@@ -1,16 +1,16 @@
 # Team Topologies
 
-**Ano**: 2026
-**Tema**: Estrutura de squads e topologias de time de engenharia
+**Year**: 2026
+**Topic**: Engineering squads structure and team topologies
 
-## Abrir
+## Open
 
-Abra `index.html` diretamente no browser.
+Open `index.html` directly in the browser.
 
-## Navegação
+## Navigation
 
-- `←` `→` — slide anterior / próximo
-- `Space` — próximo slide
-- `Home` / `End` — primeiro / último slide
-- Touch: swipe esquerda/direita
-- Clique nos dots de navegação no rodapé
+- `←` `→` — previous / next slide
+- `Space` — next slide
+- `Home` / `End` — first / last slide
+- Touch: swipe left/right
+- Click the nav dots at the bottom

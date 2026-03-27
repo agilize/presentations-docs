@@ -1,24 +1,24 @@
 # tech-presentations-docs
 
-Apresentações técnicas da Agilize organizadas por ano.
+Agilize tech presentations organized by year.
 
-## Estrutura
+## Structure
 
 ```
 tech-presentations-docs/
 ├── 2026/
-│   └── team-topologies/   # Team Topologies — estrutura e squads de engenharia
+│   └── team-topologies/   # Team Topologies — engineering squads structure
 └── ...
 ```
 
-## Apresentações
+## Presentations
 
 ### 2026
 
-| Apresentação | Descrição |
+| Presentation | Description |
 |---|---|
-| [team-topologies](./2026/team-topologies/) | Estrutura de squads e topologias de time de engenharia |
+| [team-topologies](./2026/team-topologies/) | Engineering squads structure and team topologies |
 
-## Como abrir
+## How to open
 
-Cada apresentação é um único arquivo `index.html` — abra direto no browser. Navegação por teclado (← →), touch e clique nos dots de navegação.
+Each presentation is a single `index.html` file — open it directly in the browser. Navigate with keyboard (← →), touch swipe, or click the nav dots at the bottom.
