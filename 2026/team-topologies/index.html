@@ -1,0 +1,1922 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Team Topologies — Agilize</title>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    :root {
+      --purple-dark: #3D1A6E;
+      --purple: #5C2D91;
+      --purple-light: #7B4FAF;
+      --purple-subtle: #F3EDF9;
+      --white: #FFFFFF;
+      --gray-50: #FAFAFA;
+      --gray-100: #F5F5F5;
+      --gray-200: #E8E8E8;
+      --gray-400: #AAAAAA;
+      --gray-600: #666666;
+      --gray-800: #333333;
+      --text: #2D2D2D;
+
+      /* Role colors */
+      --role-manager: #E67E22;
+      --role-pm: #E67E22;
+      --role-po: #E67E22;
+      --role-back: #3498DB;
+      --role-front: #1ABC9C;
+      --role-fullstack: #2980B9;
+      --role-ai: #9B59B6;
+      --role-head: #E67E22;
+      --role-data: #E74C3C;
+      --role-security: #C0392B;
+      --role-infra: #D35400;
+      --role-cto: #5C2D91;
+      --role-principal: #2C3E50;
+
+      --hiring: #95A5A6;
+
+      --engops: #5C2D91;
+      --entry: #7B4FAF;
+      --fingrowth: #5C2D91;
+      --maria: #9B59B6;
+      --infra-squad: #3D1A6E;
+      --data-squad: #3D1A6E;
+
+      --slide-transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Quicksand', sans-serif;
+      background: var(--gray-50);
+      color: var(--text);
+      overflow: hidden;
+      height: 100vh;
+      width: 100vw;
+    }
+
+    /* ─── Navigation ─── */
+    .nav-bar {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 8px;
+      z-index: 100;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(12px);
+      padding: 10px 20px;
+      border-radius: 40px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.1);
+    }
+
+    .nav-dot {
+      width: 12px; height: 12px;
+      border-radius: 50%;
+      background: #CCCCCC;
+      border: none; cursor: pointer;
+      transition: all 0.3s ease;
+      padding: 0;
+    }
+
+    .nav-dot.active {
+      background: var(--purple);
+      width: 36px;
+      border-radius: 6px;
+    }
+
+    .nav-dot:hover:not(.active) { background: var(--purple-light); opacity: 0.6; }
+
+    /* ─── Slide Preview Tooltip ─── */
+    .nav-dot {
+      position: relative;
+    }
+
+    .nav-dot .slide-preview {
+      position: absolute;
+      bottom: calc(100% + 16px);
+      left: 50%;
+      transform: translateX(-50%) scale(0.92);
+      width: 200px;
+      height: 130px;
+      background: transparent;
+      border-radius: 10px;
+      overflow: hidden;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease, transform 0.25s ease;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+      z-index: 200;
+    }
+
+    .nav-dot:hover .slide-preview {
+      opacity: 1;
+      transform: translateX(-50%) scale(1);
+    }
+
+    .slide-preview-thumb {
+      width: 100%;
+      height: 100%;
+      transform-origin: top left;
+      pointer-events: none;
+    }
+
+    .slide-preview-label {
+      position: absolute;
+      bottom: 6px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 4px 12px;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      font-size: 11px;
+      font-weight: 500;
+      color: #fff;
+      letter-spacing: 0.3px;
+      text-align: center;
+      white-space: nowrap;
+      border-radius: 20px;
+      z-index: 2;
+    }
+
+    .slide-preview::after {
+      display: none;
+    }
+
+    .nav-arrows {
+      position: fixed; top: 50%; transform: translateY(-50%);
+      z-index: 100; border: none; background: none; padding: 0;
+    }
+    .nav-arrows.left { left: 24px; }
+    .nav-arrows.right { right: 24px; }
+
+    .nav-arrow {
+      width: 48px; height: 48px; border-radius: 50%;
+      border: 2px solid var(--gray-200);
+      background: rgba(255,255,255,0.85);
+      backdrop-filter: blur(8px);
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      transition: all 0.3s ease;
+      color: var(--gray-600); font-size: 18px;
+    }
+
+    .nav-arrow:hover {
+      border-color: var(--purple); color: var(--purple); transform: scale(1.1);
+    }
+
+    /* ─── Slides ─── */
+    .slide-container { position: relative; width: 100vw; height: 100vh; }
+
+    .slide {
+      position: absolute; top: 0; left: 0;
+      width: 100%; height: 100%;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none;
+      transition: opacity var(--slide-transition), transform var(--slide-transition);
+      padding: 40px 60px;
+      transform: translateX(80px);
+    }
+
+    .slide.active { opacity: 1; transform: translateX(0); pointer-events: all; }
+    .slide.exit-left { opacity: 0; transform: translateX(-80px); }
+    .slide.exit-right { opacity: 0; transform: translateX(80px); }
+
+    /* ─── Cover ─── */
+    .cover {
+      background: #1B0A2E;
+      color: var(--white); text-align: center; overflow: hidden;
+    }
+
+    .cover::before, .cover::after { content: none; }
+
+    .cover-blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.7;
+      z-index: 0;
+    }
+
+    .cover-blob:nth-child(1) {
+      width: 500px; height: 500px;
+      background: #5C2D91;
+      top: -10%; left: -5%;
+      animation: drift1 16s ease-in-out infinite alternate;
+    }
+    .cover-blob:nth-child(2) {
+      width: 400px; height: 400px;
+      background: #1ABC9C;
+      opacity: 0.35;
+      bottom: -15%; right: -5%;
+      animation: drift2 20s ease-in-out infinite alternate;
+    }
+    .cover-blob:nth-child(3) {
+      width: 350px; height: 350px;
+      background: #9B59B6;
+      top: 50%; left: 60%;
+      animation: drift3 18s ease-in-out infinite alternate;
+    }
+    .cover-blob:nth-child(4) {
+      width: 300px; height: 450px;
+      background: #2980B9;
+      opacity: 0.3;
+      top: 10%; right: 20%;
+      animation: drift4 22s ease-in-out infinite alternate;
+    }
+    .cover-blob:nth-child(5) {
+      width: 450px; height: 300px;
+      background: #E67E22;
+      opacity: 0.2;
+      bottom: 10%; left: 30%;
+      animation: drift5 19s ease-in-out infinite alternate;
+    }
+    .cover-blob:nth-child(6) {
+      width: 350px; height: 350px;
+      background: #3D1A6E;
+      top: 30%; left: 10%;
+      animation: drift6 24s ease-in-out infinite alternate;
+    }
+
+    @keyframes drift1 {
+      0% { transform: translate(0, 0); }
+      100% { transform: translate(30vw, 40vh); }
+    }
+    @keyframes drift2 {
+      0% { transform: translate(0, 0); }
+      100% { transform: translate(-35vw, -30vh); }
+    }
+    @keyframes drift3 {
+      0% { transform: translate(0, 0); }
+      100% { transform: translate(-25vw, -45vh); }
+    }
+    @keyframes drift4 {
+      0% { transform: translate(0, 0); }
+      100% { transform: translate(-20vw, 35vh); }
+    }
+    @keyframes drift5 {
+      0% { transform: translate(0, 0); }
+      100% { transform: translate(25vw, -25vh); }
+    }
+    @keyframes drift6 {
+      0% { transform: translate(0, 0); }
+      100% { transform: translate(20vw, 30vh); }
+    }
+
+    @keyframes heartbeat {
+      0% { transform: scale(1); }
+      8% { transform: scale(1.15); }
+      16% { transform: scale(1); }
+      24% { transform: scale(1.10); }
+      32% { transform: scale(1); }
+      100% { transform: scale(1); }
+    }
+
+    .cover-logo-heartbeat {
+      animation: heartbeat 1s ease-in-out infinite;
+      display: inline-block;
+    }
+
+    .cover-content { position: relative; z-index: 2; }
+
+    .cover .logo-text {
+      font-size: 18px; font-weight: 300; letter-spacing: 8px;
+      text-transform: uppercase; opacity: 0.7; margin-bottom: 40px;
+    }
+
+    .cover h1 { font-size: clamp(36px, 5vw, 64px); font-weight: 700; line-height: 1.2; margin-bottom: 16px; }
+    .cover h1 span { display: block; font-weight: 300; font-size: 0.55em; opacity: 0.8; margin-top: 8px; }
+
+    .date-badge {
+      display: inline-block; margin-top: 32px; padding: 10px 28px;
+      border: 1px solid rgba(255,255,255,0.3); border-radius: 30px;
+      font-weight: 500; font-size: 14px; letter-spacing: 1px;
+    }
+
+    .decorative-line { width: 60px; height: 3px; background: rgba(255,255,255,0.4); border-radius: 2px; margin: 24px auto; }
+
+    /* ─── Common ─── */
+    .section-label {
+      font-size: 14px; font-weight: 700; letter-spacing: 4px;
+      text-transform: uppercase; color: var(--purple); margin-bottom: 12px;
+    }
+
+    .slide-title {
+      font-size: clamp(28px, 3.5vw, 44px); font-weight: 700;
+      color: var(--gray-800); margin-bottom: 40px; text-align: center;
+    }
+
+    .slide-title em { color: var(--purple); font-style: normal; }
+
+    /* ─── Context ─── */
+    .context-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; max-width: 1000px; width: 100%; }
+
+    .context-card {
+      background: var(--gray-50); border-radius: 16px; padding: 32px 28px;
+      text-align: center; border: 1px solid var(--gray-200);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .context-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(92,45,145,0.08); }
+
+    .context-icon {
+      width: 56px; height: 56px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px; margin: 0 auto 16px;
+      background: none; color: var(--purple);
+    }
+
+    .context-card h3 { font-size: 20px; font-weight: 700; margin-bottom: 8px; color: var(--gray-800); }
+    .context-card p { font-size: 16px; color: var(--gray-600); line-height: 1.6; }
+
+    /* ─── Overview ─── */
+    .squads-overview { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; max-width: 1100px; width: 100%; }
+
+    .squad-overview-card {
+      border-radius: 16px; padding: 28px 24px; color: var(--white);
+      position: relative; overflow: hidden; transition: transform 0.3s ease;
+    }
+
+    .squad-overview-card:hover { transform: translateY(-4px); }
+    .squad-overview-card::after { content: ''; position: absolute; top: -30%; right: -20%; width: 120px; height: 120px; border-radius: 50%; background: rgba(255,255,255,0.08); }
+    .squad-overview-card h3 { font-size: 20px; font-weight: 700; margin-bottom: 6px; }
+    .squad-overview-card .count { font-size: 36px; font-weight: 700; opacity: 0.9; }
+    .squad-overview-card .count span { font-size: 16px; font-weight: 400; opacity: 0.8; }
+    .squad-overview-card .desc { font-size: 14px; opacity: 0.85; margin-top: 8px; line-height: 1.5; }
+    .squad-overview-card .card-icon { position: absolute; top: 20px; right: 20px; font-size: 28px; opacity: 0.2; }
+
+    .bg-engops { background: linear-gradient(135deg, #3D1A6E, #5C2D91); }
+    .bg-entry { background: linear-gradient(135deg, #5C2D91, #7B4FAF); }
+    .bg-fingrowth { background: linear-gradient(135deg, #4A2380, #6B3FA0); }
+    .bg-maria { background: linear-gradient(135deg, #7B2D8E, #9B59B6); }
+    .bg-infra { background: linear-gradient(135deg, #2D1050, #3D1A6E); }
+    .bg-data { background: linear-gradient(135deg, #1A0D3A, #2D1050); }
+
+    /* ─── Squad Details ─── */
+    .squad-header { display: flex; align-items: center; gap: 16px; margin-bottom: 28px; }
+
+    .squad-badge {
+      width: 44px; height: 44px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px; background: none !important;
+    }
+
+    .squad-header h2 { font-size: clamp(24px, 3vw, 36px); font-weight: 700; color: var(--gray-800); }
+    .squad-header .squad-desc { font-size: 16px; color: var(--gray-600); margin-top: 2px; }
+
+    /* ─── Hierarchy Layout ─── */
+    .hierarchy { max-width: 1100px; width: 100%; }
+
+    .hierarchy-section {
+      margin-bottom: 16px;
+    }
+
+    .hierarchy-label {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--gray-400);
+      margin-bottom: 10px;
+      padding-left: 4px;
+    }
+
+    .hierarchy-connector {
+      width: 2px;
+      height: 14px;
+      background: var(--gray-200);
+      margin: 0 auto;
+    }
+
+    .members-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: center;
+    }
+
+    .member-card {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--white);
+      border-radius: 14px;
+      padding: 14px 18px;
+      min-width: 240px;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+      border: 1px solid var(--gray-200);
+    }
+
+    .member-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(92,45,145,0.08);
+    }
+
+    .member-card.hiring {
+      border: 1px dashed var(--gray-400);
+      opacity: 0.75;
+    }
+
+    .member-card.role-cto {
+      border: 1px dashed var(--gray-400);
+      opacity: 0.55;
+      filter: grayscale(0.3);
+    }
+
+    .member-avatar {
+      width: 48px; height: 48px; border-radius: 50%; flex-shrink: 0;
+      overflow: hidden; background: var(--gray-200);
+    }
+
+    .member-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+
+    .member-info { flex: 1; min-width: 0; }
+
+    .member-name {
+      font-size: 15px; font-weight: 700; color: var(--gray-800);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+
+    .member-role { font-size: 13px; color: var(--gray-600); margin-top: 2px; }
+
+    .role-badge {
+      font-size: 9px; font-weight: 700; padding: 2px 8px;
+      border-radius: 10px; color: var(--white); flex-shrink: 0;
+      white-space: nowrap;
+    }
+
+    .level-badge {
+      font-size: 9px; font-weight: 700; padding: 2px 6px;
+      border-radius: 8px; flex-shrink: 0;
+      background: var(--gray-100); color: var(--gray-600);
+      border: 1px solid var(--gray-200);
+    }
+
+    .squad-tags {
+      display: flex; gap: 10px; margin-top: 48px;
+      flex-wrap: wrap; justify-content: center;
+    }
+
+    .squad-tag {
+      padding: 6px 16px; border-radius: 20px;
+      font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
+    }
+
+    /* ─── Role Legend ─── */
+    .role-legend {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+      padding: 14px 24px;
+      background: var(--gray-50);
+      border-radius: 12px;
+      border: 1px solid var(--gray-200);
+      max-width: 800px;
+      width: 100%;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--gray-600);
+    }
+
+    .legend-dot {
+      width: 12px; height: 12px; border-radius: 3px;
+    }
+
+    /* ─── Staff ─── */
+    .staff-grid { display: flex; gap: 24px; justify-content: center; flex-wrap: wrap; }
+
+    .staff-card {
+      background: var(--white); border: 1px solid var(--gray-200);
+      border-radius: 16px; padding: 32px 36px; text-align: center;
+      min-width: 220px; transition: transform 0.3s ease;
+    }
+
+    .staff-card:hover { transform: translateY(-4px); }
+
+    .staff-avatar {
+      width: 72px; height: 72px; border-radius: 50%;
+      margin: 0 auto 14px; overflow: hidden; background: var(--gray-200);
+    }
+
+    .staff-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+    .staff-card h4 { font-size: 18px; font-weight: 700; color: var(--gray-800); }
+    .staff-card p { font-size: 15px; color: var(--gray-600); margin-top: 4px; }
+
+    /* ─── Numbers ─── */
+    .numbers-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; max-width: 900px; width: 100%; }
+
+    .number-card {
+      text-align: center; padding: 28px 16px; background: var(--white);
+      border-radius: 16px; border: 1px solid var(--gray-200);
+    }
+
+    .number-card .big-number { font-size: 56px; font-weight: 700; color: var(--purple); line-height: 1; }
+    .number-card .number-label { font-size: 16px; color: var(--gray-600); margin-top: 8px; font-weight: 500; }
+    .number-card .number-icon { font-size: 24px; color: var(--purple-light); margin-bottom: 8px; }
+
+    /* ─── Full Overview ─── */
+    .full-overview {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      max-width: 1120px;
+      width: 100%;
+    }
+
+    .overview-squad {
+      border-radius: 10px;
+      overflow: hidden;
+      background: var(--gray-50);
+      border-left: 3px solid var(--gray-200);
+    }
+
+    .overview-squad-title {
+      padding: 10px 18px 6px;
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--gray-800);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .overview-squad-title i { font-size: 12px; opacity: 0.6; }
+
+    .overview-members { padding: 4px 14px 10px; }
+
+    .ov-member {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--gray-600);
+      padding: 2px 0;
+    }
+
+    .ov-member.ov-hiring { opacity: 0.5; font-style: italic; }
+
+    .ov-dot {
+      width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0;
+    }
+
+    .ov-role {
+      margin-left: auto;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--gray-400);
+    }
+
+    /* ─── Closing ─── */
+    .closing-slide {
+      background: linear-gradient(135deg, var(--purple-dark) 0%, var(--purple) 50%, var(--purple-light) 100%);
+      color: var(--white); text-align: center; position: relative; overflow: hidden;
+    }
+
+    .closing-slide::before {
+      content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+      background: radial-gradient(circle at 70% 30%, rgba(255,255,255,0.06) 0%, transparent 50%);
+    }
+
+    .closing-content { position: relative; z-index: 2; }
+    .closing-slide h2 { font-size: clamp(32px, 4vw, 52px); font-weight: 700; margin-bottom: 16px; }
+    .closing-slide p { font-size: 18px; opacity: 0.8; font-weight: 300; max-width: 500px; margin: 0 auto; line-height: 1.7; }
+    .closing-icon { font-size: 48px; margin-bottom: 24px; opacity: 0.9; }
+
+    /* ─── UI ─── */
+    .keyboard-hint {
+      position: fixed; top: 24px; right: 24px; z-index: 100;
+      background: rgba(255,255,255,0.88); backdrop-filter: blur(8px);
+      padding: 8px 16px; border-radius: 10px; font-size: 12px;
+      color: var(--gray-600); border: 1px solid var(--gray-200);
+      transition: opacity 0.4s ease;
+    }
+
+    .keyboard-hint kbd {
+      background: var(--gray-100); border: 1px solid var(--gray-200);
+      border-radius: 4px; padding: 1px 6px; font-family: 'Quicksand', sans-serif;
+      font-size: 11px; font-weight: 600;
+    }
+
+    .slide-counter {
+      position: fixed; top: 24px; left: 24px; z-index: 100;
+      font-size: 13px; font-weight: 600; color: var(--gray-400);
+    }
+
+    .slide-counter .current { color: var(--purple); font-size: 20px; }
+
+    /* ─── Animations ─── */
+    .fade-up {
+      opacity: 0; transform: translateY(20px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+
+    .active .fade-up { opacity: 1; transform: translateY(0); }
+    .active .fade-up:nth-child(1) { transition-delay: 0.1s; }
+    .active .fade-up:nth-child(2) { transition-delay: 0.2s; }
+    .active .fade-up:nth-child(3) { transition-delay: 0.3s; }
+    .active .fade-up:nth-child(4) { transition-delay: 0.4s; }
+    .active .fade-up:nth-child(5) { transition-delay: 0.5s; }
+    .active .fade-up:nth-child(6) { transition-delay: 0.6s; }
+    .active .fade-up:nth-child(7) { transition-delay: 0.7s; }
+
+    .stagger > * {
+      opacity: 0; transform: translateY(16px);
+      transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+
+    .active .stagger > *:nth-child(1) { opacity: 1; transform: translateY(0); transition-delay: 0.1s; }
+    .active .stagger > *:nth-child(2) { opacity: 1; transform: translateY(0); transition-delay: 0.15s; }
+    .active .stagger > *:nth-child(3) { opacity: 1; transform: translateY(0); transition-delay: 0.2s; }
+    .active .stagger > *:nth-child(4) { opacity: 1; transform: translateY(0); transition-delay: 0.25s; }
+    .active .stagger > *:nth-child(5) { opacity: 1; transform: translateY(0); transition-delay: 0.3s; }
+    .active .stagger > *:nth-child(6) { opacity: 1; transform: translateY(0); transition-delay: 0.35s; }
+    .active .stagger > *:nth-child(7) { opacity: 1; transform: translateY(0); transition-delay: 0.4s; }
+    .active .stagger > *:nth-child(8) { opacity: 1; transform: translateY(0); transition-delay: 0.45s; }
+    .active .stagger > *:nth-child(9) { opacity: 1; transform: translateY(0); transition-delay: 0.5s; }
+    .active .stagger > *:nth-child(10) { opacity: 1; transform: translateY(0); transition-delay: 0.55s; }
+  </style>
+</head>
+<body>
+
+  <div class="slide-counter">
+    <span class="current" id="slideNum">01</span> / <span id="totalSlides">11</span>
+  </div>
+
+  <div id="slideLogo" style="position: fixed; top: 28px; left: 50%; transform: translateX(-50%); z-index: 99; opacity: 0; transition: opacity 0.4s ease;">
+    <img src="assets/logo-roxa.png" alt="Agilize" style="height: 36px; opacity: 0.6; animation: heartbeat 1s ease-in-out infinite;">
+  </div>
+
+  <div class="keyboard-hint">
+    <kbd><i class="fa-solid fa-arrow-left"></i></kbd> <kbd><i class="fa-solid fa-arrow-right"></i></kbd> para navegar
+  </div>
+
+  <button class="nav-arrows left" onclick="prevSlide()">
+    <div class="nav-arrow"><i class="fa-solid fa-chevron-left"></i></div>
+  </button>
+  <button class="nav-arrows right" onclick="nextSlide()">
+    <div class="nav-arrow"><i class="fa-solid fa-chevron-right"></i></div>
+  </button>
+
+  <div class="nav-bar" id="navBar"></div>
+
+  <div class="slide-container">
+
+    <!-- ═══ SLIDE 0: Cover ═══ -->
+    <div class="slide cover active" data-slide="0">
+      <div class="cover-blob"></div>
+      <div class="cover-blob"></div>
+      <div class="cover-blob"></div>
+      <div class="cover-blob"></div>
+      <div class="cover-blob"></div>
+      <div class="cover-blob"></div>
+      <div class="cover-content">
+        <div class="fade-up" style="margin-bottom: 32px;"><div class="cover-logo-heartbeat"><img src="assets/logo-branca.png" alt="Agilize" style="height: 56px; opacity: 0.9;"></div></div>
+        <div class="logo-text fade-up">Agilize</div>
+        <div class="decorative-line fade-up"></div>
+        <h1 class="fade-up" style="font-size: clamp(48px, 7vw, 80px);">
+          Team Topologies
+        </h1>
+        <div class="date-badge fade-up"><i class="fa-solid fa-users"></i>&nbsp; ProdTech All Hands</div>
+      </div>
+    </div>
+
+    <!-- ═══ SLIDE 1: Quote ═══ -->
+    <div class="slide" data-slide="1" style="background: #00E68D; color: var(--gray-800); display: flex; align-items: center; justify-content: center;">
+      <div class="cover-content" style="max-width: 800px; text-align: center;">
+        <div class="fade-up" style="font-size: 28px; opacity: 0.4; margin-bottom: 40px;"><i class="fa-solid fa-quote-left"></i></div>
+        <blockquote class="fade-up" style="font-size: clamp(28px, 3.5vw, 48px); font-weight: 500; font-style: italic; line-height: 1.5; letter-spacing: 0.5px; white-space: nowrap;">
+          É preciso ter <span style="font-weight: 700; border-bottom: 2px solid rgba(0,0,0,0.25);">caos</span> dentro de si<br>para dar à luz uma <span style="font-weight: 700; border-bottom: 2px solid rgba(0,0,0,0.25);">estrela dançante</span>.
+        </blockquote>
+        <p class="fade-up" style="margin-top: 40px; font-size: 15px; font-weight: 600; opacity: 0.5; letter-spacing: 3px; text-transform: uppercase;">— Friedrich Nietzsche</p>
+      </div>
+    </div>
+
+    <!-- ═══ SLIDE 2: Collaborative ═══ -->
+    <div class="slide" data-slide="2" style="background: var(--white);">
+      <div class="section-label fade-up">Construção coletiva</div>
+      <h2 class="slide-title fade-up">Pensamos <em>juntos</em></h2>
+      <p class="fade-up" style="max-width: 680px; text-align: center; color: var(--gray-600); font-size: 17px; line-height: 1.7; margin-bottom: 40px;">
+        Essa topologia não nasceu de uma decisão isolada. Foi desenhada de forma colaborativa entre a liderança de tecnologia e produto, com base nos desafios que vivemos no dia a dia.
+      </p>
+      <div class="fade-up" style="display: flex; gap: 28px; align-items: center; justify-content: center; flex-wrap: wrap;">
+        <div style="text-align: center;">
+          <div class="member-avatar" style="width: 64px; height: 64px; margin: 0 auto 8px;"><img src="photos/adriano.png" alt="Adriano"></div>
+          <span style="font-size: 13px; font-weight: 600; color: var(--gray-800);">Adriano</span>
+          <span style="display: block; font-size: 11px; color: var(--gray-400);">CTO</span>
+        </div>
+        <div style="text-align: center;">
+          <div class="member-avatar" style="width: 64px; height: 64px; margin: 0 auto 8px;"><img src="photos/victor.png" alt="Victor"></div>
+          <span style="font-size: 13px; font-weight: 600; color: var(--gray-800);">Victor</span>
+          <span style="display: block; font-size: 11px; color: var(--gray-400);">Head</span>
+        </div>
+        <div style="text-align: center;">
+          <div class="member-avatar" style="width: 64px; height: 64px; margin: 0 auto 8px;"><img src="photos/calison.png" alt="Calison"></div>
+          <span style="font-size: 13px; font-weight: 600; color: var(--gray-800);">Calison</span>
+          <span style="display: block; font-size: 11px; color: var(--gray-400);">Manager</span>
+        </div>
+        <div style="text-align: center;">
+          <div class="member-avatar" style="width: 64px; height: 64px; margin: 0 auto 8px;"><img src="photos/luiz.png" alt="Luiz"></div>
+          <span style="font-size: 13px; font-weight: 600; color: var(--gray-800);">Luiz</span>
+          <span style="display: block; font-size: 11px; color: var(--gray-400);">Manager</span>
+        </div>
+        <div style="text-align: center;">
+          <div class="member-avatar" style="width: 64px; height: 64px; margin: 0 auto 8px;"><img src="photos/thiago.png" alt="Thiago"></div>
+          <span style="font-size: 13px; font-weight: 600; color: var(--gray-800);">Thiago</span>
+          <span style="display: block; font-size: 11px; color: var(--gray-400);">TL Backend</span>
+        </div>
+        <div style="text-align: center;">
+          <div class="member-avatar" style="width: 64px; height: 64px; margin: 0 auto 8px;"><img src="photos/ernesto.png" alt="Ernesto"></div>
+          <span style="font-size: 13px; font-weight: 600; color: var(--gray-800);">Ernesto</span>
+          <span style="display: block; font-size: 11px; color: var(--gray-400);">Principal</span>
+        </div>
+        <div style="text-align: center;">
+          <div class="member-avatar" style="width: 64px; height: 64px; margin: 0 auto 8px;"><img src="photos/erica.png" alt="Érica"></div>
+          <span style="font-size: 13px; font-weight: 600; color: var(--gray-800);">Érica</span>
+          <span style="display: block; font-size: 11px; color: var(--gray-400);">PM</span>
+        </div>
+        <div style="text-align: center;">
+          <div class="member-avatar" style="width: 64px; height: 64px; margin: 0 auto 8px;"><img src="photos/viana.png" alt="Viana"></div>
+          <span style="font-size: 13px; font-weight: 600; color: var(--gray-800);">Viana</span>
+          <span style="display: block; font-size: 11px; color: var(--gray-400);">CPO</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ SLIDE 3: Context ═══ -->
+    <div class="slide" data-slide="3" style="background: var(--white);">
+      <div class="section-label fade-up">Contexto</div>
+      <h2 class="slide-title fade-up">Por que <em>reorganizar</em>?</h2>
+      <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; max-width: 960px; width: 100;" class="stagger">
+        <div class="context-card" style="text-align: left; display: flex; gap: 18px; align-items: flex-start;">
+          <div class="context-icon" style="margin: 0; flex-shrink: 0; width: 48px; height: 48px; font-size: 20px;"><i class="fa-solid fa-fire"></i></div>
+          <div>
+            <h3>Demanda crescente</h3>
+            <p>Estoque de 100 a 200 cards acumulados por semana, exigindo força-tarefa constante dos sêniors para conter o backlog.</p>
+          </div>
+        </div>
+        <div class="context-card" style="text-align: left; display: flex; gap: 18px; align-items: flex-start;">
+          <div class="context-icon" style="margin: 0; flex-shrink: 0; width: 48px; height: 48px; font-size: 20px;"><i class="fa-solid fa-scale-unbalanced"></i></div>
+          <div>
+            <h3>Times desbalanceados</h3>
+            <p>Squads sobrecarregados enquanto outros tinham capacidade ociosa. Planejamento feito, mas sem reorganização para atender as demandas.</p>
+          </div>
+        </div>
+        <div class="context-card" style="text-align: left; display: flex; gap: 18px; align-items: flex-start;">
+          <div class="context-icon" style="margin: 0; flex-shrink: 0; width: 48px; height: 48px; font-size: 20px;"><i class="fa-solid fa-gem"></i></div>
+          <div>
+            <h3>Senioridade estratégica</h3>
+            <p>Mais seniores no OPS para estabilidade, e liberação do Ernesto para atuar como Principal engineer de fato.</p>
+          </div>
+        </div>
+        <div class="context-card" style="text-align: left; display: flex; gap: 18px; align-items: flex-start;">
+          <div class="context-icon" style="margin: 0; flex-shrink: 0; width: 48px; height: 48px; font-size: 20px;"><i class="fa-solid fa-chart-line"></i></div>
+          <div>
+            <h3>Frente growth & financeiro</h3>
+            <p>Mudança de prioridade da Fintech deixou o squad solto. Reorganização para unificar financeiro, multibenefícios e growth.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ SLIDE: Antes vs Depois ═══ -->
+    <div class="slide" data-slide="4" style="background: var(--white);">
+      <div class="section-label fade-up">Comparativo</div>
+      <h2 class="slide-title fade-up">Antes <em>vs</em> Depois</h2>
+      <div style="display: grid; grid-template-columns: 1fr 60px 1fr; gap: 0; max-width: 960px; width: 100%; align-items: start;" class="stagger">
+        <!-- ANTES -->
+        <div style="background: var(--gray-50); border-radius: 16px; padding: 32px 28px; border-top: 4px solid var(--gray-400);">
+          <div style="font-size: 13px; font-weight: 700; color: var(--gray-400); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 20px; text-align: center;">Antes</div>
+          <div style="display: flex; flex-direction: column; gap: 12px;">
+            <div style="display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--gray-600);"><i class="fa-solid fa-circle-xmark" style="color: #E74C3C; font-size: 16px;"></i>5 squads desbalanceados</div>
+            <div style="display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--gray-600);"><i class="fa-solid fa-circle-xmark" style="color: #E74C3C; font-size: 16px;"></i>OPS sobrecarregado sem sêniores</div>
+            <div style="display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--gray-600);"><i class="fa-solid fa-circle-xmark" style="color: #E74C3C; font-size: 16px;"></i>Fintech squad sem direção clara</div>
+            <div style="display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--gray-600);"><i class="fa-solid fa-circle-xmark" style="color: #E74C3C; font-size: 16px;"></i>Backlog crescente (100-200 cards/sem)</div>
+            <div style="display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--gray-600);"><i class="fa-solid fa-circle-xmark" style="color: #E74C3C; font-size: 16px;"></i>Principal engineer apagando incêndio</div>
+          </div>
+        </div>
+        <!-- SETA -->
+        <div style="display: flex; align-items: center; justify-content: center; padding-top: 60px;">
+          <i class="fa-solid fa-arrow-right" style="font-size: 24px; color: var(--purple); opacity: 0.5;"></i>
+        </div>
+        <!-- DEPOIS -->
+        <div style="background: var(--purple-subtle); border-radius: 16px; padding: 32px 28px; border-top: 4px solid var(--purple);">
+          <div style="font-size: 13px; font-weight: 700; color: var(--purple); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 20px; text-align: center;">Depois</div>
+          <div style="display: flex; flex-direction: column; gap: 12px;">
+            <div style="display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--gray-800);"><i class="fa-solid fa-circle-check" style="color: #1ABC9C; font-size: 16px;"></i>4 squads stream-aligned + áreas de suporte</div>
+            <div style="display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--gray-800);"><i class="fa-solid fa-circle-check" style="color: #1ABC9C; font-size: 16px;"></i>OPS reforçado com rodízio sênior</div>
+            <div style="display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--gray-800);"><i class="fa-solid fa-circle-check" style="color: #1ABC9C; font-size: 16px;"></i>FinGrowth com foco claro em receita</div>
+            <div style="display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--gray-800);"><i class="fa-solid fa-circle-check" style="color: #1ABC9C; font-size: 16px;"></i>STT Day quinzenal para zerar estoque</div>
+            <div style="display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--gray-800);"><i class="fa-solid fa-circle-check" style="color: #1ABC9C; font-size: 16px;"></i>Ernesto livre como Principal engineer</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ SLIDE: Overview ═══ -->
+    <div class="slide" data-slide="5" style="background: var(--white);">
+      <div class="section-label fade-up">Visão geral</div>
+      <h2 class="slide-title fade-up" style="margin-bottom: 28px;">A nova <em>estrutura</em></h2>
+
+      <!-- Squads de produto -->
+      <div class="fade-up" style="max-width: 1100px; width: 100%; margin-bottom: 20px;">
+        <div style="font-size: 13px; font-weight: 700; color: var(--gray-400); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 12px; padding-left: 4px;"><i class="fa-solid fa-users" style="margin-right: 6px;"></i>Squads de produto</div>
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px;">
+          <div style="background: var(--gray-50); border-left: 4px solid var(--engops); border-radius: 12px; padding: 20px 22px;">
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
+              <i class="fa-solid fa-gears" style="color: var(--engops); font-size: 18px; opacity: 0.7;"></i>
+              <span style="font-size: 15px; font-weight: 800; color: var(--gray-800);">OPS</span>
+            </div>
+            <div style="font-size: 22px; font-weight: 800; color: var(--purple);">7 <span style="font-size: 12px; font-weight: 500; color: var(--gray-400);">membros</span></div>
+            <div style="font-size: 13px; color: var(--gray-500); margin-top: 4px; line-height: 1.4;">Plataforma e operações</div>
+          </div>
+          <div style="background: var(--gray-50); border-left: 4px solid var(--entry); border-radius: 12px; padding: 20px 22px;">
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
+              <i class="fa-solid fa-rocket" style="color: var(--entry); font-size: 18px; opacity: 0.7;"></i>
+              <span style="font-size: 15px; font-weight: 800; color: var(--gray-800);">Entry Journey</span>
+            </div>
+            <div style="font-size: 22px; font-weight: 800; color: var(--purple);">5 <span style="font-size: 12px; font-weight: 500; color: var(--gray-400);">membros</span></div>
+            <div style="font-size: 13px; color: var(--gray-500); margin-top: 4px; line-height: 1.4;">Onboarding do cliente</div>
+          </div>
+          <div style="background: var(--gray-50); border-left: 4px solid var(--fingrowth); border-radius: 12px; padding: 20px 22px;">
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
+              <i class="fa-solid fa-chart-line" style="color: var(--fingrowth); font-size: 18px; opacity: 0.7;"></i>
+              <span style="font-size: 15px; font-weight: 800; color: var(--gray-800);">FinGrowth</span>
+            </div>
+            <div style="font-size: 22px; font-weight: 800; color: var(--purple);">7 <span style="font-size: 12px; font-weight: 500; color: var(--gray-400);">membros</span></div>
+            <div style="font-size: 13px; color: var(--gray-500); margin-top: 4px; line-height: 1.4;">Multi-benefícios, financeiro, MEI e growth</div>
+          </div>
+          <div style="background: var(--gray-50); border-left: 4px solid var(--maria); border-radius: 12px; padding: 20px 22px;">
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
+              <i class="fa-solid fa-brain" style="color: var(--maria); font-size: 18px; opacity: 0.7;"></i>
+              <span style="font-size: 15px; font-weight: 800; color: var(--gray-800);">MarIA & ClaudIA</span>
+            </div>
+            <div style="font-size: 22px; font-weight: 800; color: var(--purple);">6 <span style="font-size: 12px; font-weight: 500; color: var(--gray-400);">membros</span></div>
+            <div style="font-size: 13px; color: var(--gray-500); margin-top: 4px; line-height: 1.4;">IA aplicada ao produto</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Linha 2: Áreas estruturantes + Transversais + Produto -->
+      <div class="fade-up" style="max-width: 1100px; width: 100%; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px;">
+        <!-- Áreas estruturantes -->
+        <div style="background: var(--gray-50); border-left: 4px solid var(--infra-squad); border-radius: 12px; padding: 20px 22px;">
+          <div style="font-size: 13px; font-weight: 700; color: var(--gray-400); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 14px;"><i class="fa-solid fa-building-columns" style="margin-right: 5px;"></i>Áreas estruturantes</div>
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <i class="fa-solid fa-shield-halved" style="color: var(--infra-squad); font-size: 14px; width: 18px; text-align: center;"></i>
+              <span style="font-size: 13px; font-weight: 700; color: var(--gray-800);">InfraSecGov</span>
+              <span style="margin-left: auto; font-size: 15px; font-weight: 800; color: var(--purple);">2</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <i class="fa-solid fa-database" style="color: var(--infra-squad); font-size: 14px; width: 18px; text-align: center;"></i>
+              <span style="font-size: 13px; font-weight: 700; color: var(--gray-800);">Data</span>
+              <span style="margin-left: auto; font-size: 15px; font-weight: 800; color: var(--purple);">1</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <i class="fa-solid fa-code" style="color: var(--purple); font-size: 14px; width: 18px; text-align: center;"></i>
+              <span style="font-size: 13px; font-weight: 700; color: var(--gray-800);">Engenharia</span>
+              <span style="margin-left: auto; font-size: 15px; font-weight: 800; color: var(--purple);">2</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Transversais -->
+        <div style="background: var(--gray-50); border-left: 4px solid var(--purple); border-radius: 12px; padding: 20px 22px;">
+          <div style="font-size: 13px; font-weight: 700; color: var(--gray-400); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 14px;"><i class="fa-solid fa-arrows-left-right" style="margin-right: 5px;"></i>Transversais</div>
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <span class="ov-dot" style="display:inline-block;background:var(--role-principal); width:10px; height:10px;"></span>
+              <span style="font-size: 13px; font-weight: 700; color: var(--gray-800);">Ernesto</span>
+              <span style="font-size: 13px; color: var(--gray-400);">Principal</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <span class="ov-dot" style="display:inline-block;background:var(--role-front); width:10px; height:10px;"></span>
+              <span style="font-size: 13px; font-weight: 700; color: var(--gray-800);">Matheus</span>
+              <span style="font-size: 13px; color: var(--gray-400);">TL Front</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <span class="ov-dot" style="display:inline-block;background:#E91E63; width:10px; height:10px;"></span>
+              <span style="font-size: 13px; font-weight: 700; color: var(--gray-800);">Tath, Thacio</span>
+              <span style="font-size: 11px; color: var(--gray-400);">PD</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Produto -->
+        <div style="background: var(--gray-50); border-left: 4px solid #E67E22; border-radius: 12px; padding: 20px 22px;">
+          <div style="font-size: 13px; font-weight: 700; color: var(--gray-400); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 14px;"><i class="fa-solid fa-bullseye" style="margin-right: 5px;"></i>Produto</div>
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <span class="ov-dot" style="display:inline-block;background:var(--role-po); width:10px; height:10px;"></span>
+              <span style="font-size: 13px; font-weight: 700; color: var(--gray-800);">Érica</span>
+              <span style="font-size: 13px; color: var(--gray-400);">PM</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <span class="ov-dot" style="display:inline-block;background:var(--role-po); width:10px; height:10px;"></span>
+              <span style="font-size: 13px; font-weight: 700; color: var(--gray-800);">Trajano, Monique O., Laura</span>
+              <span style="font-size: 13px; color: var(--gray-400);">PO</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <span class="ov-dot" style="display:inline-block;background:#E91E63; width:10px; height:10px;"></span>
+              <span style="font-size: 13px; font-weight: 700; color: var(--gray-800);">Tath, Thacio</span>
+              <span style="font-size: 11px; color: var(--gray-400);">PD</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ SLIDE 3: Legenda ═══ -->
+    <div class="slide" data-slide="5" style="background: var(--white);">
+      <div class="section-label fade-up">Legenda</div>
+      <h2 class="slide-title fade-up">Perfis</h2>
+      <div class="fade-up" style="display: flex; gap: 36px; justify-content: center; flex-wrap: nowrap; white-space: nowrap;">
+          <div class="legend-item" style="font-size: 17px; gap: 10px;"><i class="fa-solid fa-star" style="color: var(--role-manager); font-size: 17px;"></i> Manager</div>
+          <div class="legend-item" style="font-size: 17px; gap: 10px;"><i class="fa-solid fa-compass" style="color: var(--role-po); font-size: 17px;"></i> PM / PO</div>
+          <div class="legend-item" style="font-size: 17px; gap: 10px;"><i class="fa-solid fa-code" style="color: var(--role-back); font-size: 17px;"></i> Backend</div>
+          <div class="legend-item" style="font-size: 17px; gap: 10px;"><i class="fa-solid fa-palette" style="color: var(--role-front); font-size: 17px;"></i> Frontend</div>
+          <div class="legend-item" style="font-size: 17px; gap: 10px;"><i class="fa-solid fa-layer-group" style="color: var(--role-fullstack); font-size: 17px;"></i> Fullstack</div>
+          <div class="legend-item" style="font-size: 17px; gap: 10px;"><i class="fa-solid fa-crown" style="color: var(--role-head); font-size: 17px;"></i> Head</div>
+          <div class="legend-item" style="font-size: 17px; gap: 10px;"><i class="fa-solid fa-gem" style="color: var(--role-principal); font-size: 17px;"></i> Principal</div>
+          <div class="legend-item" style="font-size: 17px; gap: 10px;"><i class="fa-solid fa-pen-nib" style="color: #E91E63; font-size: 17px;"></i> Product designer</div>
+      </div>
+    </div>
+
+    <!-- ═══ SLIDE 4: OPS ═══ -->
+    <div class="slide" data-slide="6" style="background: var(--white);">
+      <div class="squad-header fade-up">
+        <div class="squad-badge"><i class="fa-solid fa-gears" style="color: var(--engops);"></i></div>
+        <div>
+          <h2>OPS</h2>
+          <div class="squad-desc">Plataforma, ferramentas de engenharia e operações</div>
+        </div>
+      </div>
+      <div class="hierarchy">
+        <!-- Liderança -->
+        <div class="hierarchy-section fade-up">
+          <div class="hierarchy-label"><i class="fa-solid fa-sitemap"></i> Liderança</div>
+          <div class="members-row stagger">
+            <div class="member-card role-manager">
+              <div class="member-avatar"><img src="photos/luiz.png" alt="Luiz"></div>
+              <div class="member-info">
+                <div class="member-name">Luiz</div>
+                <div class="member-role"><i class="fa-solid fa-star" style="font-size:12px;color:var(--role-manager);"></i> Manager</div>
+              </div>
+            </div>
+            <div class="member-card role-pm">
+              <div class="member-avatar"><img src="photos/erica.png" alt="Érica"></div>
+              <div class="member-info">
+                <div class="member-name">Érica</div>
+                <div class="member-role"><i class="fa-solid fa-compass" style="font-size:12px;color:var(--role-pm);"></i> PM</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="hierarchy-connector fade-up"></div>
+
+        <!-- Engineers -->
+        <div class="hierarchy-section fade-up">
+          <div class="hierarchy-label"><i class="fa-solid fa-code"></i> Engenharia</div>
+          <div class="members-row stagger">
+            <div class="member-card role-back">
+              <div class="member-avatar"><img src="photos/sukerman.png" alt="Monique"></div>
+              <div class="member-info">
+                <div class="member-name">Monique Sukerman</div>
+                <div class="member-role"><i class="fa-solid fa-code" style="font-size:12px;color:var(--role-back);"></i> Back engineer</div>
+              </div>
+            </div>
+            <div class="member-card role-back">
+              <div class="member-avatar"><img src="photos/marx.png" alt="Marx"></div>
+              <div class="member-info">
+                <div class="member-name">Marx</div>
+                <div class="member-role"><i class="fa-solid fa-code" style="font-size:12px;color:var(--role-back);"></i> Back engineer</div>
+              </div>
+            </div>
+            <div class="member-card role-back">
+              <div class="member-avatar"><img src="photos/lucao.png" alt="Lucão"></div>
+              <div class="member-info">
+                <div class="member-name">Lucão</div>
+                <div class="member-role"><i class="fa-solid fa-code" style="font-size:12px;color:var(--role-back);"></i> Back engineer</div>
+              </div>
+            </div>
+            <div class="member-card role-back">
+              <div class="member-avatar"><img src="photos/tulio.png" alt="Túlio"></div>
+              <div class="member-info">
+                <div class="member-name">Túlio</div>
+                <div class="member-role"><i class="fa-solid fa-code" style="font-size:12px;color:var(--role-back);"></i> Back engineer</div>
+              </div>
+            </div>
+            <div class="member-card role-back">
+              <div class="member-avatar"><img src="photos/luquinha.png" alt="Luquinha"></div>
+              <div class="member-info">
+                <div class="member-name">Luquinha</div>
+                <div class="member-role"><i class="fa-solid fa-code" style="font-size:12px;color:var(--role-back);"></i> Back engineer</div>
+              </div>
+            </div>
+            <div class="member-card role-cto" style="opacity: 0.55; filter: grayscale(0.3); border-style: dashed;">
+              <div class="member-avatar"><img src="photos/adriano.png" alt="Adriano"></div>
+              <div class="member-info">
+                <div class="member-name">Adriano</div>
+                <div class="member-role"><i class="fa-solid fa-terminal" style="font-size:12px;color:var(--role-cto);"></i> CTO</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="squad-tags fade-up" style="transition-delay: 0.6s;">
+        <span class="squad-tag" style="background: #EDE7F6; color: #5C2D91;"><i class="fa-solid fa-file-invoice"></i>&nbsp; Declarações</span>
+        <span class="squad-tag" style="background: #E8F5E9; color: #2E7D32;"><i class="fa-solid fa-receipt"></i>&nbsp; Impostos</span>
+        <span class="squad-tag" style="background: #FFF3E0; color: #E65100;"><i class="fa-solid fa-clock-rotate-left"></i>&nbsp; Rotinas periódicas</span>
+        <span class="squad-tag" style="background: #E3F2FD; color: #1565C0;"><i class="fa-solid fa-server"></i>&nbsp; Serviços de plataforma</span>
+        <span class="squad-tag" style="background: #FCE4EC; color: #C62828;"><i class="fa-solid fa-file-lines"></i>&nbsp; Informe de rendimentos</span>
+        <span class="squad-tag" style="background: #F3E5F5; color: #7B1FA2;"><i class="fa-solid fa-bug"></i>&nbsp; Bugs & tasks do dia a dia</span>
+      </div>
+    </div>
+
+    <!-- ═══ SLIDE 5: Entry Journey ═══ -->
+    <div class="slide" data-slide="7" style="background: var(--white);">
+      <div class="squad-header fade-up">
+        <div class="squad-badge"><i class="fa-solid fa-rocket" style="color: var(--entry);"></i></div>
+        <div>
+          <h2>Entry Journey</h2>
+          <div class="squad-desc">Jornada de entrada e onboarding do cliente</div>
+        </div>
+      </div>
+      <div class="hierarchy">
+        <div class="hierarchy-section fade-up">
+          <div class="hierarchy-label"><i class="fa-solid fa-sitemap"></i> Liderança</div>
+          <div class="members-row stagger">
+            <div class="member-card role-manager">
+              <div class="member-avatar"><img src="photos/calison.png" alt="Calison"></div>
+              <div class="member-info">
+                <div class="member-name">Calison</div>
+                <div class="member-role"><i class="fa-solid fa-star" style="font-size:12px;color:var(--role-manager);"></i> Manager</div>
+              </div>
+            </div>
+            <div class="member-card role-po">
+              <div class="member-avatar"><img src="photos/trajano.png" alt="Caroline"></div>
+              <div class="member-info">
+                <div class="member-name">Trajano</div>
+                <div class="member-role"><i class="fa-solid fa-compass" style="font-size:12px;color:var(--role-po);"></i> PO</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="hierarchy-connector fade-up"></div>
+
+        <div class="hierarchy-section fade-up">
+          <div class="hierarchy-label"><i class="fa-solid fa-code"></i> Engenharia</div>
+          <div class="members-row stagger">
+            <div class="member-card role-front">
+              <div class="member-avatar"><img src="photos/bruno.png" alt="Bruno"></div>
+              <div class="member-info">
+                <div class="member-name">Bruno</div>
+                <div class="member-role"><i class="fa-solid fa-palette" style="font-size:12px;color:var(--role-front);"></i> Front engineer</div>
+              </div>
+            </div>
+            <div class="member-card role-fullstack">
+              <div class="member-avatar"><img src="photos/roberto.png" alt="Roberto"></div>
+              <div class="member-info">
+                <div class="member-name">Roberto</div>
+                <div class="member-role"><i class="fa-solid fa-layer-group" style="font-size:12px;color:var(--role-fullstack);"></i> Fullstack engineer</div>
+              </div>
+            </div>
+            <div class="member-card hiring">
+              <div class="member-avatar"><img src="https://ui-avatars.com/api/?name=?&background=95A5A6&color=fff&size=128&font-size=0.5&bold=true" alt="Vaga"></div>
+              <div class="member-info">
+                <div class="member-name"><i class="fa-solid fa-user-plus" style="font-size:12px;color:var(--hiring);"></i> A contratar</div>
+                <div class="member-role">Backend engineer</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="squad-tags fade-up" style="transition-delay: 0.6s;">
+        <span class="squad-tag" style="background: #EDE7F6; color: #5C2D91;"><i class="fa-solid fa-building"></i>&nbsp; Abertura de empresa</span>
+        <span class="squad-tag" style="background: #E8F5E9; color: #2E7D32;"><i class="fa-solid fa-handshake"></i>&nbsp; Pós-venda</span>
+        <span class="squad-tag" style="background: #FFF3E0; color: #E65100;"><i class="fa-solid fa-list-check"></i>&nbsp; Onboarding</span>
+        <span class="squad-tag" style="background: #E3F2FD; color: #1565C0;"><i class="fa-solid fa-comments"></i>&nbsp; IA conversacional</span>
+        <span class="squad-tag" style="background: #FCE4EC; color: #C62828;"><i class="fa-solid fa-users-between-lines"></i>&nbsp; Societário</span>
+        <span class="squad-tag" style="background: #F3E5F5; color: #7B1FA2;"><i class="fa-solid fa-mobile-screen"></i>&nbsp; Formulários & app</span>
+      </div>
+    </div>
+
+    <!-- ═══ SLIDE 6: FinGrowth ═══ -->
+    <div class="slide" data-slide="8" style="background: var(--white);">
+      <div class="squad-header fade-up">
+        <div class="squad-badge"><i class="fa-solid fa-chart-line" style="color: var(--fingrowth);"></i></div>
+        <div>
+          <h2>FinGrowth</h2>
+          <div class="squad-desc">Multi-benefícios, financeiro, MEI e growth</div>
+        </div>
+      </div>
+      <div class="hierarchy">
+        <div class="hierarchy-section fade-up">
+          <div class="hierarchy-label"><i class="fa-solid fa-sitemap"></i> Liderança</div>
+          <div class="members-row stagger">
+            <div class="member-card role-manager">
+              <div class="member-avatar"><img src="photos/calison.png" alt="Calison"></div>
+              <div class="member-info">
+                <div class="member-name">Calison</div>
+                <div class="member-role"><i class="fa-solid fa-star" style="font-size:12px;color:var(--role-manager);"></i> Manager</div>
+              </div>
+            </div>
+            <div class="member-card role-po">
+              <div class="member-avatar"><img src="photos/monique-oliveira.png" alt="Monique O."></div>
+              <div class="member-info">
+                <div class="member-name">Monique Oliveira</div>
+                <div class="member-role"><i class="fa-solid fa-compass" style="font-size:12px;color:var(--role-po);"></i> PO</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="hierarchy-connector fade-up"></div>
+
+        <div class="hierarchy-section fade-up">
+          <div class="hierarchy-label"><i class="fa-solid fa-code"></i> Engenharia</div>
+          <div class="members-row stagger">
+            <div class="member-card role-back">
+              <div class="member-avatar"><img src="photos/thiago.png" alt="Thiago"></div>
+              <div class="member-info">
+                <div class="member-name">Thiago</div>
+                <div class="member-role"><i class="fa-solid fa-code" style="font-size:12px;color:var(--role-back);"></i> Tech Lead Backend</div>
+              </div>
+            </div>
+            <div class="member-card role-back">
+              <div class="member-avatar"><img src="photos/ana.png" alt="Ana"></div>
+              <div class="member-info">
+                <div class="member-name">Ana</div>
+                <div class="member-role"><i class="fa-solid fa-code" style="font-size:12px;color:var(--role-back);"></i> Back engineer</div>
+              </div>
+            </div>
+            <div class="member-card role-back">
+              <div class="member-avatar"><img src="photos/werneck.png" alt="Werneck"></div>
+              <div class="member-info">
+                <div class="member-name">Werneck</div>
+                <div class="member-role"><i class="fa-solid fa-code" style="font-size:12px;color:var(--role-back);"></i> Back engineer</div>
+              </div>
+            </div>
+            <div class="member-card role-back">
+              <div class="member-avatar"><img src="photos/alan.png" alt="Alan"></div>
+              <div class="member-info">
+                <div class="member-name">Alan</div>
+                <div class="member-role"><i class="fa-solid fa-code" style="font-size:12px;color:var(--role-back);"></i> Backend Engineer</div>
+              </div>
+            </div>
+            <div class="member-card hiring">
+              <div class="member-avatar"><img src="https://ui-avatars.com/api/?name=?&background=95A5A6&color=fff&size=128&font-size=0.5&bold=true" alt="Vaga"></div>
+              <div class="member-info">
+                <div class="member-name"><i class="fa-solid fa-user-plus" style="font-size:12px;color:var(--hiring);"></i> A contratar</div>
+                <div class="member-role">Backend engineer</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="squad-tags fade-up" style="transition-delay: 0.6s;">
+        <span class="squad-tag" style="background: #EDE7F6; color: #5C2D91;"><i class="fa-solid fa-gift"></i>&nbsp; Multi-benefícios</span>
+        <span class="squad-tag" style="background: #E8F5E9; color: #2E7D32;"><i class="fa-solid fa-money-bill-wave"></i>&nbsp; Financeiro cliente</span>
+        <span class="squad-tag" style="background: #FFF3E0; color: #E65100;"><i class="fa-solid fa-building-columns"></i>&nbsp; Financeiro Agilize</span>
+        <span class="squad-tag" style="background: #FCE4EC; color: #C62828;"><i class="fa-solid fa-store"></i>&nbsp; MEI</span>
+        <span class="squad-tag" style="background: #E3F2FD; color: #1565C0;"><i class="fa-solid fa-people-group"></i>&nbsp; Company Hero</span>
+        <span class="squad-tag" style="background: #F3E5F5; color: #7B1FA2;"><i class="fa-solid fa-rocket"></i>&nbsp; Growth</span>
+      </div>
+    </div>
+
+    <!-- ═══ SLIDE 7: MarIA & ClaudIA ═══ -->
+    <div class="slide" data-slide="9" style="background: var(--white);">
+      <div class="squad-header fade-up">
+        <div class="squad-badge"><i class="fa-solid fa-brain" style="color: var(--maria);"></i></div>
+        <div>
+          <h2>MarIA & ClaudIA</h2>
+          <div class="squad-desc">Inteligência artificial aplicada ao produto</div>
+        </div>
+      </div>
+      <div class="hierarchy">
+        <div class="hierarchy-section fade-up">
+          <div class="hierarchy-label"><i class="fa-solid fa-sitemap"></i> Liderança</div>
+          <div class="members-row stagger">
+            <div class="member-card role-head">
+              <div class="member-avatar"><img src="photos/victor.png" alt="Victor"></div>
+              <div class="member-info">
+                <div class="member-name">Victor</div>
+                <div class="member-role"><i class="fa-solid fa-crown" style="font-size:12px;color:var(--role-head);"></i> Head engineering</div>
+              </div>
+            </div>
+            <div class="member-card role-po">
+              <div class="member-avatar"><img src="photos/laura.png" alt="Laura"></div>
+              <div class="member-info">
+                <div class="member-name">Laura</div>
+                <div class="member-role"><i class="fa-solid fa-compass" style="font-size:12px;color:var(--role-po);"></i> PO</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="hierarchy-connector fade-up"></div>
+
+        <div class="hierarchy-section fade-up">
+          <div class="hierarchy-label"><i class="fa-solid fa-code"></i> Engenharia</div>
+          <div class="members-row stagger">
+            <div class="member-card role-back">
+              <div class="member-avatar"><img src="photos/augusto.png" alt="Augusto"></div>
+              <div class="member-info">
+                <div class="member-name">Augusto</div>
+                <div class="member-role"><i class="fa-solid fa-code" style="font-size:12px;color:var(--role-back);"></i> Backend engineer</div>
+              </div>
+            </div>
+            <div class="member-card role-back">
+              <div class="member-avatar"><img src="photos/xavier.png" alt="Lucas X."></div>
+              <div class="member-info">
+                <div class="member-name">Xavier</div>
+                <div class="member-role"><i class="fa-solid fa-code" style="font-size:12px;color:var(--role-back);"></i> Backend engineer</div>
+              </div>
+            </div>
+            <div class="member-card role-back">
+              <div class="member-avatar"><img src="photos/travassos.png" alt="Matheus T."></div>
+              <div class="member-info">
+                <div class="member-name">Travassos</div>
+                <div class="member-role"><i class="fa-solid fa-code" style="font-size:12px;color:var(--role-back);"></i> Backend engineer</div>
+              </div>
+            </div>
+            <div class="member-card role-back">
+              <div class="member-avatar"><img src="photos/alexandro.png" alt="Alexandro"></div>
+              <div class="member-info">
+                <div class="member-name">Alexandro</div>
+                <div class="member-role"><i class="fa-solid fa-code" style="font-size:12px;color:var(--role-back);"></i> Backend engineer</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="squad-tags fade-up" style="transition-delay: 0.6s;">
+        <span class="squad-tag" style="background: #EDE7F6; color: #5C2D91;"><i class="fa-solid fa-robot"></i>&nbsp; IA generativa</span>
+        <span class="squad-tag" style="background: #E8F5E9; color: #2E7D32;"><i class="fa-solid fa-database"></i>&nbsp; RAG</span>
+        <span class="squad-tag" style="background: #FFF3E0; color: #E65100;"><i class="fa-solid fa-comments"></i>&nbsp; Chat & WhatsApp</span>
+        <span class="squad-tag" style="background: #E3F2FD; color: #1565C0;"><i class="fa-solid fa-envelope"></i>&nbsp; E-mail & telefone</span>
+        <span class="squad-tag" style="background: #FCE4EC; color: #C62828;"><i class="fa-solid fa-headset"></i>&nbsp; Redução de tickets</span>
+        <span class="squad-tag" style="background: #F3E5F5; color: #7B1FA2;"><i class="fa-solid fa-wand-magic-sparkles"></i>&nbsp; Self-service cliente</span>
+      </div>
+    </div>
+
+    <!-- ═══ SLIDE 8: InfraSecGov + Data ═══ -->
+    <div class="slide" data-slide="10" style="background: var(--white);">
+      <div class="section-label fade-up">Áreas estruturantes</div>
+      <h2 class="slide-title fade-up" style="color: var(--gray-800);">InfraSecGov, Data & Engenharia</h2>
+      <div style="display: flex; gap: 48px; flex-wrap: wrap; justify-content: center; align-items: flex-start;">
+        <div style="flex: 1; min-width: 280px; max-width: 380px;">
+          <div class="squad-header fade-up" style="margin-bottom: 20px;">
+            <div class="squad-badge"><i class="fa-solid fa-shield-halved" style="color: var(--infra-squad);"></i></div>
+            <div>
+              <h2 style="font-size: 22px;">InfraSecGov</h2>
+              <div class="squad-desc">Infraestrutura, segurança e governança</div>
+            </div>
+          </div>
+          <div class="members-row stagger" style="justify-content: flex-start;">
+            <div class="member-card role-head">
+              <div class="member-avatar"><img src="photos/israel.png" alt="Israel"></div>
+              <div class="member-info">
+                <div class="member-name">Israel</div>
+                <div class="member-role"><i class="fa-solid fa-shield" style="font-size:12px;color:var(--role-head);"></i> Head security</div>
+              </div>
+            </div>
+            <div class="member-card role-head">
+              <div class="member-avatar"><img src="photos/erivaldo.png" alt="Erivaldo"></div>
+              <div class="member-info">
+                <div class="member-name">Erivaldo</div>
+                <div class="member-role"><i class="fa-solid fa-server" style="font-size:12px;color:var(--role-head);"></i> Head infra</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div style="flex: 1; min-width: 280px; max-width: 380px;">
+          <div class="squad-header fade-up" style="margin-bottom: 20px;">
+            <div class="squad-badge"><i class="fa-solid fa-chart-pie" style="color: var(--data-squad);"></i></div>
+            <div>
+              <h2 style="font-size: 22px;">Data</h2>
+              <div class="squad-desc">Dados, analytics e inteligência de negócio</div>
+            </div>
+          </div>
+          <div class="members-row stagger" style="justify-content: flex-start;">
+            <div class="member-card role-head">
+              <div class="member-avatar"><img src="photos/carlos.png" alt="Carlos"></div>
+              <div class="member-info">
+                <div class="member-name">Carlos</div>
+                <div class="member-role"><i class="fa-solid fa-database" style="font-size:12px;color:var(--role-head);"></i> Head data</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div style="flex: 1; min-width: 280px; max-width: 380px;">
+          <div class="squad-header fade-up" style="margin-bottom: 20px;">
+            <div class="squad-badge"><i class="fa-solid fa-code" style="color: var(--purple);"></i></div>
+            <div>
+              <h2 style="font-size: 22px;">Engenharia</h2>
+              <div class="squad-desc">Liderança técnica transversal</div>
+            </div>
+          </div>
+          <div class="members-row stagger" style="justify-content: flex-start;">
+            <div class="member-card role-head">
+              <div class="member-avatar"><img src="photos/victor.png" alt="Victor"></div>
+              <div class="member-info">
+                <div class="member-name">Victor</div>
+                <div class="member-role"><i class="fa-solid fa-crown" style="font-size:12px;color:var(--role-head);"></i> Head engineering</div>
+              </div>
+            </div>
+            <div class="member-card role-principal">
+              <div class="member-avatar"><img src="photos/ernesto.png" alt="Ernesto"></div>
+              <div class="member-info">
+                <div class="member-name">Ernesto</div>
+                <div class="member-role"><i class="fa-solid fa-gem" style="font-size:12px;color:var(--role-principal);"></i> Principal engineer</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="squad-tags fade-up" style="transition-delay: 0.6s;">
+        <span class="squad-tag" style="background: #EDE7F6; color: #5C2D91;"><i class="fa-solid fa-cloud"></i>&nbsp; AWS & cloud</span>
+        <span class="squad-tag" style="background: #E8F5E9; color: #2E7D32;"><i class="fa-solid fa-file-contract"></i>&nbsp; Orçamentos & contratos</span>
+        <span class="squad-tag" style="background: #FFF3E0; color: #E65100;"><i class="fa-solid fa-key"></i>&nbsp; Gestão de acessos</span>
+        <span class="squad-tag" style="background: #E3F2FD; color: #1565C0;"><i class="fa-solid fa-check-double"></i>&nbsp; Qualidade & padrões</span>
+        <span class="squad-tag" style="background: #FCE4EC; color: #C62828;"><i class="fa-solid fa-database"></i>&nbsp; Data lake</span>
+        <span class="squad-tag" style="background: #F3E5F5; color: #7B1FA2;"><i class="fa-solid fa-shield-halved"></i>&nbsp; Segurança & governança</span>
+      </div>
+    </div>
+
+    <!-- ═══ SLIDE 9: Cross-squad ═══ -->
+    <div class="slide" data-slide="11" style="background: var(--white);">
+      <div class="section-label fade-up"><i class="fa-solid fa-arrows-left-right"></i> Cross-Squad</div>
+      <h2 class="slide-title fade-up">Profissionais <em>transversais</em></h2>
+      <p class="fade-up" style="max-width: 700px; text-align: center; color: var(--gray-600); font-size: 15px; line-height: 1.6; margin: -8px auto 28px;">
+        Disponíveis para todas as frentes — destravando bloqueios, criando bases técnicas e garantindo que cada squad tenha o suporte necessário para evoluir.
+      </p>
+      <div class="staff-grid stagger">
+        <div class="staff-card">
+          <div class="staff-avatar"><img src="photos/ernesto.png" alt="Ernesto"></div>
+          <h4>Ernesto</h4>
+          <p><i class="fa-solid fa-gem" style="color:var(--role-principal);"></i> Principal engineer</p>
+        </div>
+        <div class="staff-card">
+          <div class="staff-avatar"><img src="photos/matheus.png" alt="Matheus"></div>
+          <h4>Matheus</h4>
+          <p><i class="fa-solid fa-palette" style="color:var(--role-front);"></i> Tech lead front</p>
+        </div>
+        <div class="staff-card">
+          <div class="staff-avatar"><img src="photos/tath.png" alt="Tath"></div>
+          <h4>Tath</h4>
+          <p><i class="fa-solid fa-pen-nib" style="color:#E91E63;"></i> Product designer</p>
+        </div>
+        <div class="staff-card">
+          <div class="staff-avatar"><img src="photos/thacio.png" alt="Thacio"></div>
+          <h4>Thacio</h4>
+          <p><i class="fa-solid fa-pen-nib" style="color:#E91E63;"></i> Product designer</p>
+        </div>
+        <div class="staff-card" style="opacity: 0.55; filter: grayscale(0.3); border-style: dashed;">
+          <div class="staff-avatar"><img src="photos/viana.png" alt="Rafael"></div>
+          <h4>Viana</h4>
+          <p><i class="fa-solid fa-bullhorn" style="color:var(--role-manager);"></i> CPO</p>
+        </div>
+        <div class="staff-card" style="opacity: 0.55; filter: grayscale(0.3); border-style: dashed;">
+          <div class="staff-avatar"><img src="photos/adriano.png" alt="Adriano"></div>
+          <h4>Adriano</h4>
+          <p><i class="fa-solid fa-terminal" style="color:var(--role-cto);"></i> CTO</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ SLIDE 12: Visão geral Completa ═══ -->
+    <div class="slide" data-slide="12" style="background: var(--white);">
+      <canvas id="confettiCanvas" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 10;"></canvas>
+      <div class="section-label fade-up"><i class="fa-solid fa-sitemap"></i> Mapa completo</div>
+      <h2 class="slide-title fade-up" style="margin-bottom: 20px; font-size: clamp(22px, 2.5vw, 32px);">Team <em>Topologies</em></h2>
+
+      <div class="full-overview stagger" style="grid-template-columns: repeat(4, 1fr);">
+        <!-- Row 1: 4 Squads de produto -->
+        <div class="overview-squad" style="border-left-color: var(--engops);">
+          <div class="overview-squad-title"><i class="fa-solid fa-gears"></i> OPS</div>
+          <div class="overview-members">
+            <div class="ov-member"><span class="ov-dot" style="background:var(--role-manager);"></span>Luiz <span class="ov-role">Manager</span></div>
+            <div class="ov-member"><span class="ov-dot" style="background:var(--role-pm);"></span>Érica <span class="ov-role">PM</span></div>
+            <div class="ov-member"><span class="ov-dot" style="background:var(--role-back);"></span>Monique Sukerman <span class="ov-role">Back</span></div>
+            <div class="ov-member"><span class="ov-dot" style="background:var(--role-back);"></span>Marx <span class="ov-role">Back</span></div>
+            <div class="ov-member"><span class="ov-dot" style="background:var(--role-back);"></span>Lucão <span class="ov-role">Back</span></div>
+            <div class="ov-member"><span class="ov-dot" style="background:var(--role-back);"></span>Túlio <span class="ov-role">Back</span></div>
+            <div class="ov-member"><span class="ov-dot" style="background:var(--role-back);"></span>Luquinha <span class="ov-role">Back</span></div>
+          </div>
+        </div>
+        <div class="overview-squad" style="border-left-color: var(--entry);">
+          <div class="overview-squad-title"><i class="fa-solid fa-rocket"></i> Entry Journey</div>
+          <div class="overview-members">
+            <div class="ov-member"><span class="ov-dot" style="background:var(--role-manager);"></span>Calison <span class="ov-role">Manager</span></div>
+            <div class="ov-member"><span class="ov-dot" style="background:var(--role-po);"></span>Trajano <span class="ov-role">PO</span></div>
+            <div class="ov-member"><span class="ov-dot" style="background:var(--role-front);"></span>Bruno <span class="ov-role">Front</span></div>
+            <div class="ov-member"><span class="ov-dot" style="background:var(--role-fullstack);"></span>Roberto <span class="ov-role">Full</span></div>
+            <div class="ov-member ov-hiring"><i class="fa-solid fa-user-plus" style="font-size:9px;color:var(--hiring);"></i> A contratar <span class="ov-role">Back</span></div>
+          </div>
+        </div>
+        <div class="overview-squad" style="border-left-color: var(--fingrowth);">
+          <div class="overview-squad-title"><i class="fa-solid fa-chart-line"></i> FinGrowth</div>
+          <div class="overview-members">
+            <div class="ov-member"><span class="ov-dot" style="background:var(--role-manager);"></span>Calison <span class="ov-role">Manager</span></div>
+            <div class="ov-member"><span class="ov-dot" style="background:var(--role-po);"></span>Monique Oliveira <span class="ov-role">PO</span></div>
+            <div class="ov-member"><span class="ov-dot" style="background:var(--role-back);"></span>Thiago <span class="ov-role">TL Back</span></div>
+            <div class="ov-member"><span class="ov-dot" style="background:var(--role-back);"></span>Ana <span class="ov-role">Back</span></div>
+            <div class="ov-member"><span class="ov-dot" style="background:var(--role-back);"></span>Werneck <span class="ov-role">Back</span></div>
+            <div class="ov-member"><span class="ov-dot" style="background:var(--role-back);"></span>Alan <span class="ov-role">Back</span></div>
+            <div class="ov-member ov-hiring"><i class="fa-solid fa-user-plus" style="font-size:9px;color:var(--hiring);"></i> A contratar <span class="ov-role">Back</span></div>
+          </div>
+        </div>
+        <div class="overview-squad" style="border-left-color: var(--maria);">
+          <div class="overview-squad-title"><i class="fa-solid fa-brain"></i> MarIA & ClaudIA</div>
+          <div class="overview-members">
+            <div class="ov-member"><span class="ov-dot" style="background:var(--role-head);"></span>Victor <span class="ov-role">Head</span></div>
+            <div class="ov-member"><span class="ov-dot" style="background:var(--role-po);"></span>Laura <span class="ov-role">PO</span></div>
+            <div class="ov-member"><span class="ov-dot" style="background:var(--role-back);"></span>Augusto <span class="ov-role">Back</span></div>
+            <div class="ov-member"><span class="ov-dot" style="background:var(--role-back);"></span>Xavier <span class="ov-role">Back</span></div>
+            <div class="ov-member"><span class="ov-dot" style="background:var(--role-back);"></span>Travassos <span class="ov-role">Back</span></div>
+            <div class="ov-member"><span class="ov-dot" style="background:var(--role-back);"></span>Alexandro <span class="ov-role">Back</span></div>
+          </div>
+        </div>
+
+        <!-- Row 2: Áreas estruturantes full width -->
+        <div class="overview-squad" style="border-left-color: var(--infra-squad); grid-column: span 4;">
+          <div class="overview-squad-title" style="padding-bottom: 8px;"><i class="fa-solid fa-building-columns"></i> Áreas estruturantes</div>
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0;">
+            <div class="overview-members" style="border-right: 1px solid var(--gray-200); padding-top: 0;">
+              <div style="font-size: 14px; font-weight: 700; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">InfraSecGov</div>
+              <div class="ov-member"><span class="ov-dot" style="background:var(--role-head);"></span>Israel <span class="ov-role">Head sec</span></div>
+              <div class="ov-member"><span class="ov-dot" style="background:var(--role-head);"></span>Erivaldo <span class="ov-role">Head infra</span></div>
+            </div>
+            <div class="overview-members" style="border-right: 1px solid var(--gray-200); padding-top: 0;">
+              <div style="font-size: 14px; font-weight: 700; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Data</div>
+              <div class="ov-member"><span class="ov-dot" style="background:var(--role-head);"></span>Carlos <span class="ov-role">Head data</span></div>
+            </div>
+            <div class="overview-members" style="padding-top: 0;">
+              <div style="font-size: 14px; font-weight: 700; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Engenharia</div>
+              <div class="ov-member"><span class="ov-dot" style="background:var(--role-head);"></span>Victor <span class="ov-role">Head</span></div>
+              <div class="ov-member"><span class="ov-dot" style="background:var(--role-principal);"></span>Ernesto <span class="ov-role">Principal</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Row 3: Transversais full width -->
+        <div class="overview-squad" style="border-left-color: var(--purple); grid-column: span 4;">
+          <div class="overview-squad-title"><i class="fa-solid fa-arrows-left-right"></i> Transversais</div>
+          <div class="overview-members" style="display: flex; flex-wrap: wrap; gap: 16px;">
+            <span class="ov-member" style="padding: 0;"><span class="ov-dot" style="background:var(--role-principal);"></span>Ernesto <span class="ov-role">Principal</span></span>
+            <span class="ov-member" style="padding: 0;"><span class="ov-dot" style="background:var(--role-front);"></span>Matheus <span class="ov-role">TL Front</span></span>
+            <span class="ov-member" style="padding: 0;"><span class="ov-dot" style="background:#E91E63;"></span>Tath <span class="ov-role">PD</span></span>
+            <span class="ov-member" style="padding: 0;"><span class="ov-dot" style="background:#E91E63;"></span>Thacio <span class="ov-role">PD</span></span>
+            <span class="ov-member" style="padding: 0; opacity: 0.5;"><span class="ov-dot" style="background:var(--gray-400);"></span>Adriano <span class="ov-role">CTO</span></span>
+            <span class="ov-member" style="padding: 0; opacity: 0.5;"><span class="ov-dot" style="background:var(--gray-400);"></span>Viana <span class="ov-role">CPO</span></span>
+          </div>
+        </div>
+
+        <!-- Row 4: Produto full width -->
+        <div class="overview-squad" style="border-left-color: var(--purple); grid-column: span 4;">
+          <div class="overview-squad-title"><i class="fa-solid fa-bullseye"></i> Produto</div>
+          <div class="overview-members" style="display: flex; flex-wrap: wrap; gap: 16px;">
+            <span class="ov-member" style="padding: 0; opacity: 0.5;"><span class="ov-dot" style="background:var(--gray-400);"></span>Viana <span class="ov-role">CPO</span></span>
+            <span class="ov-member" style="padding: 0;"><span class="ov-dot" style="background:var(--role-pm);"></span>Érica <span class="ov-role">PM</span></span>
+            <span class="ov-member" style="padding: 0;"><span class="ov-dot" style="background:var(--role-po);"></span>Trajano <span class="ov-role">PO</span></span>
+            <span class="ov-member" style="padding: 0;"><span class="ov-dot" style="background:var(--role-po);"></span>Monique O. <span class="ov-role">PO</span></span>
+            <span class="ov-member" style="padding: 0;"><span class="ov-dot" style="background:var(--role-po);"></span>Laura <span class="ov-role">PO</span></span>
+            <span class="ov-member" style="padding: 0;"><span class="ov-dot" style="background:#E91E63;"></span>Tath <span class="ov-role">PD</span></span>
+            <span class="ov-member" style="padding: 0;"><span class="ov-dot" style="background:#E91E63;"></span>Thacio <span class="ov-role">PD</span></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ SLIDE 13: Rodízio OPS ═══ -->
+    <div class="slide" data-slide="13" style="background: var(--white);">
+      <div class="section-label fade-up"><i class="fa-solid fa-calendar-check"></i> Quinzenal</div>
+      <h2 class="slide-title fade-up">STT Day — <em>Stock killers</em></h2>
+      <div class="fade-up" style="display: flex; gap: 24px; justify-content: center; margin-bottom: 36px; color: var(--gray-600); font-size: 15px;">
+        <span><i class="fa-solid fa-layer-group" style="color: var(--engops); margin-right: 6px;"></i>Foco: reduzir estoque de bugs & tasks</span>
+        <span><i class="fa-solid fa-users" style="color: var(--engops); margin-right: 6px;"></i>Sêniores de vários squads</span>
+        <span><i class="fa-solid fa-calendar-alt" style="color: var(--engops); margin-right: 6px;"></i>Quinzenal</span>
+      </div>
+      <div class="fade-up" style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; max-width: 700px; margin-bottom: 36px;">
+        <div style="flex: 1; min-width: 280px; background: var(--gray-50); border-radius: 12px; padding: 28px 24px; text-align: center; border-top: 4px solid var(--engops);">
+          <div style="font-size: 14px; font-weight: 800; color: var(--engops); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 12px;">2ª Quinta-feira</div>
+          <div style="font-size: 14px; color: var(--gray-500);">Segunda quinta-feira do mês</div>
+        </div>
+        <div style="flex: 1; min-width: 280px; background: var(--gray-50); border-radius: 12px; padding: 28px 24px; text-align: center; border-top: 4px solid var(--engops);">
+          <div style="font-size: 14px; font-weight: 800; color: var(--engops); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 12px;">Última Quinta-feira</div>
+          <div style="font-size: 14px; color: var(--gray-500);">Última quinta-feira do mês</div>
+        </div>
+      </div>
+      <div class="fade-up" style="background: rgba(92,45,145,0.06); border-radius: 12px; padding: 20px 32px; max-width: 600px; text-align: center;">
+        <p style="font-size: 14px; color: var(--gray-500); margin: 0;"><i class="fa-solid fa-clock" style="color: var(--engops); margin-right: 8px;"></i>Temporário — até estabilização do contábil</p>
+      </div>
+    </div>
+
+    <div class="slide" data-slide="14" style="background: var(--white);">
+      <div class="section-label fade-up"><i class="fa-solid fa-rotate"></i> Rodízio sênior</div>
+      <h2 class="slide-title fade-up">OPS — <em>Root Cause</em></h2>
+      <div class="fade-up" style="display: flex; gap: 24px; justify-content: center; margin-bottom: 36px; color: var(--gray-600); font-size: 15px;">
+        <span><i class="fa-solid fa-bullseye" style="color: var(--engops); margin-right: 6px;"></i>Foco: causa raiz</span>
+        <span><i class="fa-solid fa-building" style="color: var(--engops); margin-right: 6px;"></i>Sêniores de domínio</span>
+        <span><i class="fa-solid fa-calendar-day" style="color: var(--engops); margin-right: 6px;"></i>1 dia/semana por pessoa</span>
+      </div>
+      <div class="fade-up" style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; max-width: 900px;">
+        <div style="flex: 1; min-width: 140px; background: var(--gray-50); border-radius: 12px; padding: 24px 16px; text-align: center; border-top: 4px solid var(--engops);">
+          <div style="font-size: 14px; font-weight: 800; color: var(--engops); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 16px;">Segunda</div>
+          <div class="member-avatar" style="width: 56px; height: 56px; margin: 0 auto 10px;"><img src="photos/israel.png" alt="Israel"></div>
+          <div style="font-size: 15px; font-weight: 700; color: var(--gray-800);">Israel</div>
+          <div style="font-size: 12px; color: var(--gray-400); margin-top: 2px;">Head security</div>
+        </div>
+        <div style="flex: 1; min-width: 140px; background: var(--gray-50); border-radius: 12px; padding: 24px 16px; text-align: center; border-top: 4px solid var(--engops);">
+          <div style="font-size: 14px; font-weight: 800; color: var(--engops); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 16px;">Terça</div>
+          <div class="member-avatar" style="width: 56px; height: 56px; margin: 0 auto 10px;"><img src="photos/carlos.png" alt="Carlos"></div>
+          <div style="font-size: 15px; font-weight: 700; color: var(--gray-800);">Carlos</div>
+          <div style="font-size: 12px; color: var(--gray-400); margin-top: 2px;">Head data</div>
+        </div>
+        <div style="flex: 1; min-width: 140px; background: var(--gray-50); border-radius: 12px; padding: 24px 16px; text-align: center; border-top: 4px solid var(--engops);">
+          <div style="font-size: 14px; font-weight: 800; color: var(--engops); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 16px;">Quarta</div>
+          <div class="member-avatar" style="width: 56px; height: 56px; margin: 0 auto 10px;"><img src="photos/calison.png" alt="Calison"></div>
+          <div style="font-size: 15px; font-weight: 700; color: var(--gray-800);">Calison</div>
+          <div style="font-size: 12px; color: var(--gray-400); margin-top: 2px;">Manager</div>
+        </div>
+        <div style="flex: 1; min-width: 140px; background: var(--gray-50); border-radius: 12px; padding: 24px 16px; text-align: center; border-top: 4px solid var(--engops);">
+          <div style="font-size: 14px; font-weight: 800; color: var(--engops); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 16px;">Quinta</div>
+          <div class="member-avatar" style="width: 56px; height: 56px; margin: 0 auto 10px;"><img src="photos/ernesto.png" alt="Ernesto"></div>
+          <div style="font-size: 15px; font-weight: 700; color: var(--gray-800);">Ernesto</div>
+          <div style="font-size: 12px; color: var(--gray-400); margin-top: 2px;">Principal engineer</div>
+        </div>
+        <div style="flex: 1; min-width: 140px; background: var(--gray-50); border-radius: 12px; padding: 24px 16px; text-align: center; border-top: 4px solid var(--engops);">
+          <div style="font-size: 14px; font-weight: 800; color: var(--engops); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 16px;">Sexta</div>
+          <div class="member-avatar" style="width: 56px; height: 56px; margin: 0 auto 10px;"><img src="photos/adriano.png" alt="Adriano"></div>
+          <div style="font-size: 15px; font-weight: 700; color: var(--gray-800);">Adriano</div>
+          <div style="font-size: 12px; color: var(--gray-400); margin-top: 2px;">CTO</div>
+        </div>
+      </div>
+      <div class="fade-up" style="background: rgba(92,45,145,0.06); border-radius: 12px; padding: 20px 32px; max-width: 600px; text-align: center; margin-top: 28px;">
+        <p style="font-size: 14px; color: var(--gray-500); margin: 0;"><i class="fa-solid fa-clock" style="color: var(--engops); margin-right: 8px;"></i>Temporário — até estabilização do contábil</p>
+      </div>
+    </div>
+
+    <!-- ═══ SLIDE: Próximos Passos ═══ -->
+    <div class="slide cover" data-slide="16">
+      <div class="cover-blob"></div>
+      <div class="cover-blob"></div>
+      <div class="cover-blob"></div>
+      <div class="cover-blob"></div>
+      <div class="cover-blob"></div>
+      <div class="cover-blob"></div>
+      <div class="cover-content">
+      <div style="max-width: 700px; width: 100%; text-align: left;">
+      <div class="section-label fade-up" style="color: rgba(255,255,255,0.7);"><i class="fa-solid fa-route"></i> Próximos passos</div>
+      <h2 class="slide-title fade-up" style="color: var(--white); text-align: left;">E agora, <em style="color: #00E68D;">quando</em>?</h2>
+      </div>
+      <div class="stagger" style="display: flex; flex-direction: column; gap: 0; max-width: 700px; width: 100%; position: relative; padding-left: 40px;">
+        <!-- Timeline line -->
+        <div style="position: absolute; left: 14px; top: 10px; bottom: 10px; width: 2px; background: linear-gradient(to bottom, #00E68D, rgba(255,255,255,0.3)); border-radius: 2px;"></div>
+        <!-- Item 1: STT Day -->
+        <div style="display: flex; align-items: flex-start; gap: 24px; padding: 16px 0; position: relative;">
+          <div style="position: absolute; left: -25px; top: 20px; width: 16px; height: 16px; transform: translateX(-50%); background: #00E68D; border-radius: 50%; border: 3px solid rgba(255,255,255,0.3); z-index: 1; box-sizing: border-box; box-shadow: 0 0 12px rgba(0,230,141,0.5);"></div>
+          <div style="text-align: left;">
+            <div style="font-size: 12px; font-weight: 700; color: #00E68D; text-transform: uppercase; letter-spacing: 2px;">STT Day</div>
+            <div style="font-size: 15px; color: rgba(255,255,255,0.8); margin-top: 6px;">Já está acontecendo</div>
+          </div>
+        </div>
+        <!-- Item 2: Segunda passada -->
+        <div style="display: flex; align-items: flex-start; gap: 24px; padding: 16px 0; position: relative;">
+          <div style="position: absolute; left: -25px; top: 20px; width: 16px; height: 16px; transform: translateX(-50%); background: #00E68D; border-radius: 50%; border: 3px solid rgba(255,255,255,0.3); z-index: 1; box-sizing: border-box; box-shadow: 0 0 12px rgba(0,230,141,0.5);"></div>
+          <div style="text-align: left;">
+            <div style="font-size: 12px; font-weight: 700; color: #00E68D; text-transform: uppercase; letter-spacing: 2px;">Segunda passada</div>
+            <div style="font-size: 15px; color: rgba(255,255,255,0.8); margin-top: 6px;">Início do rodízio sênior no OPS</div>
+          </div>
+        </div>
+        <!-- Item 3: Hoje -->
+        <div style="display: flex; align-items: flex-start; gap: 24px; padding: 16px 0; position: relative;">
+          <div style="position: absolute; left: -25px; top: 18px; width: 20px; height: 20px; transform: translateX(-50%); background: #FFFFFF; border-radius: 50%; border: 3px solid #00E68D; z-index: 1; box-sizing: border-box; box-shadow: 0 0 16px rgba(0,230,141,0.6);"></div>
+          <div style="text-align: left;">
+            <div style="font-size: 12px; font-weight: 700; color: #FFFFFF; text-transform: uppercase; letter-spacing: 2px;">Hoje</div>
+            <div style="font-size: 15px; color: rgba(255,255,255,0.9); margin-top: 6px; font-weight: 500;">Comunicação da nova estrutura e realocação dos times</div>
+          </div>
+        </div>
+        <!-- Item 4: Próxima semana -->
+        <div style="display: flex; align-items: flex-start; gap: 24px; padding: 16px 0; position: relative;">
+          <div style="position: absolute; left: -25px; top: 20px; width: 16px; height: 16px; transform: translateX(-50%); background: rgba(255,255,255,0.5); border-radius: 50%; border: 3px solid rgba(255,255,255,0.3); z-index: 1; box-sizing: border-box;"></div>
+          <div style="text-align: left;">
+            <div style="font-size: 12px; font-weight: 700; color: rgba(255,255,255,0.7); text-transform: uppercase; letter-spacing: 2px;">Próxima semana</div>
+            <div style="font-size: 15px; color: rgba(255,255,255,0.8); margin-top: 6px;">Squads novos formados</div>
+          </div>
+        </div>
+        <!-- Item 5: Abril -->
+        <div style="display: flex; align-items: flex-start; gap: 24px; padding: 16px 0; position: relative;">
+          <div style="position: absolute; left: -25px; top: 20px; width: 16px; height: 16px; transform: translateX(-50%); background: rgba(255,255,255,0.4); border-radius: 50%; border: 3px solid rgba(255,255,255,0.3); z-index: 1; box-sizing: border-box;"></div>
+          <div style="text-align: left;">
+            <div style="font-size: 12px; font-weight: 700; color: rgba(255,255,255,0.7); text-transform: uppercase; letter-spacing: 2px;">Abril</div>
+            <div style="font-size: 15px; color: rgba(255,255,255,0.8); margin-top: 6px;">Ernesto atuando como Principal</div>
+          </div>
+        </div>
+      </div>
+      </div>
+    </div>
+
+    <!-- ═══ SLIDE: Encerramento ═══ -->
+    <div class="slide cover" data-slide="17">
+      <div class="cover-blob"></div>
+      <div class="cover-blob"></div>
+      <div class="cover-blob"></div>
+      <div class="cover-blob"></div>
+      <div class="cover-blob"></div>
+      <div class="cover-blob"></div>
+      <div class="cover-content">
+        <div class="fade-up" style="margin-bottom: 32px;"><div class="cover-logo-heartbeat"><img src="assets/logo-branca.png" alt="Agilize" style="height: 48px; opacity: 0.9;"></div></div>
+        <blockquote class="fade-up" style="font-size: clamp(24px, 3vw, 40px); font-weight: 500; font-style: italic; line-height: 1.5; letter-spacing: 0.5px; opacity: 0.9; max-width: 700px; text-align: center;">
+          Do caos à <span style="font-weight: 700; border-bottom: 2px solid rgba(255,255,255,0.3);">estrela dançante</span>.
+        </blockquote>
+        <div style="width: 60px; height: 3px; background: rgba(255,255,255,0.3); border-radius: 2px; margin: 36px auto;"></div>
+        <p class="fade-up" style="font-size: clamp(28px, 4vw, 48px); font-weight: 700; letter-spacing: 1px; color: #FFFFFF;">Dúvidas?</p>
+        <p class="fade-up" style="font-size: 14px; opacity: 0.4; margin-top: 24px; letter-spacing: 2px; text-transform: uppercase; color: #FFFFFF;">ProdTech All Hands — 2026</p>
+      </div>
+    </div>
+
+    <!-- ═══ SLIDE: Até o próximo caos ═══ -->
+    <div class="slide cover" data-slide="18">
+      <div class="cover-blob"></div>
+      <div class="cover-blob"></div>
+      <div class="cover-blob"></div>
+      <div class="cover-blob"></div>
+      <div class="cover-blob"></div>
+      <div class="cover-blob"></div>
+      <div class="cover-content">
+        <div class="fade-up" style="margin-bottom: 40px;"><div class="cover-logo-heartbeat"><img src="assets/logo-branca.png" alt="Agilize" style="height: 48px; opacity: 0.9;"></div></div>
+        <p class="fade-up" style="font-size: clamp(28px, 4vw, 52px); font-weight: 500; font-style: italic; letter-spacing: 0.5px; opacity: 0.9;">Até o próximo caos...</p>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    const slides = document.querySelectorAll('.slide');
+    const totalSlides = slides.length;
+    let currentSlide = 0;
+    let isAnimating = false;
+
+    const slideTitles = [
+      'Team Topologies',
+      'Nietzsche',
+      'Pensamos juntos',
+      'Por que reorganizar?',
+      'Antes vs Depois',
+      'A nova estrutura',
+      'Perfis',
+      'OPS',
+      'Entry Journey',
+      'FinGrowth',
+      'MarIA & ClaudIA',
+      'InfraSecGov & Data',
+      'Transversais',
+      'Mapa completo',
+      'STT Day',
+      'Rodízio OPS',
+      'Próximos passos',
+      'Dúvidas?',
+      'Até o próximo caos'
+    ];
+
+    const navBar = document.getElementById('navBar');
+    for (let i = 0; i < totalSlides; i++) {
+      const dot = document.createElement('button');
+      dot.className = 'nav-dot' + (i === 0 ? ' active' : '');
+      dot.onclick = () => goToSlide(i);
+
+      // Create preview tooltip
+      const preview = document.createElement('div');
+      preview.className = 'slide-preview';
+
+      // Clone the slide as a scaled-down thumbnail
+      const thumb = document.createElement('div');
+      thumb.className = 'slide-preview-thumb';
+      const clone = slides[i].cloneNode(true);
+      clone.classList.remove('active', 'exit-left', 'exit-right');
+      const origBg = slides[i].style.background || (slides[i].classList.contains('cover') ? '#1B0A2E' : '#FFFFFF');
+      clone.style.position = 'absolute';
+      clone.style.top = '0';
+      clone.style.left = '0';
+      clone.style.width = '100vw';
+      clone.style.height = '100vh';
+      clone.style.opacity = '1';
+      clone.style.pointerEvents = 'none';
+      clone.style.transform = 'none';
+      clone.style.display = 'flex';
+      clone.style.background = origBg;
+      // Remove animations from clone
+      clone.querySelectorAll('.fade-up, .stagger, .stagger > *').forEach(el => {
+        el.style.opacity = '1';
+        el.style.transform = 'none';
+        el.style.transition = 'none';
+      });
+      const scaleX = 200 / window.innerWidth;
+      const scaleY = 130 / window.innerHeight;
+      const coverScale = Math.max(scaleX, scaleY);
+      thumb.style.width = window.innerWidth + 'px';
+      thumb.style.height = window.innerHeight + 'px';
+      thumb.style.transform = 'scale(' + coverScale + ')';
+      thumb.style.transformOrigin = 'top center';
+      thumb.style.position = 'absolute';
+      thumb.style.top = '0';
+      thumb.style.left = '50%';
+      thumb.style.marginLeft = -(window.innerWidth / 2) + 'px';
+      thumb.appendChild(clone);
+      preview.appendChild(thumb);
+
+      // Title label overlay
+      const label = document.createElement('div');
+      label.className = 'slide-preview-label';
+      label.textContent = slideTitles[i] || 'Slide ' + (i + 1);
+      preview.appendChild(label);
+
+      dot.appendChild(preview);
+      navBar.appendChild(dot);
+    }
+
+    document.getElementById('totalSlides').textContent = String(totalSlides).padStart(2, '0');
+
+    // Initial state for cover slide counter
+    document.querySelector('.slide-counter').style.color = 'rgba(255,255,255,0.5)';
+    document.querySelector('.slide-counter .current').style.color = 'rgba(255,255,255,0.85)';
+
+    function goToSlide(index) {
+      if (index < 0 || index >= totalSlides || index === currentSlide || isAnimating) return;
+      isAnimating = true;
+
+      const goingForward = index > currentSlide;
+      const oldSlide = currentSlide;
+
+      slides[oldSlide].classList.remove('active');
+      slides[oldSlide].classList.add(goingForward ? 'exit-left' : 'exit-right');
+
+      slides[index].style.transition = 'none';
+      slides[index].classList.remove('exit-left', 'exit-right');
+      slides[index].style.transform = goingForward ? 'translateX(80px)' : 'translateX(-80px)';
+      slides[index].style.opacity = '0';
+
+      void slides[index].offsetWidth;
+
+      slides[index].style.transition = '';
+      slides[index].classList.add('active');
+      slides[index].style.transform = '';
+      slides[index].style.opacity = '';
+
+      currentSlide = index;
+
+      document.querySelectorAll('.nav-dot').forEach((d, i) => {
+        d.classList.toggle('active', i === currentSlide);
+      });
+
+      document.getElementById('slideNum').textContent = String(currentSlide + 1).padStart(2, '0');
+
+      const counter = document.querySelector('.slide-counter');
+      const counterCurrent = document.querySelector('.slide-counter .current');
+      const isLastSlide = currentSlide === totalSlides - 1;
+      const isCoverSlide = slides[currentSlide].classList.contains('cover');
+      const isDarkBg = isCoverSlide || currentSlide === 0 || slides[currentSlide].dataset.slide === '1';
+      if (isDarkBg) {
+        counter.style.color = 'rgba(255,255,255,0.5)';
+        counterCurrent.style.color = 'rgba(255,255,255,0.85)';
+      } else {
+        counter.style.color = '';
+        counterCurrent.style.color = '';
+      }
+      document.getElementById('slideLogo').style.opacity = (currentSlide > 0 && !isCoverSlide) ? '1' : '0';
+      document.querySelector('.keyboard-hint').style.opacity = currentSlide === 0 ? '' : '0';
+      document.querySelector('.keyboard-hint').style.pointerEvents = currentSlide === 0 ? '' : 'none';
+
+      // Confetti on Mapa completo slide — 3 explosions
+      const mapaSlide = document.querySelector('[data-slide="12"]');
+      if (slides[index] === mapaSlide) {
+        setTimeout(() => launchConfetti(0.5, 0.5), 300);
+        setTimeout(() => launchConfetti(0.35, 0.5), 450);
+        setTimeout(() => launchConfetti(0.65, 0.5), 600);
+      }
+
+      setTimeout(() => {
+        slides[oldSlide].classList.remove('exit-left', 'exit-right');
+        isAnimating = false;
+      }, 500);
+    }
+
+    function nextSlide() { goToSlide(currentSlide + 1); }
+    function prevSlide() { goToSlide(currentSlide - 1); }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); nextSlide(); }
+      if (e.key === 'ArrowLeft') { e.preventDefault(); prevSlide(); }
+      if (e.key === 'Home') { e.preventDefault(); goToSlide(0); }
+      if (e.key === 'End') { e.preventDefault(); goToSlide(totalSlides - 1); }
+    });
+
+    let touchStartX = 0;
+    document.addEventListener('touchstart', (e) => { touchStartX = e.touches[0].clientX; });
+    document.addEventListener('touchend', (e) => {
+      const diff = touchStartX - e.changedTouches[0].clientX;
+      if (Math.abs(diff) > 50) { diff > 0 ? nextSlide() : prevSlide(); }
+    });
+
+    // Confetti explosion system (supports multiple concurrent bursts)
+    const confettiParticles = [];
+    let confettiRunning = false;
+    const confettiColors = ['#5C2D91', '#1ABC9C', '#E67E22', '#00E68D', '#9B59B6', '#2980B9', '#F1C40F', '#E74C3C', '#3498DB', '#FF6B6B'];
+
+    function launchConfetti(originX, originY) {
+      const canvas = document.getElementById('confettiCanvas');
+      if (!canvas) return;
+      canvas.width = canvas.offsetWidth;
+      canvas.height = canvas.offsetHeight;
+
+      const cx = canvas.width * originX;
+      const cy = canvas.height * originY;
+      const total = 400;
+      for (let i = 0; i < total; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const speed = 8 + Math.random() * 20;
+        confettiParticles.push({
+          x: cx,
+          y: cy,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed,
+          w: Math.random() * 4 + 1,
+          h: Math.random() * 3 + 1,
+          maxW: Math.random() * 12 + 5,
+          maxH: Math.random() * 8 + 3,
+          color: confettiColors[Math.floor(Math.random() * confettiColors.length)],
+          rotation: Math.random() * 360,
+          rotSpeed: (Math.random() - 0.5) * 15,
+          gravity: 0.12 + Math.random() * 0.1,
+          opacity: 1,
+          life: 0,
+          scale: 0.2
+        });
+      }
+
+      if (!confettiRunning) {
+        confettiRunning = true;
+        animateConfetti();
+      }
+    }
+
+    function animateConfetti() {
+      const canvas = document.getElementById('confettiCanvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      for (let i = confettiParticles.length - 1; i >= 0; i--) {
+        const c = confettiParticles[i];
+        c.x += c.vx;
+        c.vy += c.gravity;
+        c.y += c.vy;
+        c.vx *= 0.985;
+        c.vy *= 0.985;
+        c.rotation += c.rotSpeed;
+        c.life++;
+        c.scale = Math.min(1, c.scale + 0.06);
+        if (c.life > 100) c.opacity = Math.max(0, c.opacity - 0.04);
+
+        const w = c.maxW * c.scale;
+        const h = c.maxH * c.scale;
+        ctx.save();
+        ctx.translate(c.x, c.y);
+        ctx.rotate(c.rotation * Math.PI / 180);
+        ctx.globalAlpha = c.opacity;
+        ctx.fillStyle = c.color;
+        ctx.fillRect(-w / 2, -h / 2, w, h);
+        ctx.restore();
+
+        if (c.opacity <= 0) confettiParticles.splice(i, 1);
+      }
+
+      if (confettiParticles.length > 0) {
+        requestAnimationFrame(animateConfetti);
+      } else {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        confettiRunning = false;
+      }
+    }
+
+  </script>
+
+</body>
+</html>
