@@ -1369,7 +1369,7 @@
         <i data-lucide="check" style="width: 14px; height: 14px; color: var(--accent); display: inline; vertical-align: middle;"></i> Programar andando.<br>
         <i data-lucide="check" style="width: 14px; height: 14px; color: var(--accent); display: inline; vertical-align: middle;"></i> Programar dirigindo.<br>
         <i data-lucide="check" style="width: 14px; height: 14px; color: var(--accent); display: inline; vertical-align: middle;"></i> Programar enquanto faz qualquer coisa.<br>
-        <span style="display: block; margin-top: 0.6rem;"><i data-lucide="baby" class="icon-heartbeat" style="width: 28px; height: 28px; color: var(--purple); display: inline; vertical-align: middle;"></i> <span id="magic-text" style="font-size: 1.6rem; font-weight: 700;">Programar enquanto brinca com seu filho.</span></span>
+        <span id="magic-line" style="display: block; margin-top: 0.6rem; visibility: hidden;"><i id="magic-baby" data-lucide="baby" style="width: 36px; height: 36px; display: inline; vertical-align: middle;"></i> <span id="magic-text" style="font-size: 1.6rem; font-weight: 700;">Programar enquanto brinca com seu filho.</span></span>
       </p>
       <p style="display:none;">
       </p>
@@ -1872,53 +1872,84 @@
     // Magic rainbow text for "brinca com seu filho"
     (function() {
       var magicColors = ['#ff6b6b','#ffd93d','#6bcb77','#4d96ff','#ff6bdf','#a66cff','#ff9f43','#00d2d3','#ff4757','#2ed573'];
-      function initMagicText() {
+      var magicReady = false;
+      var magicTriggered = false;
+      var magicSpans = [];
+
+      function prepareMagicText() {
         var el = document.getElementById('magic-text');
         if (!el) return;
         var text = el.textContent;
         el.innerHTML = '';
-        var spans = [];
+        magicSpans = [];
         for (var i = 0; i < text.length; i++) {
           var span = document.createElement('span');
           span.textContent = text[i];
           var color = magicColors[Math.floor(Math.random() * magicColors.length)];
           span.dataset.color = color;
-          span.style.cssText = 'color:' + color + ';transition:filter 0.5s ease,opacity 0.5s ease;opacity:0;';
+          span.style.cssText = 'color:' + color + ';transition:filter 0.3s ease,opacity 0.3s ease;opacity:0;';
           el.appendChild(span);
-          spans.push(span);
+          magicSpans.push(span);
         }
-        // Typewriter: reveal letter by letter
-        spans.forEach(function(s, idx) {
-          setTimeout(function() {
-            s.style.opacity = '0.7';
-            s.style.filter = 'brightness(1.6) drop-shadow(0 0 10px ' + s.dataset.color + ')';
-            setTimeout(function() {
-              s.style.filter = 'brightness(0.8)';
-              // Start random glow loop after typewriter
-              if (idx === spans.length - 1) {
-                setTimeout(function() { startGlowLoop(spans); }, 300);
+        // Colorize baby icon
+        var baby = document.getElementById('magic-baby');
+        if (baby) {
+          var paths = baby.querySelectorAll('path, circle, line, polyline, polygon');
+          paths.forEach(function(p) {
+            var c = magicColors[Math.floor(Math.random() * magicColors.length)];
+            p.setAttribute('stroke', c);
+            p.dataset.color = c;
+          });
+          // Animate baby icon colors
+          setInterval(function() {
+            paths.forEach(function(p) {
+              if (Math.random() > 0.5) {
+                var c = magicColors[Math.floor(Math.random() * magicColors.length)];
+                p.setAttribute('stroke', c);
+                p.dataset.color = c;
               }
-            }, 200);
-          }, idx * 45);
+            });
+          }, 400);
+        }
+        magicReady = true;
+      }
+
+      function triggerMagicTypewriter() {
+        if (magicTriggered || !magicReady) return;
+        magicTriggered = true;
+        var line = document.getElementById('magic-line');
+        if (line) line.style.visibility = 'visible';
+        magicSpans.forEach(function(s, idx) {
+          setTimeout(function() {
+            s.style.opacity = '0.75';
+            s.style.filter = 'brightness(1.8) drop-shadow(0 0 12px ' + s.dataset.color + ')';
+            setTimeout(function() {
+              s.style.filter = 'brightness(0.85)';
+              if (idx === magicSpans.length - 1) {
+                setTimeout(function() { startGlowLoop(magicSpans); }, 200);
+              }
+            }, 150);
+          }, idx * 40);
         });
       }
+
       function startGlowLoop(spans) {
         spans.forEach(function(s) {
           (function(s) {
             function glow() {
-              s.style.filter = 'brightness(2) drop-shadow(0 0 12px ' + s.dataset.color + ')';
+              s.style.filter = 'brightness(2.2) drop-shadow(0 0 14px ' + s.dataset.color + ')';
               s.style.opacity = '1';
               setTimeout(function() {
-                s.style.filter = 'brightness(0.8)';
-                s.style.opacity = '0.7';
-                setTimeout(glow, Math.random() * 2000 + 800);
-              }, Math.random() * 500 + 250);
+                s.style.filter = 'brightness(0.85)';
+                s.style.opacity = '0.75';
+                setTimeout(glow, Math.random() * 800 + 400);
+              }, Math.random() * 300 + 150);
             }
-            setTimeout(glow, Math.random() * 2000);
+            setTimeout(glow, Math.random() * 1000);
           })(s);
         });
       }
-      document.addEventListener('DOMContentLoaded', initMagicText);
+      document.addEventListener('DOMContentLoaded', prepareMagicText);
     })();
 
     function goTo(index) {
@@ -1961,6 +1992,13 @@
 
       // Stop typewriter when leaving slide 38
       if (current === 40 && index !== 40) stopTypewriter();
+      // Reset magic text when leaving slide 29
+      if (current === 29 && index !== 29) {
+        magicTriggered = false;
+        var line = document.getElementById('magic-line');
+        if (line) line.style.visibility = 'hidden';
+        magicSpans.forEach(function(s) { s.style.opacity = '0'; s.style.filter = ''; });
+      }
 
       current = index;
       updateUI();
@@ -1973,7 +2011,10 @@
       }, 600);
     }
 
-    function next() { goTo(current + 1); }
+    function next() {
+      if (current === 29 && !magicTriggered) { triggerMagicTypewriter(); return; }
+      goTo(current + 1);
+    }
     function prev() { goTo(current - 1); }
 
     // Nav arrow clicks
@@ -1984,6 +2025,13 @@
     document.addEventListener('keydown', (e) => {
       if (helpOverlay.classList.contains('visible') && e.key !== 'h' && e.key !== 'H' && e.key !== 'Escape') {
         helpOverlay.classList.remove('visible');
+        return;
+      }
+
+      // Intercept forward navigation on slide 29 to trigger magic text first
+      if (current === 29 && !magicTriggered && (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ' || e.key === 'PageDown')) {
+        e.preventDefault();
+        triggerMagicTypewriter();
         return;
       }
 
