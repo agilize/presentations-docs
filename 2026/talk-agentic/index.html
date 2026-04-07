@@ -188,6 +188,7 @@
 
     /* Only animate when slide is active */
     .slide:not(.active) .fade-in { animation: none; opacity: 0; }
+    .slide.active .fade-in-visible { opacity: 1; transform: none; }
 
     /* ======= SPECIAL SLIDE LAYOUTS ======= */
 
@@ -1574,7 +1575,8 @@
       const prev = slides[current];
       const next = slides[index];
 
-      // Exit animation
+      // Exit: clean up prev slide
+      prev.querySelectorAll('.fade-in-visible').forEach(el => el.classList.remove('fade-in-visible'));
       prev.classList.remove('active');
       prev.classList.add('exit-up');
 
@@ -1585,23 +1587,35 @@
       next.style.opacity = '0';
       void next.offsetWidth; // reflow
 
-      // Reset fade-in elements on new slide
-      next.querySelectorAll('.fade-in').forEach(el => {
-        el.style.animation = 'none';
-        el.offsetHeight;
-        el.style.animation = '';
-      });
-
       // Animate in
       next.style.transition = '';
       next.classList.add('active');
       next.style.transform = '';
       next.style.opacity = '';
 
+      // Restart fade-in animations AFTER active class is applied
+      var capturedIndex = index;
+      requestAnimationFrame(function() {
+        next.querySelectorAll('.fade-in').forEach(function(el) {
+          el.style.animation = 'none';
+          void el.offsetWidth;
+          el.style.animation = '';
+        });
+      });
+
+      // Fallback: guarantee fade-in elements become visible via class (not inline style)
+      setTimeout(function() {
+        if (current === capturedIndex && slides[capturedIndex].classList.contains('active')) {
+          slides[capturedIndex].querySelectorAll('.fade-in').forEach(function(el) {
+            el.classList.add('fade-in-visible');
+          });
+        }
+      }, 3000);
+
       current = index;
       updateUI();
 
-      setTimeout(() => {
+      setTimeout(function() {
         prev.classList.remove('exit-up');
         prev.style.transform = '';
         prev.style.opacity = '';
