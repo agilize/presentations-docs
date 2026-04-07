@@ -18,7 +18,7 @@ tech-presentations-docs/
 | Presentation | Description |
 |---|---|
 | [team-topologies](./2026/team-topologies/) | Engineering squads structure and team topologies |
-| [talk-agentic](./2026/talk-agentic/) | AI Agents: Pare de fazer! Comece a orquestrar! |
+| [talk-comece-a-orquestrar](./2026/talk-comece-a-orquestrar/) | AI Agents: Pare de fazer! Comece a orquestrar! |
 
 ## How to open
 
