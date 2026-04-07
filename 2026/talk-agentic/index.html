@@ -171,7 +171,7 @@
       to { opacity: 1; transform: scale(1); }
     }
 
-    .animate-glitch { animation: glitch-burst 7s ease-in-out infinite; }
+    .animate-glitch { animation: glitch-burst 3s ease-in-out infinite; }
     .animate-float { animation: float 3s ease-in-out infinite; }
     .cursor-blink { animation: blink 1s step-end infinite; }
     .animate-flicker { animation: screen-flicker 5s ease-in-out infinite; }
@@ -1130,7 +1130,7 @@
       <i data-lucide="bot" class="icon-bot" style="width: 52px; height: 52px; color: var(--blue);"></i>
     </div>
     <h2 class="fade-in delay-1">Voc&ecirc; &eacute; o <span class="accent">PM.</span></h2>
-    <h2 class="fade-in delay-2">Os agentes s&atilde;o seus <span class="accent">engenheiros.</span></h2>
+    <h2 class="fade-in delay-2">Os agentes s&atilde;o seus <span style="color: var(--blue);">engenheiros.</span></h2>
     <h2 class="fade-in delay-3" style="color: var(--text-secondary); font-size: 2rem; margin-top: 1rem;">Seu trabalho: manter todos <span class="accent">desbloqueados.</span></h2>
     <p class="fade-in delay-4 mt-4 small" style="max-width: 700px;">
       Isso vale pra todo mundo. Dev, PM, designer, analista.<br>
@@ -1413,8 +1413,7 @@
   <!-- ======================== -->
   <div class="slide" data-slide="34">
     <div class="announcement fade-in">
-      <p class="small" style="color: var(--accent-dim); letter-spacing: 0.15em; text-transform: uppercase;">An&uacute;ncio</p>
-      <h2 class="mt-2" style="white-space: nowrap;">Grupo de Pesquisa Cient&iacute;fica</h2>
+      <h2 style="white-space: nowrap;">Grupo de Pesquisa Cient&iacute;fica</h2>
       <p class="mt-3" style="color: var(--text-secondary); max-width: 700px; margin-left: auto; margin-right: auto;">
         Dedica&ccedil;&atilde;o de <span class="accent">100% do tempo</span> a explorar em profundidade o novo paradigma. Por tempo indeterminado.
       </p>
@@ -1444,7 +1443,7 @@
     <h2 class="fade-in delay-1">A l&acirc;mpada ainda <span class="accent">n&atilde;o foi inventada.</span></h2>
     <h2 class="fade-in delay-2" style="color: var(--text-secondary); font-size: 2.2rem; margin-top: 0.5rem;">Mas j&aacute; d&aacute; pra ver a <span class="accent">fa&iacute;sca.</span></h2>
     <p class="fade-in delay-3 mt-4" style="max-width: 700px;">
-      Os modelos v&atilde;o melhorar. As ferramentas v&atilde;o amadurecer.<br>
+      Os modelos v&atilde;o melhorar. As ferramentas v&atilde;o amadurecer.
       Quem come&ccedil;ar <span class="accent">agora</span> vai estar anos &agrave; frente.
     </p>
     <p class="fade-in delay-4 mt-3 small" style="color: var(--text-muted);">
@@ -1459,7 +1458,7 @@
     <h2 class="fade-in">Estamos num <span class="accent">ponto de inflex&atilde;o</span></h2>
     <h2 class="fade-in delay-1" style="color: var(--text-secondary); font-size: 2.2rem; margin-top: 0.5rem;">da hist&oacute;ria da tecnologia.</h2>
     <p class="fade-in delay-2 mt-4" style="max-width: 700px;">
-      Investir em entender profundamente esse novo mundo<br>
+      Investir em entender profundamente esse novo mundo
       n&atilde;o &eacute; opcional &mdash; &eacute; <span class="accent">estrat&eacute;gico.</span>
     </p>
     <p class="fade-in delay-3 mt-3 small">
@@ -1487,9 +1486,7 @@
   <!-- SLIDE 38: THE FINAL QUESTION -->
   <!-- ======================== -->
   <div class="slide" data-slide="38">
-    <h1 class="fade-in animate-glitch" style="font-size: 3.2rem; line-height: 1.3;">
-      O que voc&ecirc; vai<br><span class="accent" style="font-size: 4.5rem;">orquestrar</span><br>amanh&atilde;?<span class="cursor-blink" style="color: var(--accent); font-weight: 400;">_</span>
-    </h1>
+    <h1 id="typewriter-final" class="fade-in" style="font-size: 3.2rem; line-height: 1.3; min-height: 4em;"></h1>
   </div>
 
   <!-- ======================== -->
@@ -1742,6 +1739,42 @@
       keyboardHint.style.pointerEvents = current === 0 ? 'auto' : 'none';
     }
 
+    // Typewriter effect for slide 38
+    var typewriterTimer = null;
+    function startTypewriter() {
+      var el = document.getElementById('typewriter-final');
+      if (!el) return;
+      el.innerHTML = '<span class="cursor-blink" style="color: var(--accent);">_</span>';
+      var parts = [
+        { text: 'O que voc\u00ea vai\n', style: '' },
+        { text: 'orquestrar', style: 'color: var(--accent); font-size: 4.5rem;' },
+        { text: '\namanh\u00e3?', style: '' }
+      ];
+      var pIdx = 0, cIdx = 0, html = '';
+      function type() {
+        if (pIdx >= parts.length) {
+          el.innerHTML = html + '<span class="cursor-blink" style="color: var(--accent); font-weight: 400;">_</span>';
+          return;
+        }
+        var p = parts[pIdx];
+        var ch = p.text[cIdx];
+        if (cIdx === 0 && p.style) html += '<span style="' + p.style + '">';
+        if (ch === '\n') html += '<br>';
+        else html += ch;
+        cIdx++;
+        if (cIdx >= p.text.length) {
+          if (p.style) html += '</span>';
+          pIdx++; cIdx = 0;
+        }
+        el.innerHTML = html + '<span class="cursor-blink" style="color: var(--accent); font-weight: 400;">_</span>';
+        typewriterTimer = setTimeout(type, pIdx === 1 && cIdx > 0 ? 90 : 70);
+      }
+      typewriterTimer = setTimeout(type, 500);
+    }
+    function stopTypewriter() {
+      if (typewriterTimer) { clearTimeout(typewriterTimer); typewriterTimer = null; }
+    }
+
     function goTo(index) {
       if (index < 0 || index >= totalSlides || index === current || isTransitioning) return;
       isTransitioning = true;
@@ -1775,8 +1808,13 @@
           next.querySelectorAll('.fade-in').forEach(function(el) {
             el.classList.add('show');
           });
+          // Start typewriter on slide 38
+          if (index === 38) startTypewriter();
         });
       });
+
+      // Stop typewriter when leaving slide 38
+      if (current === 38 && index !== 38) stopTypewriter();
 
       current = index;
       updateUI();
