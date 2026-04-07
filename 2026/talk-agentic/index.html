@@ -509,6 +509,17 @@
     }
     .announcement h2 { color: var(--accent); }
 
+    /* Word cloud */
+    .word-cloud {
+      display: flex; flex-wrap: wrap; justify-content: center; align-items: center;
+      gap: 0.4rem 0.9rem; max-width: 750px; margin: 0 auto; line-height: 1.6;
+    }
+    .word-cloud span {
+      font-family: 'JetBrains Mono', monospace; font-weight: 600; opacity: 0.85;
+      transition: opacity 0.3s;
+    }
+    .word-cloud span:hover { opacity: 1; }
+
     /* People grid */
     .people-grid {
       display: flex; gap: 1.5rem; flex-wrap: wrap;
@@ -960,15 +971,37 @@
     <p class="fade-in delay-1 mt-3">
       Decidimos <span class="accent">experimentar antes de julgar.</span>
     </p>
-    <div class="fade-in delay-2 mt-4" style="display: flex; gap: 0.8rem; flex-wrap: wrap; justify-content: center;">
-      <div class="presenter-card" style="border-color: var(--green);"><span class="presenter-name green">Copilot</span></div>
-      <div class="presenter-card" style="border-color: var(--blue);"><span class="presenter-name blue">Cursor</span></div>
-      <div class="presenter-card" style="border-color: var(--purple);"><span class="presenter-name purple">v0</span></div>
-      <div class="presenter-card" style="border-color: var(--yellow);"><span class="presenter-name yellow">Bolt</span></div>
-      <div class="presenter-card" style="border-color: var(--accent);"><span class="presenter-name accent">Claude</span></div>
-      <div class="presenter-card" style="border-color: var(--blue);"><span class="presenter-name blue">ChatGPT</span></div>
-      <div class="presenter-card" style="border-color: var(--green);"><span class="presenter-name green">Gemini</span></div>
-      <div class="presenter-card" style="border-color: var(--red);"><span class="presenter-name red">Deepseek</span></div>
+    <div class="fade-in delay-2 mt-4 word-cloud">
+      <span style="font-size: 2.2rem; color: var(--accent);">Claude</span>
+      <span style="font-size: 1.8rem; color: var(--blue);">Cursor</span>
+      <span style="font-size: 1.6rem; color: var(--green);">Copilot</span>
+      <span style="font-size: 2rem; color: var(--blue);">ChatGPT</span>
+      <span style="font-size: 1.1rem; color: var(--purple);">v0</span>
+      <span style="font-size: 1.4rem; color: var(--yellow);">Bolt</span>
+      <span style="font-size: 1.7rem; color: var(--green);">Gemini</span>
+      <span style="font-size: 1.5rem; color: var(--red);">Deepseek</span>
+      <span style="font-size: 1.3rem; color: var(--purple);">Augment</span>
+      <span style="font-size: 1.9rem; color: var(--yellow);">Manus</span>
+      <span style="font-size: 1.1rem; color: var(--accent);">Windsurf</span>
+      <span style="font-size: 1.4rem; color: var(--blue);">Copilot Chat</span>
+      <span style="font-size: 1rem; color: var(--green);">Tabnine</span>
+      <span style="font-size: 1.6rem; color: var(--red);">Llama</span>
+      <span style="font-size: 1.2rem; color: var(--purple);">Mistral</span>
+      <span style="font-size: 1rem; color: var(--yellow);">Codeium</span>
+      <span style="font-size: 1.5rem; color: var(--accent);">Claude Code</span>
+      <span style="font-size: 1.1rem; color: var(--blue);">Perplexity</span>
+      <span style="font-size: 1.3rem; color: var(--green);">Lovable</span>
+      <span style="font-size: 0.95rem; color: var(--red);">Qwen</span>
+      <span style="font-size: 1.2rem; color: var(--yellow);">Replit Agent</span>
+      <span style="font-size: 1rem; color: var(--purple);">Devin</span>
+      <span style="font-size: 1.4rem; color: var(--blue);">Grok</span>
+      <span style="font-size: 0.95rem; color: var(--green);">Amazon Q</span>
+      <span style="font-size: 1.1rem; color: var(--accent);">Aider</span>
+      <span style="font-size: 1rem; color: var(--red);">Codex</span>
+      <span style="font-size: 1.3rem; color: var(--yellow);">NotebookLM</span>
+      <span style="font-size: 0.95rem; color: var(--purple);">Cody</span>
+      <span style="font-size: 1.1rem; color: var(--blue);">Gemma</span>
+      <span style="font-size: 1rem; color: var(--green);">Continue</span>
     </div>
     <p class="fade-in delay-3 mt-3 small">
       Coisas que levariam semanas saindo em dias.<br>Problemas complexos resolvidos em horas.
