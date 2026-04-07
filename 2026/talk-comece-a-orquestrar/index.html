@@ -284,6 +284,16 @@
     .icon-terminal { animation: terminal-cursor 2s ease-in-out infinite; display: inline-block; }
     .icon-workflow { animation: workflow-spin 3s ease-in-out infinite; display: inline-block; }
     .icon-float { animation: float 3s ease-in-out infinite; display: inline-block; }
+    @keyframes gamepad-shake {
+      0%, 75%, 100% { transform: rotate(0deg); }
+      78% { transform: rotate(8deg); }
+      81% { transform: rotate(-7deg); }
+      84% { transform: rotate(5deg); }
+      87% { transform: rotate(-4deg); }
+      90% { transform: rotate(2deg); }
+      93% { transform: rotate(0deg); }
+    }
+    .icon-gamepad { animation: gamepad-shake 3s ease-in-out infinite; display: inline-block; }
 
     /* Delayed fade-in for staggered elements */
     .fade-in {
@@ -1374,7 +1384,7 @@
         <i data-lucide="check" style="width: 14px; height: 14px; color: var(--accent); display: inline; vertical-align: middle;"></i> Programar andando.<br>
         <i data-lucide="check" style="width: 14px; height: 14px; color: var(--accent); display: inline; vertical-align: middle;"></i> Programar dirigindo.<br>
         <i data-lucide="check" style="width: 14px; height: 14px; color: var(--accent); display: inline; vertical-align: middle;"></i> Programar enquanto faz qualquer coisa.<br>
-        <span style="display: block; margin-top: 0.6rem;"><i data-lucide="gamepad-2" style="width: 36px; height: 36px; display: inline; vertical-align: middle; color: var(--purple);"></i> <span id="magic-text" style="font-size: 1.6rem; font-weight: 700;">Programar enquanto brinca com seu filho.</span></span>
+        <span style="display: block; margin-top: 0.6rem;"><i data-lucide="gamepad-2" class="icon-gamepad" style="width: 36px; height: 36px; display: inline; vertical-align: middle; color: var(--purple);"></i> <span id="magic-text" style="font-size: 1.6rem; font-weight: 700;">Programar enquanto brinca com seu filho.</span></span>
       </p>
       <p style="display:none;">
       </p>
