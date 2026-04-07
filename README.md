@@ -18,7 +18,12 @@ tech-presentations-docs/
 | Presentation | Description |
 |---|---|
 | [team-topologies](./2026/team-topologies/) | Engineering squads structure and team topologies |
+| [talk-agentic](./2026/talk-agentic/) | AI Agents: Pare de fazer! Comece a orquestrar! |
 
 ## How to open
 
 Each presentation is a single `index.html` file — open it directly in the browser. Navigate with keyboard (← →), touch swipe, or click the nav dots at the bottom.
+
+## Deployment
+
+Deployed on Vercel with password protection. Set the `PRESENTATION_PASSWORD` environment variable.

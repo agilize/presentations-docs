@@ -1,0 +1,1840 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Pare de Codar. Comece a Orquestrar.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    /* ======= RESET & BASE ======= */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #1a1a2e;
+      --surface: #1e1e32;
+      --surface-2: #24243a;
+      --surface-3: #2a2a42;
+      --border: #33334d;
+      --border-hover: #44446a;
+      --text: #f2f0ea;
+      --text-secondary: #d5d1c9;
+      --text-muted: #a09c96;
+      --accent: #f0a08a;
+      --accent-dim: #d48060;
+      --accent-glow: rgba(232, 147, 122, 0.08);
+      --blue: #7eb8da;
+      --green: #7ec9a0;
+      --red: #da7e7e;
+      --purple: #b07eda;
+      --yellow: #dac87e;
+      --font: 'JetBrains Mono', 'SF Mono', 'Fira Code', monospace;
+    }
+
+    html, body {
+      width: 100%; height: 100%;
+      overflow: hidden;
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ======= CRT EFFECTS ======= */
+    body::after {
+      content: ''; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.12) 2px, rgba(0,0,0,0.12) 4px);
+      pointer-events: none; z-index: 9999;
+    }
+    body::before {
+      content: ''; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.4) 100%);
+      pointer-events: none; z-index: 9998;
+    }
+
+    .crt-interference {
+      position: fixed; top: 0; left: 0; right: 0;
+      height: 80px; pointer-events: none; z-index: 9997;
+      background: linear-gradient(180deg, transparent 0%, rgba(232,147,122,0.03) 30%, rgba(126,184,218,0.04) 50%, rgba(232,147,122,0.03) 70%, transparent 100%);
+      animation: roll-band 4s linear infinite;
+    }
+    @keyframes roll-band { 0% { top: -80px; } 100% { top: 100vh; } }
+
+    /* ======= MATRIX RAIN BACKGROUND ======= */
+    #matrix-canvas {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      pointer-events: none; z-index: 0; opacity: 0.06;
+    }
+
+    /* ======= SLIDE ENGINE ======= */
+    .slide-container {
+      position: relative; width: 100%; height: 100vh; z-index: 1;
+    }
+
+    .slide {
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+      display: flex; align-items: center; justify-content: center;
+      padding: 4rem;
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+      pointer-events: none;
+      flex-direction: column;
+      text-align: center;
+    }
+
+    .slide.active {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    .slide.exit-up {
+      opacity: 0;
+      transform: translateY(-30px);
+    }
+
+    /* ======= TYPOGRAPHY ======= */
+    .slide h1 {
+      font-size: 4.5rem; font-weight: 800; letter-spacing: -0.04em;
+      line-height: 1.1; margin-bottom: 1rem;
+      text-shadow: 0 0 40px rgba(240, 160, 138, 0.25);
+    }
+    .slide h2 {
+      font-size: 3rem; font-weight: 700; letter-spacing: -0.03em;
+      line-height: 1.2; margin-bottom: 1rem;
+      text-shadow: 0 0 30px rgba(240, 160, 138, 0.2);
+    }
+    .slide h3 {
+      font-size: 2rem; font-weight: 600; letter-spacing: -0.02em;
+      line-height: 1.3; margin-bottom: 0.8rem;
+    }
+    .slide p {
+      font-size: 1.6rem; line-height: 1.7; color: var(--text-secondary);
+      max-width: 950px;
+    }
+    .slide .small { font-size: 1.3rem; color: var(--text-secondary); }
+    .slide .accent { color: var(--accent); }
+    .slide .blue { color: var(--blue); }
+    .slide .green { color: var(--green); }
+    .slide .purple { color: var(--purple); }
+    .slide .yellow { color: var(--yellow); }
+    .slide .red { color: var(--red); }
+    .slide .dim { color: var(--text-muted); }
+
+    /* ======= GLITCH ANIMATIONS ======= */
+    @keyframes glitch-burst {
+      0%, 88%, 100% { transform: none; text-shadow: 0 0 20px rgba(232,147,122,0.15); }
+      89% { transform: translate(-3px, 0); text-shadow: -3px 0 rgba(126,184,218,0.6), 3px 0 rgba(232,147,122,0.6); }
+      90% { transform: translate(3px, 1px) skewX(-2deg); text-shadow: 3px 0 rgba(126,201,160,0.5), -3px 0 rgba(176,126,218,0.5); }
+      91% { transform: translate(-1px, -1px); text-shadow: -2px 0 rgba(232,147,122,0.7), 2px 0 rgba(126,184,218,0.4); }
+      92% { transform: translate(2px, 0) skewX(1deg); text-shadow: 1px 0 rgba(218,200,126,0.5), -1px 0 rgba(232,147,122,0.5); }
+      93% { transform: none; text-shadow: 0 0 20px rgba(232,147,122,0.15); }
+    }
+
+    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+    @keyframes typing {
+      from { width: 0; }
+      to { width: 100%; }
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 0 20px rgba(232, 147, 122, 0.1); }
+      50% { box-shadow: 0 0 40px rgba(232, 147, 122, 0.25); }
+    }
+
+    @keyframes screen-flicker {
+      0%, 100% { opacity: 1; }
+      70% { opacity: 1; }
+      70.5% { opacity: 0.95; }
+      71% { opacity: 1; }
+      85% { opacity: 1; }
+      85.3% { opacity: 0.97; }
+      85.6% { opacity: 1; }
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    @keyframes countUp {
+      from { opacity: 0; transform: scale(0.5); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .animate-glitch { animation: glitch-burst 7s ease-in-out infinite; }
+    .animate-float { animation: float 3s ease-in-out infinite; }
+    .cursor-blink { animation: blink 1s step-end infinite; }
+    .animate-flicker { animation: screen-flicker 5s ease-in-out infinite; }
+    .animate-pulse { animation: pulse-glow 2s ease-in-out infinite; }
+
+    /* Delayed fade-in for staggered elements */
+    .fade-in { opacity: 0; animation: fadeInUp 0.8s ease forwards; }
+    .delay-1 { animation-delay: 0.3s; }
+    .delay-2 { animation-delay: 0.6s; }
+    .delay-3 { animation-delay: 0.9s; }
+    .delay-4 { animation-delay: 1.2s; }
+    .delay-5 { animation-delay: 1.5s; }
+    .delay-6 { animation-delay: 1.8s; }
+
+    /* Only animate when slide is active */
+    .slide:not(.active) .fade-in { animation: none; opacity: 0; }
+
+    /* Force slide 33 content visible when active */
+    .slide[data-slide="33"].active { opacity: 1 !important; }
+    .slide[data-slide="33"].active .fade-in { opacity: 1 !important; }
+
+    /* ======= SPECIAL SLIDE LAYOUTS ======= */
+
+    /* Title slide */
+    .title-slide h1 { font-size: 5rem; }
+    .title-slide .subtitle {
+      font-size: 1.3rem; color: var(--text-secondary); margin-top: 1rem;
+      max-width: 700px; line-height: 1.6;
+    }
+    .title-slide .presenters {
+      margin-top: 2.5rem; display: flex; gap: 2rem; flex-wrap: wrap;
+      justify-content: center;
+    }
+    .presenter-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 0.8rem 1.5rem;
+      display: flex; flex-direction: column; align-items: center; gap: 0.2rem;
+    }
+    .presenter-name { font-weight: 700; font-size: 1.15rem; color: var(--text); }
+    .presenter-role { font-size: 0.85rem; color: var(--accent); text-transform: uppercase; letter-spacing: 0.1em; }
+
+    /* Chapter title slides */
+    .chapter-slide {
+      background: linear-gradient(135deg, var(--bg) 0%, var(--surface) 100%);
+    }
+    .chapter-slide .chapter-num {
+      font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.2em;
+      color: var(--accent-dim); margin-bottom: 1rem;
+    }
+    .chapter-slide h1 {
+      font-size: 4rem;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--yellow) 50%, var(--accent) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* Quote slides */
+    .quote-slide {
+      padding: 4rem 6rem;
+    }
+    .quote-slide .big-quote {
+      font-size: 2.8rem; font-weight: 600; line-height: 1.45;
+      color: var(--text); max-width: 1050px;
+      position: relative; padding-left: 2.5rem;
+      border-left: 5px solid var(--accent);
+      text-align: left;
+    }
+    .quote-slide .big-quote .highlight {
+      color: var(--accent);
+      text-shadow: 0 0 30px rgba(240, 160, 138, 0.4);
+    }
+    .quote-slide .attribution {
+      margin-top: 2rem; font-size: 1.3rem; color: var(--text-secondary);
+      padding-left: 2.5rem; text-align: left;
+    }
+
+    /* Reddit post slide */
+    .reddit-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 2.5rem;
+      max-width: 800px; width: 100%;
+      text-align: left;
+      position: relative;
+      overflow: hidden;
+    }
+    .reddit-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0;
+      height: 3px; background: linear-gradient(90deg, var(--accent), var(--purple), var(--blue));
+    }
+    .reddit-header {
+      display: flex; align-items: center; gap: 0.8rem;
+      margin-bottom: 1.2rem;
+    }
+    .reddit-icon {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: var(--accent); display: flex; align-items: center;
+      justify-content: center; font-weight: 800; font-size: 1.1rem; color: var(--bg);
+    }
+    .reddit-sub { font-size: 1rem; color: var(--accent); font-weight: 600; }
+    .reddit-meta { font-size: 0.85rem; color: var(--text-secondary); }
+    .reddit-title {
+      font-size: 1.5rem; font-weight: 700; color: var(--text);
+      margin-bottom: 1rem; line-height: 1.4;
+    }
+    .reddit-body { font-size: 1.1rem; color: var(--text-secondary); line-height: 1.7; }
+    /* Reddit screenshot image */
+    .reddit-screenshot {
+      max-width: 680px; width: 100%;
+      border: 1px solid var(--border);
+      box-shadow: 0 8px 40px rgba(0,0,0,0.4);
+    }
+
+    /* Stats slide */
+    .stats-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem; max-width: 900px; width: 100%;
+    }
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 2rem 1.5rem;
+      text-align: center;
+      transition: border-color 0.3s;
+    }
+    .stat-card:hover { border-color: var(--accent-dim); }
+    .stat-value {
+      font-size: 3.5rem; font-weight: 800; color: var(--accent);
+      text-shadow: 0 0 20px rgba(240, 160, 138, 0.35);
+      letter-spacing: -0.03em;
+    }
+    .stat-label {
+      font-size: 1rem; color: var(--text-secondary); text-transform: uppercase;
+      letter-spacing: 0.08em; margin-top: 0.5rem;
+    }
+
+    /* Case card slide */
+    .case-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 3rem;
+      max-width: 850px; width: 100%;
+      text-align: left;
+      position: relative;
+    }
+    .case-card::before {
+      content: '\250C\2500'; position: absolute; top: 0.6rem; left: 0.8rem;
+      color: var(--border-hover); font-size: 0.7rem;
+    }
+    .case-tag {
+      display: inline-block; font-size: 0.85rem; text-transform: uppercase;
+      letter-spacing: 0.1em; padding: 0.3em 1em; font-weight: 700;
+      margin-bottom: 1rem;
+    }
+    .case-tag.tag-green { background: rgba(126,201,160,0.12); color: var(--green); }
+    .case-tag.tag-blue { background: rgba(126,184,218,0.12); color: var(--blue); }
+    .case-tag.tag-purple { background: rgba(176,126,218,0.12); color: var(--purple); }
+    .case-tag.tag-yellow { background: rgba(218,200,126,0.12); color: var(--yellow); }
+    .case-tag.tag-red { background: rgba(218,126,126,0.12); color: var(--red); }
+    .case-card h2 { font-size: 2.6rem; margin-bottom: 1rem; }
+    .case-card p { font-size: 1.4rem; color: var(--text-secondary); line-height: 1.7; }
+    .case-highlight {
+      background: var(--accent-glow);
+      border-left: 3px solid var(--accent);
+      padding: 1.2rem 1.5rem; margin-top: 1.5rem;
+    }
+    .case-highlight p { font-size: 1.4rem; color: var(--accent); font-weight: 600; }
+
+    /* Timeline items */
+    .timeline-visual {
+      display: flex; align-items: center; gap: 1.5rem;
+      max-width: 900px; width: 100%;
+    }
+    .timeline-dot {
+      width: 16px; height: 16px; border-radius: 50%;
+      background: var(--accent); flex-shrink: 0;
+      box-shadow: 0 0 20px rgba(232, 147, 122, 0.4);
+    }
+    .timeline-line {
+      width: 2px; height: 60px; background: var(--border);
+      flex-shrink: 0;
+    }
+
+    /* Link cards */
+    .link-card {
+      display: inline-flex; align-items: center; gap: 1rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 1.2rem 2rem;
+      text-decoration: none; color: var(--text);
+      transition: all 0.3s;
+      margin: 0.5rem;
+    }
+    .link-card:hover {
+      border-color: var(--accent);
+      box-shadow: 0 0 20px rgba(232, 147, 122, 0.15);
+      transform: translateY(-2px);
+    }
+    .link-badge {
+      font-size: 0.8rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.08em; padding: 0.3em 0.8em;
+      background: rgba(240, 160, 138, 0.15); color: var(--accent);
+    }
+    .link-text { font-size: 1.1rem; font-weight: 500; }
+    .link-arrow { color: var(--accent); font-size: 1.4rem; }
+
+    /* Comparison layout */
+    .comparison {
+      display: grid; grid-template-columns: 1fr auto 1fr;
+      gap: 2rem; align-items: center;
+      max-width: 900px; width: 100%;
+    }
+    .comparison-side {
+      text-align: center; padding: 2rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+    }
+    .comparison-vs {
+      font-size: 2rem; font-weight: 800; color: var(--accent);
+      text-shadow: 0 0 20px rgba(232, 147, 122, 0.4);
+    }
+
+    /* Big number */
+    .big-number {
+      font-size: 8rem; font-weight: 800; color: var(--accent);
+      text-shadow: 0 0 60px rgba(232, 147, 122, 0.3);
+      letter-spacing: -0.05em; line-height: 1;
+    }
+
+    /* Announcement card */
+    .announcement {
+      background: linear-gradient(135deg, var(--surface) 0%, var(--surface-2) 100%);
+      border: 1px solid var(--accent-dim);
+      padding: 3rem;
+      max-width: 850px; width: 100%;
+      text-align: center;
+      animation: pulse-glow 3s ease-in-out infinite;
+    }
+    .announcement h2 { color: var(--accent); }
+
+    /* People grid */
+    .people-grid {
+      display: flex; gap: 1.5rem; flex-wrap: wrap;
+      justify-content: center; margin-top: 1.5rem;
+    }
+    .person-chip {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      padding: 0.6rem 1.2rem;
+      display: flex; flex-direction: column; align-items: center; gap: 0.2rem;
+    }
+    .person-chip .name { font-weight: 700; font-size: 1.15rem; }
+    .person-chip .role { font-size: 0.85rem; color: var(--accent); text-transform: uppercase; letter-spacing: 0.08em; }
+
+    /* Terminal prompt */
+    .terminal-prompt {
+      font-size: 1.6rem; color: var(--text-secondary);
+      text-align: left; max-width: 700px; width: 100%;
+    }
+    .terminal-prompt .prompt-char { color: var(--accent); }
+    .terminal-prompt .command { color: var(--text); font-weight: 600; }
+    .terminal-prompt .flag { color: var(--blue); }
+    .terminal-prompt .arg { color: var(--green); }
+
+    /* ======= PROGRESS BAR ======= */
+    .progress-bar {
+      position: fixed; bottom: 0; left: 0; right: 0; height: 2px;
+      background: var(--surface-2); z-index: 100;
+    }
+    .progress-fill {
+      height: 100%; background: linear-gradient(90deg, var(--accent), var(--purple));
+      transition: width 0.4s ease;
+      box-shadow: 0 0 10px rgba(232, 147, 122, 0.5);
+    }
+
+    /* ======= SLIDE COUNTER ======= */
+    .slide-counter {
+      position: fixed; top: 42px; left: 20px; z-index: 100;
+      font-size: 1rem; color: #f2f0ea;
+      letter-spacing: 0.05em; font-weight: 500;
+    }
+    .slide-counter .current-num { color: var(--accent); font-weight: 700; font-size: 1.4rem; }
+
+    /* ======= NAV ARROWS ======= */
+    .nav-arrows {
+      position: fixed; top: 50%; transform: translateY(-50%);
+      z-index: 100; border: none; background: none; padding: 0;
+    }
+    .nav-arrows.left { left: 20px; }
+    .nav-arrows.right { right: 20px; }
+
+    .nav-arrow {
+      width: 48px; height: 48px;
+      border: 1px solid #6a6a8a;
+      background: rgba(36, 36, 58, 0.95);
+      backdrop-filter: blur(8px);
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      transition: all 0.3s ease;
+      color: #f2f0ea; font-size: 20px;
+      font-family: var(--font);
+    }
+    .nav-arrow:hover {
+      border-color: var(--accent); color: var(--accent);
+      box-shadow: 0 0 12px rgba(232, 147, 122, 0.15);
+      transform: scale(1.08);
+    }
+    .nav-arrow:active { transform: scale(0.95); }
+
+    /* ======= NAV BAR (dots) ======= */
+    .nav-bar {
+      position: fixed;
+      bottom: 14px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 5px;
+      z-index: 100;
+      background: rgba(36, 36, 58, 0.95);
+      backdrop-filter: blur(12px);
+      padding: 10px 16px;
+      border: 1px solid #5a5a7a;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+    }
+
+    .nav-dot {
+      width: 12px; height: 12px;
+      background: #5a5a7a;
+      border: 1px solid #6a6a8a;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      padding: 0;
+      position: relative;
+    }
+    .nav-dot:hover:not(.active) {
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+    .nav-dot.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      width: 30px;
+      box-shadow: 0 0 10px rgba(240, 160, 138, 0.5);
+    }
+
+    /* Chapter dot markers */
+    .nav-dot.chapter-dot:not(.active) {
+      background: #7a7a9a;
+      border-color: #8a8aaa;
+    }
+
+    /* ======= SLIDE PREVIEW TOOLTIP ======= */
+    .slide-preview {
+      position: absolute;
+      bottom: calc(100% + 14px);
+      left: 50%;
+      transform: translateX(-50%) scale(0.92);
+      width: 200px;
+      height: 128px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease, transform 0.25s ease;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+      z-index: 200;
+    }
+    .nav-dot:hover .slide-preview {
+      opacity: 1;
+      transform: translateX(-50%) scale(1);
+    }
+    .slide-preview-thumb {
+      width: 100%; height: 100%;
+      transform-origin: top left;
+      pointer-events: none;
+    }
+    .slide-preview-label {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      padding: 5px 10px;
+      background: rgba(26, 26, 46, 0.88);
+      backdrop-filter: blur(8px);
+      font-size: 0.6rem;
+      font-weight: 600;
+      color: var(--accent);
+      letter-spacing: 0.05em;
+      text-align: center;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      z-index: 2;
+      border-top: 1px solid var(--border);
+    }
+    /* Preview arrow pointer */
+    .slide-preview::after {
+      content: '';
+      position: absolute; bottom: -5px; left: 50%; transform: translateX(-50%) rotate(45deg);
+      width: 8px; height: 8px;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* ======= KEYBOARD HINT ======= */
+    .keyboard-hint {
+      position: fixed; top: 42px; right: 20px; z-index: 100;
+      background: rgba(36, 36, 58, 0.95);
+      backdrop-filter: blur(8px);
+      padding: 10px 18px;
+      border: 1px solid #5a5a7a;
+      font-size: 0.85rem;
+      color: #f2f0ea;
+      font-weight: 500;
+      transition: opacity 0.4s ease;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .keyboard-hint kbd {
+      background: #3a3a58;
+      border: 1px solid #6a6a8a;
+      padding: 3px 10px;
+      font-family: var(--font);
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    /* ======= TERMINAL BAR ======= */
+    .terminal-bar {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      display: flex; align-items: center; gap: 0.6rem;
+      background: var(--surface-2); border-bottom: 1px solid var(--border);
+      padding: 0.4rem 1rem; font-size: 0.7rem; color: var(--text-muted);
+    }
+    .terminal-dots { display: flex; gap: 0.35rem; }
+    .terminal-dots span { width: 10px; height: 10px; border-radius: 50%; }
+    .terminal-dots span:nth-child(1) { background: var(--red); }
+    .terminal-dots span:nth-child(2) { background: var(--yellow); }
+    .terminal-dots span:nth-child(3) { background: var(--green); }
+    .terminal-title { flex: 1; text-align: center; letter-spacing: 0.04em; }
+
+    /* ======= LOGO ======= */
+    .logo-container {
+      margin-top: 2rem; display: flex; align-items: center;
+      justify-content: center; gap: 1rem;
+    }
+    .logo-container img { height: 22px; opacity: 0.6; }
+    .logo-sep { color: var(--text-muted); font-size: 0.8rem; }
+
+    /* ======= HELPER CLASSES ======= */
+    .mt-1 { margin-top: 0.5rem; }
+    .mt-2 { margin-top: 1rem; }
+    .mt-3 { margin-top: 1.5rem; }
+    .mt-4 { margin-top: 2rem; }
+    .mt-5 { margin-top: 3rem; }
+    .mb-2 { margin-bottom: 1rem; }
+    .mb-3 { margin-bottom: 1.5rem; }
+    .text-left { text-align: left; }
+    .text-center { text-align: center; }
+    .max-w-700 { max-width: 700px; }
+    .max-w-800 { max-width: 800px; }
+    .max-w-900 { max-width: 900px; }
+    .w-full { width: 100%; }
+    .flex-center { display: flex; align-items: center; justify-content: center; }
+    .gap-1 { gap: 0.5rem; }
+    .gap-2 { gap: 1rem; }
+    .gap-3 { gap: 1.5rem; }
+
+    /* Two-column layout */
+    .two-col {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 2rem; max-width: 900px; width: 100%;
+      text-align: left;
+    }
+
+    /* Inline tag */
+    .tag-inline {
+      display: inline-block; font-size: 0.65rem; text-transform: uppercase;
+      letter-spacing: 0.1em; padding: 0.2em 0.6em; font-weight: 700;
+      background: var(--accent-glow); color: var(--accent);
+      vertical-align: middle; margin-right: 0.5rem;
+    }
+
+    /* ======= KEYBOARD HELP ======= */
+    .help-overlay {
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(26, 26, 46, 0.95); z-index: 500;
+      display: none; align-items: center; justify-content: center;
+      flex-direction: column; gap: 1rem;
+    }
+    .help-overlay.visible { display: flex; }
+    .help-overlay h3 { color: var(--accent); font-size: 1.2rem; margin-bottom: 1rem; }
+    .help-key {
+      display: flex; align-items: center; gap: 1rem;
+      font-size: 0.9rem; color: var(--text-secondary);
+    }
+    .help-key kbd {
+      background: var(--surface-2); border: 1px solid var(--border);
+      padding: 0.3em 0.7em; font-family: var(--font); font-size: 0.8rem;
+      color: var(--accent); min-width: 2rem; text-align: center;
+    }
+
+    /* ======= RESPONSIVE ======= */
+    @media (max-width: 900px) {
+      .slide { padding: 2rem; }
+      .slide h1 { font-size: 2.8rem; }
+      .slide h2 { font-size: 2rem; }
+      .slide h3 { font-size: 1.3rem; }
+      .slide p { font-size: 1rem; }
+      .title-slide h1 { font-size: 3rem; }
+      .quote-slide { padding: 2rem; }
+      .quote-slide .big-quote { font-size: 1.8rem; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .two-col { grid-template-columns: 1fr; }
+      .comparison { grid-template-columns: 1fr; }
+      .big-number { font-size: 5rem; }
+      .case-card, .reddit-card { padding: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- CRT effects -->
+<div class="crt-interference"></div>
+
+<!-- Matrix rain canvas -->
+<canvas id="matrix-canvas"></canvas>
+
+<!-- Terminal bar -->
+<div class="terminal-bar">
+  <div class="terminal-dots"><span></span><span></span><span></span></div>
+  <div class="terminal-title">talk-agentic &mdash; agilize &mdash; 2026</div>
+</div>
+
+<!-- ======================================================== -->
+<!-- SLIDES -->
+<!-- ======================================================== -->
+<div class="slide-container" id="slideContainer">
+
+  <!-- ======================== -->
+  <!-- SLIDE 0: TITLE -->
+  <!-- ======================== -->
+  <div class="slide title-slide active" data-slide="0">
+    <div class="fade-in">
+      <p class="small" style="letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent-dim);">$ ./agilize --talk 2026</p>
+    </div>
+    <h1 class="fade-in delay-1">
+      Pare de Codar.<br><span class="accent">Comece a <span id="typewriterWord"></span><span id="typewriterCursor" class="cursor-blink" style="color: var(--accent); font-weight: 400;">_</span></span>
+    </h1>
+    <p class="subtitle fade-in delay-2" style="white-space: nowrap;">O papel de quem constr&oacute;i tecnologia nunca mais ser&aacute; o mesmo.</p>
+    <div class="presenters fade-in delay-3">
+      <div class="presenter-card">
+        <span class="presenter-name">Adriano Fialho</span>
+        <span class="presenter-role">CTO</span>
+      </div>
+      <div class="presenter-card">
+        <span class="presenter-name">Rafael Viana</span>
+        <span class="presenter-role">CPO</span>
+      </div>
+      <div class="presenter-card">
+        <span class="presenter-name">Ernesto Amorim</span>
+        <span class="presenter-role">Principal Engineer</span>
+      </div>
+    </div>
+    <div class="logo-container fade-in delay-4">
+      <img src="assets/logo-branca.png" alt="Agilize">
+    </div>
+  </div>
+
+  <!-- ======================== -->
+  <!-- SLIDE 1: THE SHOCK -->
+  <!-- ======================== -->
+  <div class="slide" data-slide="1">
+    <img src="assets/reddit-post.png" alt="Reddit post about Anthropic" class="reddit-screenshot fade-in">
+  </div>
+
+  <!-- ======================== -->
+  <!-- SLIDE 2: QUOTE 1 -->
+  <!-- ======================== -->
+  <div class="slide quote-slide" data-slide="2">
+    <div class="fade-in">
+      <div class="big-quote">
+        "The mental model isn't <span class="highlight">'use AI to code faster.'</span> It's <span class="highlight">'you are the PM, the agents are your engineers,</span> and your job is to keep all of them unblocked.'"
+      </div>
+      <div class="attribution">// r/csMajors &mdash; sobre o time da Anthropic</div>
+    </div>
+  </div>
+
+  <!-- ======================== -->
+  <!-- SLIDE 3: QUOTE 2 -->
+  <!-- ======================== -->
+  <div class="slide quote-slide" data-slide="3">
+    <div class="fade-in">
+      <div class="big-quote">
+        "If you're just <span class="highlight">watching an agent code, you're already behind.</span> That idle time should be spent spinning up another agent and directing it somewhere else."
+      </div>
+      <div class="attribution">// r/csMajors &mdash; sobre o time da Anthropic</div>
+    </div>
+  </div>
+
+  <!-- ======================== -->
+  <!-- SLIDE 4: QUOTE 3 -->
+  <!-- ======================== -->
+  <div class="slide quote-slide" data-slide="4">
+    <div class="fade-in">
+      <div class="big-quote">
+        "The productivity gap between people who think this way and people who don't is <span class="highlight">already enormous.</span>"
+      </div>
+      <div class="attribution">// r/csMajors &mdash; sobre o time da Anthropic</div>
+    </div>
+  </div>
+
+  <!-- ======================== -->
+  <!-- SLIDE 5: THE QUESTION -->
+  <!-- ======================== -->
+  <div class="slide" data-slide="5">
+    <h2 class="fade-in animate-glitch">Se isso j&aacute; &eacute; verdade<br>na <span class="accent">Anthropic</span>,</h2>
+    <h2 class="fade-in delay-2" style="color: var(--text-secondary); font-size: 2.2rem;">quanto tempo at&eacute; ser verdade<br><span class="accent" style="font-size: 3.5rem;">em todo lugar?</span></h2>
+  </div>
+
+  <!-- ======================== -->
+  <!-- SLIDE 6: CHAPTER - A JORNADA -->
+  <!-- ======================== -->
+  <div class="slide chapter-slide" data-slide="6">
+    <div class="fade-in" style="margin-bottom: 1.2rem;"><i data-lucide="map" style="width: 48px; height: 48px; color: var(--accent);"></i></div>
+    <div class="chapter-num fade-in delay-1">Cap&iacute;tulo 01</div>
+    <h1 class="fade-in delay-2">A Jornada</h1>
+    <p class="fade-in delay-2" style="color: var(--text-secondary); font-size: 1.3rem;">Da era das cavernas ao fogo</p>
+  </div>
+
+  <!-- ======================== -->
+  <!-- SLIDE 7: STONE AGE -->
+  <!-- ======================== -->
+  <div class="slide" data-slide="7">
+    <div class="fade-in" style="margin-bottom: 1rem;"><i data-lucide="mountain" style="width: 52px; height: 52px; color: var(--accent);"></i></div>
+    <h2 class="fade-in delay-1">A <span class="accent">Idade da Pedra</span><br>do Desenvolvimento</h2>
+    <p class="fade-in delay-1 mt-3">
+      C&oacute;digo bruto. Linha por linha. Caractere por caractere.<br>
+      Stack Overflow era a biblioteca de Alexandria.<br>
+      Copiar e colar de f&oacute;rum era <span class="accent">t&eacute;cnica avan&ccedil;ada.</span>
+    </p>
+    <p class="fade-in delay-2 mt-3 small">
+      O valor de um dev se media pela capacidade de produzir c&oacute;digo manualmente.
+    </p>
+  </div>
+
+  <!-- ======================== -->
+  <!-- SLIDE 8: FIRST TOOLS -->
+  <!-- ======================== -->
+  <div class="slide" data-slide="8">
+    <h2 class="fade-in">Os Primeiros Sinais</h2>
+    <div class="fade-in delay-1 mt-4" style="display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;">
+      <div class="presenter-card"><span class="presenter-name">Snippets</span></div>
+      <div class="presenter-card"><span class="presenter-name">Templates</span></div>
+      <div class="presenter-card"><span class="presenter-name">IDEs</span></div>
+      <div class="presenter-card"><span class="presenter-name">Autocomplete</span></div>
+      <div class="presenter-card"><span class="presenter-name">Linters</span></div>
+      <div class="presenter-card"><span class="presenter-name">Formatters</span></div>
+    </div>
+    <p class="fade-in delay-2 mt-4 small">
+      <span class="accent">"Isso &eacute; muleta"</span> &mdash; <span class="accent">"Dev de verdade n&atilde;o precisa disso"</span><br>
+      Essa resist&ecirc;ncia se repetiu em cada nova onda.
+    </p>
+  </div>
+
+  <!-- ======================== -->
+  <!-- SLIDE 9: COPILOT -->
+  <!-- ======================== -->
+  <div class="slide" data-slide="9">
+    <h2 class="fade-in">A Chegada do <span class="accent">Copilot</span></h2>
+    <div class="comparison fade-in delay-1 mt-4">
+      <div class="comparison-side">
+        <h3 class="green">Curiosos</h3>
+        <p class="mt-2 small">Experimentando, testando, aprendendo</p>
+      </div>
+      <div class="comparison-vs">VS</div>
+      <div class="comparison-side">
+        <h3 class="red">C&eacute;ticos</h3>
+        <p class="mt-2 small">"Vai gerar c&oacute;digo ruim"<br>"Vai criar depend&ecirc;ncia"<br>"&Eacute; pl&aacute;gio"</p>
+      </div>
+    </div>
+    <p class="fade-in delay-2 mt-3 small">O mercado se dividiu. A resist&ecirc;ncia era real.</p>
+  </div>
+
+  <!-- ======================== -->
+  <!-- SLIDE 10: AGILIZE ADVANCES -->
+  <!-- ======================== -->
+  <div class="slide" data-slide="10">
+    <h2 class="fade-in">Enquanto isso,<br>na <span class="accent">Agilize...</span></h2>
+    <p class="fade-in delay-1 mt-3">
+      Decidimos <span class="accent">experimentar antes de julgar.</span>
+    </p>
+    <div class="fade-in delay-2 mt-4" style="display: flex; gap: 0.8rem; flex-wrap: wrap; justify-content: center;">
+      <div class="presenter-card" style="border-color: var(--green);"><span class="presenter-name green">Copilot</span></div>
+      <div class="presenter-card" style="border-color: var(--blue);"><span class="presenter-name blue">Cursor</span></div>
+      <div class="presenter-card" style="border-color: var(--purple);"><span class="presenter-name purple">v0</span></div>
+      <div class="presenter-card" style="border-color: var(--yellow);"><span class="presenter-name yellow">Bolt</span></div>
+      <div class="presenter-card" style="border-color: var(--accent);"><span class="presenter-name accent">Claude</span></div>
+      <div class="presenter-card" style="border-color: var(--blue);"><span class="presenter-name blue">ChatGPT</span></div>
+      <div class="presenter-card" style="border-color: var(--green);"><span class="presenter-name green">Gemini</span></div>
+      <div class="presenter-card" style="border-color: var(--red);"><span class="presenter-name red">Deepseek</span></div>
+    </div>
+    <p class="fade-in delay-3 mt-3 small">
+      Coisas que levariam semanas saindo em dias. Problemas complexos resolvidos em horas.
+    </p>
+  </div>
+
+  <!-- ======================== -->
+  <!-- SLIDE 11: DISCOVERY OF FIRE -->
+  <!-- ======================== -->
+  <div class="slide" data-slide="11">
+    <div class="fade-in" style="margin-bottom: 1rem;"><i data-lucide="flame" style="width: 52px; height: 52px; color: var(--accent);"></i></div>
+    <h2 class="fade-in delay-1">A <span class="accent">Descoberta do Fogo</span></h2>
+    <p class="fade-in delay-1 mt-3">
+      Quando a IA parou de ser assistente<br>
+      e come&ccedil;ou a <span class="accent">trabalhar de verdade.</span>
+    </p>
+    <p class="fade-in delay-2 mt-3" style="max-width: 700px;">
+      N&atilde;o s&oacute; sugerindo c&oacute;digo enquanto a gente digitava &mdash; mas pegando uma tarefa e <span class="accent">executando do in&iacute;cio ao fim.</span>
+    </p>
+  </div>
+
+  <!-- ======================== -->
+  <!-- SLIDE 12: CULTURAL BARRIER -->
+  <!-- ======================== -->
+  <div class="slide" data-slide="12">
+    <h2 class="fade-in">A barreira n&atilde;o foi <span class="red">t&eacute;cnica.</span></h2>
+    <h2 class="fade-in delay-1">Foi <span class="accent">cultural.</span></h2>
+    <div class="fade-in delay-2 mt-4" style="max-width: 700px; text-align: left;">
+      <p style="margin-bottom: 1.2rem; color: var(--text); font-style: italic; font-size: 2rem;">"Ser&aacute; que vai fazer certo?"</p>
+      <p style="margin-bottom: 1.2rem; color: var(--text); font-style: italic; font-size: 2rem;">"Eu deveria estar acompanhando..."</p>
+      <p style="color: var(--text); font-style: italic; font-size: 2rem;">"E se der ruim?"</p>
+    </div>
+    <p class="fade-in delay-3 mt-4 small" style="white-space: nowrap;">
+      Gera&ccedil;&otilde;es de devs foram treinadas pra acreditar que o valor est&aacute; em <span class="accent">escrever</span> o c&oacute;digo. O valor est&aacute; em <span class="accent">resolver problemas.</span>
+    </p>
+  </div>
+
+  <!-- ======================== -->
+  <!-- SLIDE 13: CURRENT WORLD -->
+  <!-- ======================== -->
+  <div class="slide" data-slide="13">
+    <h2 class="fade-in">O Mundo <span class="accent">Hoje</span></h2>
+    <div class="fade-in delay-1 mt-4" style="display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;">
+      <div class="stat-card" style="min-width: 180px;">
+        <div class="stat-value" style="font-size: 1.4rem;">Agentes aut&ocirc;nomos</div>
+      </div>
+      <div class="stat-card" style="min-width: 180px;">
+        <div class="stat-value" style="font-size: 1.4rem;">M&uacute;ltiplos em paralelo</div>
+      </div>
+      <div class="stat-card" style="min-width: 180px;">
+        <div class="stat-value" style="font-size: 1.4rem;">Dev como orquestrador</div>
+      </div>
+    </div>
+    <p class="fade-in delay-2 mt-4">
+      Uma parte enorme do mercado <span class="accent">ainda est&aacute; descobrindo o fogo.</span><br>
+      A velocidade da mudan&ccedil;a acelerou. E a dist&acirc;ncia s&oacute; aumenta.
+    </p>
+  </div>
+
+  <!-- ======================== -->
+  <!-- SLIDE 14: THE GAP -->
+  <!-- ======================== -->
+  <div class="slide" data-slide="14">
+    <p class="fade-in small" style="letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent-dim);">O gap de produtividade</p>
+    <div class="fade-in delay-1 mt-3">
+      <span class="big-number animate-glitch">10x</span>
+    </div>
+    <p class="fade-in delay-2 mt-3">
+      A diferen&ccedil;a entre quem orquestra cinco agentes em paralelo<br>
+      e quem ainda escreve c&oacute;digo linha por linha<br>
+      <span class="accent">n&atilde;o &eacute; de 20%. &Eacute; de ordens de magnitude.</span>
+    </p>
+  </div>
+
+  <!-- ======================== -->
+  <!-- SLIDE 15: JOURNEY MESSAGE -->
+  <!-- ======================== -->
+  <div class="slide" data-slide="15">
+    <h2 class="fade-in">O que fez <span class="accent">diferen&ccedil;a?</span></h2>
+    <p class="fade-in delay-1 mt-3" style="max-width: 750px;">
+      A disposi&ccedil;&atilde;o de <span class="accent">experimentar mesmo com medo.</span><br>
+      De ajustar a cultura mesmo quando era desconfort&aacute;vel.<br>
+      De aceitar que o jeito antigo de trabalhar <span class="accent">n&atilde;o era sagrado.</span>
+    </p>
+    <p class="fade-in delay-2 mt-4 small">
+      Essa disposi&ccedil;&atilde;o &eacute; o que separa quem lidera de quem corre atr&aacute;s.
+    </p>
+  </div>
+
+  <!-- ======================== -->
+  <!-- SLIDE 16: CHAPTER - A VIRADA -->
+  <!-- ======================== -->
+  <div class="slide chapter-slide" data-slide="16">
+    <div class="fade-in" style="margin-bottom: 1.2rem;"><i data-lucide="rotate-ccw" style="width: 48px; height: 48px; color: var(--accent);"></i></div>
+    <div class="chapter-num fade-in delay-1">Cap&iacute;tulo 02</div>
+    <h1 class="fade-in delay-2">A Virada</h1>
+    <p class="fade-in delay-2" style="color: var(--text-secondary); font-size: 1.3rem;">De executor para orquestrador</p>
+  </div>
+
+  <!-- ======================== -->
+  <!-- SLIDE 17: PARADIGM SHIFT -->
+  <!-- ======================== -->
+  <div class="slide" data-slide="17">
+    <div class="comparison fade-in">
+      <div class="comparison-side" style="border-color: var(--red); opacity: 0.7;">
+        <div style="margin-bottom: 0.6rem;"><i data-lucide="code" style="width: 32px; height: 32px; color: var(--red);"></i></div>
+        <p class="small red" style="text-transform: uppercase; letter-spacing: 0.1em;">Antes</p>
+        <h3 class="mt-2" style="font-size: 2rem;">Como eu <span class="red">fa&ccedil;o</span> isso?</h3>
+        <p class="mt-2" style="font-size: 1.3rem;">IA como ferramenta. Voc&ecirc; no centro. Executando.</p>
+      </div>
+      <div class="comparison-vs">&rarr;</div>
+      <div class="comparison-side" style="border-color: var(--accent);">
+        <div style="margin-bottom: 0.6rem;"><i data-lucide="wand-2" style="width: 32px; height: 32px; color: var(--accent);"></i></div>
+        <p class="small accent" style="text-transform: uppercase; letter-spacing: 0.1em;">Agora</p>
+        <h3 class="mt-2" style="font-size: 2rem;">Como eu <span class="accent">orquestro</span> isso?</h3>
+        <p class="mt-2" style="font-size: 1.3rem;">Agente executa. Voc&ecirc; orquestra. M&uacute;ltiplos em paralelo.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================== -->
+  <!-- SLIDE 18: NEW ROLE -->
+  <!-- ======================== -->
+  <div class="slide" data-slide="18">
+    <div class="fade-in" style="margin-bottom: 0.8rem; display: flex; gap: 1.5rem; justify-content: center;">
+      <i data-lucide="crown" style="width: 52px; height: 52px; color: var(--accent);"></i>
+      <i data-lucide="bot" style="width: 52px; height: 52px; color: var(--blue);"></i>
+    </div>
+    <h2 class="fade-in delay-1">Voc&ecirc; &eacute; o <span class="accent">PM.</span></h2>
+    <h2 class="fade-in delay-2">Os agentes s&atilde;o seus <span class="accent">engenheiros.</span></h2>
+    <h2 class="fade-in delay-3" style="color: var(--text-secondary); font-size: 2rem; margin-top: 1rem;">Seu trabalho: manter todos <span class="accent">desbloqueados.</span></h2>
+    <p class="fade-in delay-4 mt-4 small" style="max-width: 700px;">
+      Isso vale pra todo mundo. Dev, PM, designer, analista.<br>
+      Quem aprender a orquestrar <span class="accent">multiplica sua capacidade.</span>
+    </p>
+  </div>
+
+  <!-- ======================== -->
+  <!-- SLIDE 19: CHAPTER - BENCHMARK -->
+  <!-- ======================== -->
+  <div class="slide chapter-slide" data-slide="19">
+    <div class="fade-in" style="margin-bottom: 1.2rem;"><i data-lucide="bar-chart-3" style="width: 48px; height: 48px; color: var(--accent);"></i></div>
+    <div class="chapter-num fade-in delay-1">Cap&iacute;tulo 03</div>
+    <h1 class="fade-in delay-2">Benchmark</h1>
+    <p class="fade-in delay-2" style="color: var(--text-secondary); font-size: 1.3rem;">O que o mercado est&aacute; dizendo</p>
+  </div>
+
+  <!-- ======================== -->
+  <!-- SLIDE 20: MARKET DATA -->
+  <!-- ======================== -->
+  <div class="slide" data-slide="20">
+    <div class="fade-in" style="margin-bottom: 0.8rem;"><i data-lucide="trending-up" style="width: 44px; height: 44px; color: var(--accent);"></i></div>
+    <h3 class="fade-in delay-1 mb-3" style="color: var(--text-secondary);">Dados da Anthropic &mdash; 2026</h3>
+    <div class="stats-grid fade-in delay-1">
+      <div class="stat-card">
+        <div class="stat-value">90%</div>
+        <div class="stat-label">C&oacute;digo escrito por IA</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">59%</div>
+        <div class="stat-label">Trabalho di&aacute;rio usa IA</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">67%</div>
+        <div class="stat-label">Mais PRs/engenheiro</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">5-30</div>
+        <div class="stat-label">PRs shipped/dia</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">74</div>
+        <div class="stat-label">Releases em 52 dias</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">200%</div>
+        <div class="stat-label">Ganho de produtividade</div>
+      </div>
+    </div>
+    <p class="fade-in delay-2 mt-3 small">Esses ganhos est&atilde;o se tornando o novo baseline de competitividade.</p>
+  </div>
+
+  <!-- ======================== -->
+  <!-- SLIDE 21: CHAPTER - CASES -->
+  <!-- ======================== -->
+  <div class="slide chapter-slide" data-slide="21">
+    <div class="fade-in" style="margin-bottom: 1.2rem;"><i data-lucide="rocket" style="width: 48px; height: 48px; color: var(--accent);"></i></div>
+    <div class="chapter-num fade-in delay-1">Cap&iacute;tulo 04</div>
+    <h1 class="fade-in delay-2">Cases Reais</h1>
+    <p class="fade-in delay-2" style="color: var(--text-secondary); font-size: 1.3rem;">O que j&aacute; fizemos na Agilize</p>
+  </div>
+
+  <!-- ======================== -->
+  <!-- SLIDE 22: CASE 1 - JIRA CLONE -->
+  <!-- ======================== -->
+  <div class="slide" data-slide="22">
+    <div class="case-card fade-in">
+      <span class="case-tag tag-green">Case 01 &mdash; Adriano</span>
+      <div style="margin-bottom: 0.8rem;"><i data-lucide="layout-dashboard" style="width: 44px; height: 44px; color: var(--green);"></i></div>
+      <h2>O Clone do Jira</h2>
+      <p>
+        Um sistema completo que vai substituir o Jira na empresa.
+        Constru&iacute;do com apenas <span class="accent">duas horas</span> de trabalho pessoal.
+      </p>
+      <p class="mt-2">
+        N&atilde;o foram duas horas seguidas de c&oacute;digo. Foram shots curtos de <span class="accent">5 a 15 minutos</span> de orquestra&ccedil;&atilde;o. Agentes aut&ocirc;nomos rodando em paralelo, executando enquanto cuidava de outras coisas.
+      </p>
+      <div class="case-highlight">
+        <p>Voc&ecirc; n&atilde;o fica assistindo o agente trabalhar. Voc&ecirc; dispara outro agente enquanto o primeiro executa.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================== -->
+  <!-- SLIDE 23: CASE 2 - VOICE -->
+  <!-- ======================== -->
+  <div class="slide" data-slide="23">
+    <div class="case-card fade-in">
+      <span class="case-tag tag-blue">Case 02 &mdash; Adriano</span>
+      <div style="margin-bottom: 0.8rem;"><i data-lucide="mic" style="width: 44px; height: 44px; color: var(--blue);"></i></div>
+      <h2>Programa&ccedil;&atilde;o por Voz</h2>
+      <p>
+        Comandos falados pelo Telegram viram tarefas executadas por agentes.<br>
+        O teclado se torna <span class="accent">opcional.</span>
+      </p>
+      <p class="mt-2">
+        Programar andando. Programar dirigindo. Programar enquanto faz outra coisa.
+      </p>
+      <div class="case-highlight">
+        <p>O limite deixa de ser a velocidade de digita&ccedil;&atilde;o e passa a ser a clareza do pensamento.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================== -->
+  <!-- SLIDE 24: CASE 3 - ONE PROMPT -->
+  <!-- ======================== -->
+  <div class="slide" data-slide="24">
+    <div class="case-card fade-in">
+      <span class="case-tag tag-purple">Case 03 &mdash; Adriano</span>
+      <div style="margin-bottom: 0.8rem;"><i data-lucide="terminal" style="width: 44px; height: 44px; color: var(--purple);"></i></div>
+      <h2>Um Card. Um Prompt.</h2>
+      <p>
+        Um card do Jira resolvido integralmente com <span class="accent">um &uacute;nico prompt.</span>
+      </p>
+      <p class="mt-2">
+        Sem interven&ccedil;&atilde;o manual no c&oacute;digo. O agente entendeu o contexto, analisou o problema, implementou a solu&ccedil;&atilde;o e entregou.
+      </p>
+      <div class="case-highlight">
+        <p>Saber pedir &eacute; t&atilde;o importante quanto saber fazer.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================== -->
+  <!-- SLIDE 25: CASE 4 - AGILIFY -->
+  <!-- ======================== -->
+  <div class="slide" data-slide="25">
+    <div class="case-card fade-in">
+      <span class="case-tag tag-yellow">Case 04 &mdash; Viana</span>
+      <div style="margin-bottom: 0.8rem;"><i data-lucide="workflow" style="width: 44px; height: 44px; color: var(--yellow);"></i></div>
+      <h2>Agilify: O Clone do Pipefy</h2>
+      <p>
+        Constru&iacute;do <span class="accent">sozinho</span> por um CPO. N&atilde;o &eacute; dev de forma&ccedil;&atilde;o. N&atilde;o tem time dedicado.
+      </p>
+      <p class="mt-2">
+        Orquestrou agentes e entregou um produto completo.
+      </p>
+      <div class="case-highlight" style="border-left-color: var(--green);">
+        <p style="color: var(--green);">Impacto financeiro: economia de R$ 3 milh&otilde;es para a Agilize.</p>
+      </div>
+      <p class="mt-3 small">
+        A capacidade de construir n&atilde;o est&aacute; mais restrita a quem sabe programar.<br>
+        Est&aacute; dispon&iacute;vel pra quem sabe <span class="accent">orquestrar.</span>
+      </p>
+    </div>
+  </div>
+
+  <!-- ======================== -->
+  <!-- SLIDE 26: CASE 5 -->
+  <!-- ======================== -->
+  <div class="slide" data-slide="26">
+    <div class="case-card fade-in">
+      <span class="case-tag tag-red">Case 05 &mdash; Ernesto & Luiz</span>
+      <div style="margin-bottom: 0.8rem;"><i data-lucide="cpu" style="width: 44px; height: 44px; color: var(--red);"></i></div>
+      <h2>Projeto Ernesto & Luiz</h2>
+      <p>
+        Mais um exemplo concreto de como a orquestra&ccedil;&atilde;o de agentes est&aacute; transformando o que &eacute; poss&iacute;vel fazer na Agilize.
+      </p>
+      <div class="case-highlight">
+        <p>Demo ao vivo.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================== -->
+  <!-- SLIDE 27: CHAPTER - DEEP STUDY -->
+  <!-- ======================== -->
+  <div class="slide chapter-slide" data-slide="27">
+    <div class="fade-in" style="margin-bottom: 1.2rem;"><i data-lucide="book-open" style="width: 48px; height: 48px; color: var(--accent);"></i></div>
+    <div class="chapter-num fade-in delay-1">Cap&iacute;tulo 05</div>
+    <h1 class="fade-in delay-2">Deep Study</h1>
+    <p class="fade-in delay-2" style="color: var(--text-secondary); font-size: 1.3rem;">Como a Anthropic constr&oacute;i software</p>
+  </div>
+
+  <!-- ======================== -->
+  <!-- SLIDE 28: ANTHROPIC WAY -->
+  <!-- ======================== -->
+  <div class="slide" data-slide="28">
+    <div class="fade-in" style="margin-bottom: 0.8rem;"><i data-lucide="building" style="width: 44px; height: 44px; color: var(--accent);"></i></div>
+    <h3 class="fade-in delay-1" style="color: var(--text-secondary);">Dados reais do time da Anthropic</h3>
+    <div class="two-col fade-in delay-1 mt-4">
+      <div style="background: var(--surface); border: 1px solid var(--border); padding: 1.5rem;">
+        <h3 class="accent mb-2">Workflow</h3>
+        <p class="small">Times "fully AI aligned". M&uacute;ltiplos agentes rodando em paralelo. Engenheiros como gerentes de projeto dos agentes.</p>
+      </div>
+      <div style="background: var(--surface); border: 1px solid var(--border); padding: 1.5rem;">
+        <h3 class="accent mb-2">Resultado</h3>
+        <p class="small">A Anthropic shipando mais que qualquer outra empresa em 2026. N&atilde;o &eacute; coincid&ecirc;ncia. &Eacute; consequ&ecirc;ncia.</p>
+      </div>
+    </div>
+    <div class="fade-in delay-2 mt-4">
+      <a href="https://building-like-anthropic.vercel.app/" target="_blank" class="link-card">
+        <span class="link-badge">Deep Study</span>
+        <span class="link-text">building-like-anthropic.vercel.app</span>
+        <span class="link-arrow">&rarr;</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- ======================== -->
+  <!-- SLIDE 29: CHAPTER - COMO COMECAR -->
+  <!-- ======================== -->
+  <div class="slide chapter-slide" data-slide="29">
+    <div class="fade-in" style="margin-bottom: 1.2rem;"><i data-lucide="play-circle" style="width: 48px; height: 48px; color: var(--accent);"></i></div>
+    <div class="chapter-num fade-in delay-1">Cap&iacute;tulo 06</div>
+    <h1 class="fade-in delay-2">Como Come&ccedil;ar</h1>
+    <p class="fade-in delay-2" style="color: var(--text-secondary); font-size: 1.3rem;">Recursos para a audi&ecirc;ncia</p>
+  </div>
+
+  <!-- ======================== -->
+  <!-- SLIDE 30: RESOURCES -->
+  <!-- ======================== -->
+  <div class="slide" data-slide="30">
+    <h2 class="fade-in">A barreira n&atilde;o &eacute; <span class="accent">acesso.</span></h2>
+    <h2 class="fade-in delay-1" style="color: var(--text-secondary); font-size: 2rem;">A barreira &eacute; decidir <span class="accent">come&ccedil;ar.</span></h2>
+    <div class="fade-in delay-2 mt-5" style="display: flex; flex-direction: column; gap: 1rem; align-items: center;">
+      <a href="https://cccourses.vercel.app/" target="_blank" class="link-card">
+        <span class="link-badge">Curso</span>
+        <span class="link-text">Claude Code para Engenheiros &mdash; 29 m&oacute;dulos</span>
+        <span class="link-arrow">&rarr;</span>
+      </a>
+      <a href="https://building-like-anthropic.vercel.app/" target="_blank" class="link-card">
+        <span class="link-badge">Deep Study</span>
+        <span class="link-text">Como a Anthropic constr&oacute;i software</span>
+        <span class="link-arrow">&rarr;</span>
+      </a>
+    </div>
+    <p class="fade-in delay-3 mt-4 small">
+      Quanto mais cedo come&ccedil;ar, maior a vantagem acumulada.
+    </p>
+  </div>
+
+  <!-- ======================== -->
+  <!-- SLIDE 31: CHAPTER - O FUTURO -->
+  <!-- ======================== -->
+  <div class="slide chapter-slide" data-slide="31">
+    <div class="fade-in" style="margin-bottom: 1.2rem;"><i data-lucide="telescope" style="width: 48px; height: 48px; color: var(--accent);"></i></div>
+    <div class="chapter-num fade-in delay-1">Cap&iacute;tulo 07</div>
+    <h1 class="fade-in delay-2">O Futuro</h1>
+    <p class="fade-in delay-2" style="color: var(--text-secondary); font-size: 1.3rem;">Grupo de pesquisa cient&iacute;fica</p>
+  </div>
+
+  <!-- ======================== -->
+  <!-- SLIDE 32: RESEARCH GROUP -->
+  <!-- ======================== -->
+  <div class="slide" data-slide="32">
+    <div class="announcement fade-in">
+      <p class="small" style="color: var(--accent-dim); letter-spacing: 0.15em; text-transform: uppercase;">An&uacute;ncio</p>
+      <h2 class="mt-2">Grupo de Pesquisa Cient&iacute;fica</h2>
+      <p class="mt-3" style="color: var(--text-secondary); max-width: 700px; margin-left: auto; margin-right: auto;">
+        Dedica&ccedil;&atilde;o de <span class="accent">100% do tempo</span> a explorar em profundidade o novo paradigma. Por tempo indeterminado.
+      </p>
+      <div class="people-grid mt-4">
+        <div class="person-chip"><span class="name">Adriano</span><span class="role">CTO</span></div>
+        <div class="person-chip"><span class="name">Viana</span><span class="role">CPO</span></div>
+        <div class="person-chip"><span class="name">Ernesto</span><span class="role">Principal Eng.</span></div>
+        <div class="person-chip"><span class="name">Victor</span><span class="role">Pesquisa</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================== -->
+  <!-- SLIDE 33: NEW LEADERSHIP -->
+  <!-- ======================== -->
+  <div class="slide" data-slide="33">
+    <div class="fade-in" style="margin-bottom: 1.2rem;">
+      <i data-lucide="shield" style="width: 48px; height: 48px; color: var(--accent);"></i>
+    </div>
+    <h2 class="fade-in delay-1">O Motor <span class="accent">Continua</span></h2>
+    <p class="fade-in delay-2 mt-3" style="max-width: 700px;">Manter a Agilize funcionando e evoluindo com excel&ecirc;ncia enquanto a lideran&ccedil;a t&eacute;cnica mergulha na pesquisa.</p>
+    <div class="fade-in delay-3 mt-4 people-grid">
+      <div class="person-chip"><span class="name">Israel</span><span class="role">Lideran&ccedil;a t&eacute;cnica</span></div>
+      <div class="person-chip"><span class="name">Calison</span><span class="role">Lideran&ccedil;a de produto</span></div>
+      <div class="person-chip" style="border-color: var(--green);"><span class="name">&Eacute;rica</span><span class="role" style="color: var(--green);">Entregas e crescimento</span></div>
+    </div>
+    <p class="fade-in delay-4 mt-4 small" style="color: var(--text-secondary);">Assumindo as posi&ccedil;&otilde;es de Adriano e Viana na opera&ccedil;&atilde;o</p>
+  </div>
+
+  <!-- ======================== -->
+  <!-- SLIDE 34: WHY THIS MATTERS -->
+  <!-- ======================== -->
+  <div class="slide" data-slide="34">
+    <h2 class="fade-in">Estamos num <span class="accent">ponto de inflex&atilde;o</span></h2>
+    <h2 class="fade-in delay-1" style="color: var(--text-secondary); font-size: 2.2rem; margin-top: 0.5rem;">da hist&oacute;ria da tecnologia.</h2>
+    <p class="fade-in delay-2 mt-4" style="max-width: 700px;">
+      Investir em entender profundamente esse novo mundo<br>
+      n&atilde;o &eacute; opcional &mdash; &eacute; <span class="accent">estrat&eacute;gico.</span>
+    </p>
+    <p class="fade-in delay-3 mt-3 small">
+      A Agilize est&aacute; se posicionando pra <span class="accent">liderar</span>, n&atilde;o pra correr atr&aacute;s.
+    </p>
+  </div>
+
+  <!-- ======================== -->
+  <!-- SLIDE 35: FINAL MESSAGE -->
+  <!-- ======================== -->
+  <div class="slide" data-slide="35">
+    <h1 class="fade-in animate-glitch" style="font-size: 3.5rem;">
+      O mundo <span class="accent">mudou.</span>
+    </h1>
+    <p class="fade-in delay-1 mt-3" style="font-size: 1.3rem; color: var(--text-secondary);">
+      N&atilde;o &eacute; mudan&ccedil;a que <em>vai</em> acontecer.<br>
+      &Eacute; mudan&ccedil;a que <span class="accent">j&aacute; aconteceu.</span>
+    </p>
+    <p class="fade-in delay-2 mt-3 small">
+      O post do Reddit n&atilde;o &eacute; previs&atilde;o &mdash; &eacute; relato do presente.
+    </p>
+  </div>
+
+  <!-- ======================== -->
+  <!-- SLIDE 36: THE FINAL QUESTION -->
+  <!-- ======================== -->
+  <div class="slide" data-slide="36">
+    <h1 class="fade-in animate-glitch" style="font-size: 3.2rem; line-height: 1.3;">
+      O que voc&ecirc; vai<br><span class="accent" style="font-size: 4.5rem;">orquestrar</span><br>amanh&atilde;?<span class="cursor-blink" style="color: var(--accent); font-weight: 400;">_</span>
+    </h1>
+  </div>
+
+  <!-- ======================== -->
+  <!-- SLIDE 37: LINKS -->
+  <!-- ======================== -->
+  <div class="slide" data-slide="37">
+    <div class="terminal-prompt fade-in mb-3">
+      <span class="prompt-char">$</span> <span class="command">echo</span> <span class="arg">"Comece agora"</span>
+    </div>
+    <div class="fade-in delay-1" style="display: flex; flex-direction: column; gap: 1rem; align-items: center;">
+      <a href="https://cccourses.vercel.app/" target="_blank" class="link-card">
+        <span class="link-badge">Curso</span>
+        <span class="link-text">Claude Code &mdash; 29 m&oacute;dulos, 100% pr&aacute;tico</span>
+        <span class="link-arrow">&rarr;</span>
+      </a>
+      <a href="https://building-like-anthropic.vercel.app/" target="_blank" class="link-card">
+        <span class="link-badge">Deep Study</span>
+        <span class="link-text">Como a Anthropic constr&oacute;i software</span>
+        <span class="link-arrow">&rarr;</span>
+      </a>
+    </div>
+    <div class="logo-container fade-in delay-2 mt-5">
+      <img src="assets/logo-branca.png" alt="Agilize">
+    </div>
+    <p class="fade-in delay-3 mt-3 small" style="color: var(--text-muted);">// EOF &mdash; Pare de Codar. Comece a Orquestrar. &mdash; Agilize 2026</p>
+  </div>
+
+</div>
+
+<!-- Nav arrows -->
+<button class="nav-arrows left" id="navLeft">
+  <div class="nav-arrow">&larr;</div>
+</button>
+<button class="nav-arrows right" id="navRight">
+  <div class="nav-arrow">&rarr;</div>
+</button>
+
+<!-- Nav bar (dots) -->
+<div class="nav-bar" id="navBar"></div>
+
+<!-- Progress bar -->
+<div class="progress-bar">
+  <div class="progress-fill" id="progressFill"></div>
+</div>
+
+<!-- Slide counter -->
+<div class="slide-counter" id="slideCounter"><span class="current-num">01</span> / <span id="totalSlides">38</span></div>
+
+<!-- Keyboard hint -->
+<div class="keyboard-hint" id="keyboardHint">
+  <kbd>&larr;</kbd> <kbd>&rarr;</kbd> navegar &nbsp; <kbd>H</kbd> ajuda &nbsp; <kbd>F</kbd> fullscreen
+</div>
+
+<!-- Help overlay -->
+<div class="help-overlay" id="helpOverlay">
+  <h3>// Navega&ccedil;&atilde;o</h3>
+  <div class="help-key"><kbd>&rarr;</kbd> <span>Pr&oacute;ximo slide</span></div>
+  <div class="help-key"><kbd>&larr;</kbd> <span>Slide anterior</span></div>
+  <div class="help-key"><kbd>Space</kbd> <span>Pr&oacute;ximo slide</span></div>
+  <div class="help-key"><kbd>Home</kbd> <span>Primeiro slide</span></div>
+  <div class="help-key"><kbd>End</kbd> <span>&Uacute;ltimo slide</span></div>
+  <div class="help-key"><kbd>H</kbd> <span>Mostrar/ocultar ajuda</span></div>
+  <div class="help-key"><kbd>F</kbd> <span>Fullscreen</span></div>
+  <div class="help-key"><kbd>Esc</kbd> <span>Fechar</span></div>
+</div>
+
+<script>
+  // ======= MATRIX RAIN =======
+  (function() {
+    const canvas = document.getElementById('matrix-canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const chars = 'アカサタナハマヤラワ01{}[]<>/\\|=+-_*&^%$#@!;:'.split('');
+    const fontSize = 14;
+    const columns = Math.floor(canvas.width / fontSize);
+    const drops = Array(columns).fill(1);
+
+    function draw() {
+      ctx.fillStyle = 'rgba(26, 26, 46, 0.05)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = '#e8937a';
+      ctx.font = fontSize + 'px JetBrains Mono';
+
+      for (let i = 0; i < drops.length; i++) {
+        const text = chars[Math.floor(Math.random() * chars.length)];
+        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+        if (drops[i] * fontSize > canvas.height && Math.random() > 0.985) {
+          drops[i] = 0;
+        }
+        drops[i]++;
+      }
+    }
+    setInterval(draw, 60);
+
+    window.addEventListener('resize', () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
+  })();
+
+  // ======= SLIDE ENGINE =======
+  (function() {
+    const slides = document.querySelectorAll('.slide');
+    const totalSlides = slides.length;
+    let current = 0;
+    let isTransitioning = false;
+
+    const progressFill = document.getElementById('progressFill');
+    const helpOverlay = document.getElementById('helpOverlay');
+    const navBar = document.getElementById('navBar');
+    const navLeft = document.getElementById('navLeft');
+    const navRight = document.getElementById('navRight');
+    const keyboardHint = document.getElementById('keyboardHint');
+
+    // Slide titles for preview tooltips
+    const slideTitles = [
+      'Pare de Codar.',
+      'O Choque de Realidade',
+      'Mental Model',
+      'Idle Time',
+      'Productivity Gap',
+      'A Pergunta',
+      'Cap 01: A Jornada',
+      'Idade da Pedra',
+      'Primeiros Sinais',
+      'Copilot',
+      'Agilize Avança',
+      'Descoberta do Fogo',
+      'Barreira Cultural',
+      'O Mundo Hoje',
+      'O Gap: 10x',
+      'O que fez diferença?',
+      'Cap 02: A Virada',
+      'Executor vs Orquestrador',
+      'Você é o PM',
+      'Cap 03: Benchmark',
+      'Dados Anthropic',
+      'Cap 04: Cases Reais',
+      'Case: Clone do Jira',
+      'Case: Voz / Telegram',
+      'Case: Um Prompt',
+      'Case: Agilify',
+      'Case: Ernesto & Luiz',
+      'Cap 05: Deep Study',
+      'Anthropic Way',
+      'Cap 06: Como Começar',
+      'Recursos',
+      'Cap 07: O Futuro',
+      'Grupo de Pesquisa',
+      'O Motor Continua',
+      'Ponto de Inflexão',
+      'O Mundo Mudou',
+      'O que vai orquestrar?',
+      'Links & Recursos'
+    ];
+
+    // Chapter slides (for dot styling)
+    const chapterSlides = [0, 6, 16, 19, 21, 27, 29, 31];
+
+    // Build nav dots with preview thumbnails
+    function buildNavBar() {
+      for (let i = 0; i < totalSlides; i++) {
+        const dot = document.createElement('button');
+        dot.className = 'nav-dot' + (i === 0 ? ' active' : '') + (chapterSlides.includes(i) ? ' chapter-dot' : '');
+        dot.onclick = (e) => { e.stopPropagation(); goTo(i); };
+
+        // Create preview tooltip
+        const preview = document.createElement('div');
+        preview.className = 'slide-preview';
+
+        // Clone slide as scaled thumbnail
+        const thumb = document.createElement('div');
+        thumb.className = 'slide-preview-thumb';
+        const clone = slides[i].cloneNode(true);
+        clone.classList.remove('active', 'exit-up');
+        clone.style.position = 'absolute';
+        clone.style.top = '0';
+        clone.style.left = '0';
+        clone.style.width = '100vw';
+        clone.style.height = '100vh';
+        clone.style.opacity = '1';
+        clone.style.pointerEvents = 'none';
+        clone.style.transform = 'none';
+        clone.style.display = 'flex';
+        clone.style.background = getComputedStyle(slides[i]).background || 'var(--bg)';
+        // Remove animations from clone
+        clone.querySelectorAll('.fade-in').forEach(el => {
+          el.style.opacity = '1';
+          el.style.transform = 'none';
+          el.style.transition = 'none';
+          el.style.animation = 'none';
+        });
+        clone.querySelectorAll('.animate-glitch, .cursor-blink, .animate-pulse, .animate-float').forEach(el => {
+          el.style.animation = 'none';
+        });
+
+        const scaleX = 200 / window.innerWidth;
+        const scaleY = 128 / window.innerHeight;
+        const coverScale = Math.max(scaleX, scaleY);
+        thumb.style.width = window.innerWidth + 'px';
+        thumb.style.height = window.innerHeight + 'px';
+        thumb.style.transform = 'scale(' + coverScale + ')';
+        thumb.style.transformOrigin = 'top center';
+        thumb.style.position = 'absolute';
+        thumb.style.top = '0';
+        thumb.style.left = '50%';
+        thumb.style.marginLeft = -(window.innerWidth / 2) + 'px';
+        thumb.appendChild(clone);
+        preview.appendChild(thumb);
+
+        // Title label
+        const label = document.createElement('div');
+        label.className = 'slide-preview-label';
+        label.textContent = slideTitles[i] || 'Slide ' + (i + 1);
+        preview.appendChild(label);
+
+        dot.appendChild(preview);
+        navBar.appendChild(dot);
+      }
+    }
+    buildNavBar();
+
+    // Update total slides counter
+    document.getElementById('totalSlides').textContent = String(totalSlides).padStart(2, '0');
+
+    function updateUI() {
+      const progress = ((current + 1) / totalSlides) * 100;
+      progressFill.style.width = progress + '%';
+
+      // Update counter
+      document.querySelector('.slide-counter .current-num').textContent = String(current + 1).padStart(2, '0');
+
+      // Update nav dots
+      document.querySelectorAll('.nav-dot').forEach((d, i) => {
+        d.classList.toggle('active', i === current);
+      });
+
+      // Hide arrows at edges
+      navLeft.style.opacity = current === 0 ? '0.2' : '1';
+      navLeft.style.pointerEvents = current === 0 ? 'none' : 'auto';
+      navRight.style.opacity = current === totalSlides - 1 ? '0.2' : '1';
+      navRight.style.pointerEvents = current === totalSlides - 1 ? 'none' : 'auto';
+
+      // Fade keyboard hint after first slide
+      keyboardHint.style.opacity = current === 0 ? '1' : '0';
+      keyboardHint.style.pointerEvents = current === 0 ? 'auto' : 'none';
+    }
+
+    function goTo(index) {
+      if (index < 0 || index >= totalSlides || index === current || isTransitioning) return;
+      isTransitioning = true;
+
+      const goingForward = index > current;
+      const prev = slides[current];
+      const next = slides[index];
+
+      // Exit animation
+      prev.classList.remove('active');
+      prev.classList.add('exit-up');
+
+      // Prepare entry with directional offset
+      next.style.transition = 'none';
+      next.classList.remove('exit-up');
+      next.style.transform = goingForward ? 'translateY(30px)' : 'translateY(-30px)';
+      next.style.opacity = '0';
+      void next.offsetWidth; // reflow
+
+      // Reset fade-in elements on new slide
+      next.querySelectorAll('.fade-in').forEach(el => {
+        el.style.animation = 'none';
+        el.offsetHeight;
+        el.style.animation = '';
+      });
+
+      // Animate in
+      next.style.transition = '';
+      next.classList.add('active');
+      next.style.transform = '';
+      next.style.opacity = '';
+
+      current = index;
+      updateUI();
+
+      setTimeout(() => {
+        prev.classList.remove('exit-up');
+        prev.style.transform = '';
+        prev.style.opacity = '';
+        isTransitioning = false;
+      }, 600);
+
+      // Safety net: force active slide fully visible after transitions
+      setTimeout(() => {
+        const active = slides[current];
+        if (active && active.classList.contains('active')) {
+          active.style.opacity = '1';
+          active.querySelectorAll('.fade-in').forEach(el => {
+            el.style.opacity = '1';
+          });
+        }
+      }, 2500);
+    }
+
+    function next() { goTo(current + 1); }
+    function prev() { goTo(current - 1); }
+
+    // Nav arrow clicks
+    navLeft.addEventListener('click', (e) => { e.stopPropagation(); prev(); });
+    navRight.addEventListener('click', (e) => { e.stopPropagation(); next(); });
+
+    // Keyboard
+    document.addEventListener('keydown', (e) => {
+      if (helpOverlay.classList.contains('visible') && e.key !== 'h' && e.key !== 'H' && e.key !== 'Escape') {
+        helpOverlay.classList.remove('visible');
+        return;
+      }
+
+      switch(e.key) {
+        case 'ArrowRight':
+        case 'ArrowDown':
+        case ' ':
+        case 'PageDown':
+          e.preventDefault(); next(); break;
+        case 'ArrowLeft':
+        case 'ArrowUp':
+        case 'PageUp':
+          e.preventDefault(); prev(); break;
+        case 'Home':
+          e.preventDefault(); goTo(0); break;
+        case 'End':
+          e.preventDefault(); goTo(totalSlides - 1); break;
+        case 'h':
+        case 'H':
+          helpOverlay.classList.toggle('visible'); break;
+        case 'Escape':
+          helpOverlay.classList.remove('visible'); break;
+        case 'f':
+        case 'F':
+          if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen();
+          } else {
+            document.exitFullscreen();
+          }
+          break;
+      }
+    });
+
+    // Touch
+    let touchStartX = 0;
+    let touchStartY = 0;
+    document.addEventListener('touchstart', (e) => {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+    });
+    document.addEventListener('touchend', (e) => {
+      const dx = e.changedTouches[0].clientX - touchStartX;
+      const dy = e.changedTouches[0].clientY - touchStartY;
+      if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50) {
+        dx < 0 ? next() : prev();
+      }
+    });
+
+    // Click anywhere to dismiss help overlay (but NOT navigate slides)
+    document.addEventListener('click', (e) => {
+      if (helpOverlay.classList.contains('visible')) {
+        helpOverlay.classList.remove('visible');
+      }
+    });
+
+    updateUI();
+  })();
+
+  // Initialize Lucide icons
+  lucide.createIcons();
+
+  // Debug: verify slide 33 state
+  (function() {
+    const allSlides = document.querySelectorAll('.slide-container > .slide');
+    console.log('[DEBUG] Total slides in container:', allSlides.length);
+    const s33 = document.querySelector('.slide[data-slide="33"]');
+    if (s33) {
+      console.log('[DEBUG] Slide 33 found, children:', s33.children.length, 'innerHTML length:', s33.innerHTML.length);
+      console.log('[DEBUG] Slide 33 classes:', s33.className);
+      console.log('[DEBUG] Slide 33 computed opacity:', getComputedStyle(s33).opacity);
+      console.log('[DEBUG] Slide 33 parent:', s33.parentElement?.className);
+    } else {
+      console.error('[DEBUG] Slide 33 NOT FOUND in DOM!');
+    }
+  })();
+
+  // ======= TYPEWRITER EFFECT =======
+  (function() {
+    const words = ['Orquestrar.', 'Delegar.', 'Escalar.', 'Multiplicar.', 'Pensar.', 'Liderar.', 'Orquestrar.'];
+    const el = document.getElementById('typewriterWord');
+    let wordIndex = 0;
+    let charIndex = 0;
+    let isDeleting = false;
+    let pauseEnd = 0;
+
+    function tick() {
+      const now = Date.now();
+      if (now < pauseEnd) { requestAnimationFrame(tick); return; }
+
+      const currentWord = words[wordIndex];
+
+      if (!isDeleting) {
+        // Typing
+        charIndex++;
+        el.textContent = currentWord.substring(0, charIndex);
+        if (charIndex === currentWord.length) {
+          // Pause at full word
+          if (wordIndex === words.length - 1) {
+            // Last word — stop looping, keep it displayed
+            return;
+          }
+          isDeleting = true;
+          pauseEnd = now + 2000;
+        } else {
+          pauseEnd = now + 80 + Math.random() * 40;
+        }
+      } else {
+        // Deleting
+        charIndex--;
+        el.textContent = currentWord.substring(0, charIndex);
+        if (charIndex === 0) {
+          isDeleting = false;
+          wordIndex++;
+          pauseEnd = now + 300;
+        } else {
+          pauseEnd = now + 40 + Math.random() * 20;
+        }
+      }
+      requestAnimationFrame(tick);
+    }
+
+    // Start after a short delay
+    setTimeout(() => { pauseEnd = Date.now(); tick(); }, 1200);
+  })();
+</script>
+
+<!-- ======= PASSWORD GATE ======= -->
+<div id="passwordGate" style="
+  position: fixed; inset: 0; z-index: 99999;
+  background: #1a1a2e;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'JetBrains Mono', monospace;
+">
+  <div style="text-align: center; max-width: 400px; padding: 2rem;">
+    <div style="font-size: 2.5rem; margin-bottom: 0.5rem; color: #f0a08a;">&#9608;</div>
+    <h2 style="color: #f2f0ea; font-size: 1.4rem; font-weight: 600; margin-bottom: 0.3rem;">Acesso restrito</h2>
+    <p style="color: #a09c96; font-size: 0.85rem; margin-bottom: 1.5rem;">Apresenta&ccedil;&atilde;o interna Agilize</p>
+    <form id="passwordForm" autocomplete="off" style="display: flex; flex-direction: column; gap: 0.8rem;">
+      <input id="passwordInput" type="password" placeholder="Senha" autofocus
+        style="
+          background: #1e1e32; border: 1px solid #5a5a7a; color: #f2f0ea;
+          padding: 0.8rem 1rem; font-family: inherit; font-size: 1rem;
+          text-align: center; outline: none;
+        "
+      >
+      <button type="submit" style="
+        background: #f0a08a; color: #1a1a2e; border: none;
+        padding: 0.8rem; font-family: inherit; font-size: 0.95rem;
+        font-weight: 700; cursor: pointer; letter-spacing: 0.05em;
+      ">ENTRAR</button>
+      <p id="passwordError" style="color: #ff6b6b; font-size: 0.8rem; display: none;">Senha incorreta</p>
+    </form>
+  </div>
+</div>
+<script>
+(function() {
+  var gate = document.getElementById('passwordGate');
+  var form = document.getElementById('passwordForm');
+  var input = document.getElementById('passwordInput');
+  var error = document.getElementById('passwordError');
+
+  // Check session
+  if (sessionStorage.getItem('presentation_auth') === 'ok') {
+    gate.style.display = 'none';
+    return;
+  }
+
+  // Local file: skip gate
+  if (location.protocol === 'file:') {
+    gate.style.display = 'none';
+    return;
+  }
+
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    error.style.display = 'none';
+    fetch('/api/verify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: input.value })
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      if (data.ok) {
+        sessionStorage.setItem('presentation_auth', 'ok');
+        gate.style.display = 'none';
+      } else {
+        error.style.display = 'block';
+        input.value = '';
+        input.focus();
+      }
+    })
+    .catch(function() {
+      error.textContent = 'Erro de conex\u00e3o';
+      error.style.display = 'block';
+    });
+  });
+})();
+</script>
+
+</body>
+</html>
