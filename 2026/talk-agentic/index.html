@@ -177,6 +177,85 @@
     .animate-flicker { animation: screen-flicker 5s ease-in-out infinite; }
     .animate-pulse { animation: pulse-glow 2s ease-in-out infinite; }
 
+    /* ======= ICON ANIMATIONS ======= */
+    @keyframes heartbeat {
+      0%, 100% { transform: scale(1); }
+      10% { transform: scale(1.15); }
+      20% { transform: scale(1); }
+      30% { transform: scale(1.1); }
+      40% { transform: scale(1); }
+    }
+    @keyframes flame-flicker {
+      0%, 100% { transform: scaleY(1) rotate(0deg); filter: brightness(1); }
+      25% { transform: scaleY(1.08) rotate(-2deg); filter: brightness(1.2); }
+      50% { transform: scaleY(0.95) rotate(1deg); filter: brightness(0.9); }
+      75% { transform: scaleY(1.05) rotate(-1deg); filter: brightness(1.15); }
+    }
+    @keyframes crown-shine {
+      0%, 100% { filter: drop-shadow(0 0 4px rgba(240,160,138,0.2)); }
+      50% { filter: drop-shadow(0 0 16px rgba(240,160,138,0.6)) drop-shadow(0 0 30px rgba(240,160,138,0.3)); }
+    }
+    @keyframes rock-crack {
+      0%, 90%, 100% { transform: translate(0,0) rotate(0); }
+      92% { transform: translate(-2px, 1px) rotate(-0.5deg); }
+      94% { transform: translate(2px, -1px) rotate(0.5deg); }
+      96% { transform: translate(-1px, 0) rotate(-0.3deg); }
+      98% { transform: translate(1px, 1px) rotate(0.3deg); }
+    }
+    @keyframes rocket-hover {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
+    }
+    @keyframes icon-spin-slow {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(-360deg); }
+    }
+    @keyframes telescope-zoom {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.08); }
+    }
+    @keyframes bot-blink {
+      0%, 100% { opacity: 1; }
+      48% { opacity: 1; }
+      50% { opacity: 0.4; }
+      52% { opacity: 1; }
+      78% { opacity: 1; }
+      80% { opacity: 0.4; }
+      82% { opacity: 1; }
+    }
+    @keyframes mic-pulse {
+      0%, 100% { transform: scale(1); filter: drop-shadow(0 0 0 transparent); }
+      50% { transform: scale(1.05); filter: drop-shadow(0 0 10px rgba(100,149,237,0.4)); }
+    }
+    @keyframes chart-grow {
+      0%, 100% { transform: scaleY(1); }
+      50% { transform: scaleY(1.08); }
+    }
+    @keyframes terminal-cursor {
+      0%, 100% { filter: brightness(1); }
+      40% { filter: brightness(1); }
+      50% { filter: brightness(1.5) drop-shadow(0 0 8px rgba(168,130,255,0.5)); }
+      60% { filter: brightness(1); }
+    }
+    @keyframes workflow-spin {
+      0%, 100% { transform: rotate(0deg); }
+      25% { transform: rotate(5deg); }
+      75% { transform: rotate(-5deg); }
+    }
+    .icon-heartbeat { animation: heartbeat 1.5s ease-in-out infinite; display: inline-block; }
+    .icon-flame { animation: flame-flicker 0.8s ease-in-out infinite; display: inline-block; transform-origin: bottom center; }
+    .icon-crown { animation: crown-shine 3s ease-in-out infinite; display: inline-block; }
+    .icon-rock { animation: rock-crack 4s ease-in-out infinite; display: inline-block; }
+    .icon-rocket { animation: rocket-hover 2s ease-in-out infinite; display: inline-block; }
+    .icon-spin { animation: icon-spin-slow 8s linear infinite; display: inline-block; }
+    .icon-telescope { animation: telescope-zoom 3s ease-in-out infinite; display: inline-block; }
+    .icon-bot { animation: bot-blink 4s ease-in-out infinite; display: inline-block; }
+    .icon-mic { animation: mic-pulse 2s ease-in-out infinite; display: inline-block; }
+    .icon-chart { animation: chart-grow 2.5s ease-in-out infinite; display: inline-block; transform-origin: bottom center; }
+    .icon-terminal { animation: terminal-cursor 2s ease-in-out infinite; display: inline-block; }
+    .icon-workflow { animation: workflow-spin 3s ease-in-out infinite; display: inline-block; }
+    .icon-float { animation: float 3s ease-in-out infinite; display: inline-block; }
+
     /* Delayed fade-in for staggered elements */
     .fade-in {
       opacity: 0;
@@ -797,7 +876,7 @@
   <!-- SLIDE 6: CHAPTER - A JORNADA -->
   <!-- ======================== -->
   <div class="slide chapter-slide" data-slide="6">
-    <div class="fade-in" style="margin-bottom: 1.2rem;"><i data-lucide="map" style="width: 48px; height: 48px; color: var(--accent);"></i></div>
+    <div class="fade-in" style="margin-bottom: 1.2rem;"><i data-lucide="map" class="icon-float" style="width: 48px; height: 48px; color: var(--accent);"></i></div>
     <div class="chapter-num fade-in delay-1">Cap&iacute;tulo 01</div>
     <h1 class="fade-in delay-2">A Jornada</h1>
     <p class="fade-in delay-2" style="color: var(--text-secondary); font-size: 1.3rem;">Da era das cavernas ao fogo</p>
@@ -807,7 +886,7 @@
   <!-- SLIDE 7: STONE AGE -->
   <!-- ======================== -->
   <div class="slide" data-slide="7">
-    <div class="fade-in" style="margin-bottom: 1rem;"><i data-lucide="mountain" style="width: 52px; height: 52px; color: var(--accent);"></i></div>
+    <div class="fade-in" style="margin-bottom: 1rem;"><i data-lucide="mountain" class="icon-rock" style="width: 52px; height: 52px; color: var(--accent);"></i></div>
     <h2 class="fade-in delay-1">A <span class="accent">Idade da Pedra</span><br>do Desenvolvimento</h2>
     <p class="fade-in delay-1 mt-3">
       C&oacute;digo bruto. Linha por linha. Caractere por caractere.<br>
@@ -884,7 +963,7 @@
   <!-- SLIDE 11: DISCOVERY OF FIRE -->
   <!-- ======================== -->
   <div class="slide" data-slide="11">
-    <div class="fade-in" style="margin-bottom: 1rem;"><i data-lucide="flame" style="width: 52px; height: 52px; color: var(--accent);"></i></div>
+    <div class="fade-in" style="margin-bottom: 1rem;"><i data-lucide="flame" class="icon-flame" style="width: 52px; height: 52px; color: var(--accent);"></i></div>
     <h2 class="fade-in delay-1">A <span class="accent">Descoberta do Fogo</span></h2>
     <p class="fade-in delay-1 mt-3">
       Quando a IA parou de ser assistente<br>
@@ -967,7 +1046,7 @@
   <!-- SLIDE 16: CHAPTER - A VIRADA -->
   <!-- ======================== -->
   <div class="slide chapter-slide" data-slide="16">
-    <div class="fade-in" style="margin-bottom: 1.2rem;"><i data-lucide="rotate-ccw" style="width: 48px; height: 48px; color: var(--accent);"></i></div>
+    <div class="fade-in" style="margin-bottom: 1.2rem;"><i data-lucide="rotate-ccw" class="icon-spin" style="width: 48px; height: 48px; color: var(--accent);"></i></div>
     <div class="chapter-num fade-in delay-1">Cap&iacute;tulo 02</div>
     <h1 class="fade-in delay-2">A Virada</h1>
     <p class="fade-in delay-2" style="color: var(--text-secondary); font-size: 1.3rem;">De executor para orquestrador</p>
@@ -999,8 +1078,8 @@
   <!-- ======================== -->
   <div class="slide" data-slide="18">
     <div class="fade-in" style="margin-bottom: 0.8rem; display: flex; gap: 1.5rem; justify-content: center;">
-      <i data-lucide="crown" style="width: 52px; height: 52px; color: var(--accent);"></i>
-      <i data-lucide="bot" style="width: 52px; height: 52px; color: var(--blue);"></i>
+      <i data-lucide="crown" class="icon-crown" style="width: 52px; height: 52px; color: var(--accent);"></i>
+      <i data-lucide="bot" class="icon-bot" style="width: 52px; height: 52px; color: var(--blue);"></i>
     </div>
     <h2 class="fade-in delay-1">Voc&ecirc; &eacute; o <span class="accent">PM.</span></h2>
     <h2 class="fade-in delay-2">Os agentes s&atilde;o seus <span class="accent">engenheiros.</span></h2>
@@ -1015,7 +1094,7 @@
   <!-- SLIDE 19: CHAPTER - BENCHMARK -->
   <!-- ======================== -->
   <div class="slide chapter-slide" data-slide="19">
-    <div class="fade-in" style="margin-bottom: 1.2rem;"><i data-lucide="bar-chart-3" style="width: 48px; height: 48px; color: var(--accent);"></i></div>
+    <div class="fade-in" style="margin-bottom: 1.2rem;"><i data-lucide="bar-chart-3" class="icon-chart" style="width: 48px; height: 48px; color: var(--accent);"></i></div>
     <div class="chapter-num fade-in delay-1">Cap&iacute;tulo 03</div>
     <h1 class="fade-in delay-2">Benchmark</h1>
     <p class="fade-in delay-2" style="color: var(--text-secondary); font-size: 1.3rem;">O que o mercado est&aacute; dizendo</p>
@@ -1025,7 +1104,7 @@
   <!-- SLIDE 20: MARKET DATA -->
   <!-- ======================== -->
   <div class="slide" data-slide="20">
-    <div class="fade-in" style="margin-bottom: 0.8rem;"><i data-lucide="trending-up" style="width: 44px; height: 44px; color: var(--accent);"></i></div>
+    <div class="fade-in" style="margin-bottom: 0.8rem;"><i data-lucide="trending-up" class="icon-rocket" style="width: 44px; height: 44px; color: var(--accent);"></i></div>
     <h3 class="fade-in delay-1 mb-3" style="color: var(--text-secondary);">Dados da Anthropic &mdash; 2026</h3>
     <div class="stats-grid fade-in delay-1">
       <div class="stat-card">
@@ -1060,7 +1139,7 @@
   <!-- SLIDE 21: CHAPTER - CASES -->
   <!-- ======================== -->
   <div class="slide chapter-slide" data-slide="21">
-    <div class="fade-in" style="margin-bottom: 1.2rem;"><i data-lucide="rocket" style="width: 48px; height: 48px; color: var(--accent);"></i></div>
+    <div class="fade-in" style="margin-bottom: 1.2rem;"><i data-lucide="rocket" class="icon-rocket" style="width: 48px; height: 48px; color: var(--accent);"></i></div>
     <div class="chapter-num fade-in delay-1">Cap&iacute;tulo 04</div>
     <h1 class="fade-in delay-2">Cases Reais</h1>
     <p class="fade-in delay-2" style="color: var(--text-secondary); font-size: 1.3rem;">O que j&aacute; fizemos na Agilize</p>
@@ -1072,7 +1151,7 @@
   <div class="slide" data-slide="22">
     <div class="case-card fade-in">
       <span class="case-tag tag-red">Case 01</span>
-      <div style="margin-bottom: 0.8rem;"><i data-lucide="cpu" style="width: 44px; height: 44px; color: var(--red);"></i></div>
+      <div style="margin-bottom: 0.8rem;"><i data-lucide="cpu" class="icon-bot" style="width: 44px; height: 44px; color: var(--red);"></i></div>
       <h2>Demo ao Vivo</h2>
       <p>
         Orquestra&ccedil;&atilde;o de agentes aplicada na pr&aacute;tica dentro da Agilize.
@@ -1089,7 +1168,7 @@
   <div class="slide" data-slide="23">
     <div class="case-card fade-in">
       <span class="case-tag tag-purple">Case 02</span>
-      <div style="margin-bottom: 0.8rem;"><i data-lucide="terminal" style="width: 44px; height: 44px; color: var(--purple);"></i></div>
+      <div style="margin-bottom: 0.8rem;"><i data-lucide="terminal" class="icon-terminal" style="width: 44px; height: 44px; color: var(--purple);"></i></div>
       <h2>Demo ao Vivo</h2>
       <p>
         Mais um exemplo concreto de como a orquestra&ccedil;&atilde;o de agentes est&aacute; transformando o que &eacute; poss&iacute;vel fazer na Agilize.
@@ -1106,7 +1185,7 @@
   <div class="slide" data-slide="24">
     <div class="case-card fade-in">
       <span class="case-tag tag-green">Case 03</span>
-      <div style="margin-bottom: 0.8rem;"><i data-lucide="layout-dashboard" style="width: 44px; height: 44px; color: var(--green);"></i></div>
+      <div style="margin-bottom: 0.8rem;"><i data-lucide="layout-dashboard" class="icon-crown" style="width: 44px; height: 44px; color: var(--green);"></i></div>
       <h2>O Clone do Jira</h2>
       <p>
         Um sistema completo que vai substituir o Jira na empresa.
@@ -1127,7 +1206,7 @@
   <div class="slide" data-slide="25">
     <div class="case-card fade-in">
       <span class="case-tag tag-blue">Case 04</span>
-      <div style="margin-bottom: 0.8rem;"><i data-lucide="mic" style="width: 44px; height: 44px; color: var(--blue);"></i></div>
+      <div style="margin-bottom: 0.8rem;"><i data-lucide="mic" class="icon-mic" style="width: 44px; height: 44px; color: var(--blue);"></i></div>
       <h2>Programa&ccedil;&atilde;o por Voz</h2>
       <p>
         Comandos falados pelo Telegram viram tarefas executadas por agentes.<br>
@@ -1148,7 +1227,7 @@
   <div class="slide" data-slide="26">
     <div class="case-card fade-in">
       <span class="case-tag tag-purple">Case 05</span>
-      <div style="margin-bottom: 0.8rem;"><i data-lucide="terminal" style="width: 44px; height: 44px; color: var(--purple);"></i></div>
+      <div style="margin-bottom: 0.8rem;"><i data-lucide="terminal" class="icon-terminal" style="width: 44px; height: 44px; color: var(--purple);"></i></div>
       <h2>Um Card. Um Prompt.</h2>
       <p>
         Um card do Jira resolvido integralmente com <span class="accent">um &uacute;nico prompt.</span>
@@ -1168,7 +1247,7 @@
   <div class="slide" data-slide="27">
     <div class="case-card fade-in">
       <span class="case-tag tag-yellow">Case 06</span>
-      <div style="margin-bottom: 0.8rem;"><i data-lucide="workflow" style="width: 44px; height: 44px; color: var(--yellow);"></i></div>
+      <div style="margin-bottom: 0.8rem;"><i data-lucide="workflow" class="icon-workflow" style="width: 44px; height: 44px; color: var(--yellow);"></i></div>
       <h2>Agilify: O Clone do Pipefy</h2>
       <p>
         Constru&iacute;do <span class="accent">sozinho</span> por um CPO. N&atilde;o &eacute; dev de forma&ccedil;&atilde;o. N&atilde;o tem time dedicado.
@@ -1190,7 +1269,7 @@
   <!-- SLIDE 28: CHAPTER - DEEP STUDY -->
   <!-- ======================== -->
   <div class="slide chapter-slide" data-slide="28">
-    <div class="fade-in" style="margin-bottom: 1.2rem;"><i data-lucide="book-open" style="width: 48px; height: 48px; color: var(--accent);"></i></div>
+    <div class="fade-in" style="margin-bottom: 1.2rem;"><i data-lucide="book-open" class="icon-float" style="width: 48px; height: 48px; color: var(--accent);"></i></div>
     <div class="chapter-num fade-in delay-1">Cap&iacute;tulo 05</div>
     <h1 class="fade-in delay-2">Deep Study</h1>
     <p class="fade-in delay-2" style="color: var(--text-secondary); font-size: 1.3rem;">Como a Anthropic constr&oacute;i software</p>
@@ -1200,7 +1279,7 @@
   <!-- SLIDE 29: ANTHROPIC WAY -->
   <!-- ======================== -->
   <div class="slide" data-slide="29">
-    <div class="fade-in" style="margin-bottom: 0.8rem;"><i data-lucide="building" style="width: 44px; height: 44px; color: var(--accent);"></i></div>
+    <div class="fade-in" style="margin-bottom: 0.8rem;"><i data-lucide="building" class="icon-float" style="width: 44px; height: 44px; color: var(--accent);"></i></div>
     <h3 class="fade-in delay-1" style="color: var(--text-secondary);">Dados reais do time da Anthropic</h3>
     <div class="two-col fade-in delay-1 mt-4">
       <div style="background: var(--surface); border: 1px solid var(--border); padding: 1.5rem;">
@@ -1225,7 +1304,7 @@
   <!-- SLIDE 30: CHAPTER - COMO COMECAR -->
   <!-- ======================== -->
   <div class="slide chapter-slide" data-slide="30">
-    <div class="fade-in" style="margin-bottom: 1.2rem;"><i data-lucide="play-circle" style="width: 48px; height: 48px; color: var(--accent);"></i></div>
+    <div class="fade-in" style="margin-bottom: 1.2rem;"><i data-lucide="play-circle" class="icon-crown" style="width: 48px; height: 48px; color: var(--accent);"></i></div>
     <div class="chapter-num fade-in delay-1">Cap&iacute;tulo 06</div>
     <h1 class="fade-in delay-2">Como Come&ccedil;ar</h1>
     <p class="fade-in delay-2" style="color: var(--text-secondary); font-size: 1.3rem;">Recursos para a audi&ecirc;ncia</p>
@@ -1258,7 +1337,7 @@
   <!-- SLIDE 32: CHAPTER - O FUTURO -->
   <!-- ======================== -->
   <div class="slide chapter-slide" data-slide="32">
-    <div class="fade-in" style="margin-bottom: 1.2rem;"><i data-lucide="telescope" style="width: 48px; height: 48px; color: var(--accent);"></i></div>
+    <div class="fade-in" style="margin-bottom: 1.2rem;"><i data-lucide="telescope" class="icon-telescope" style="width: 48px; height: 48px; color: var(--accent);"></i></div>
     <div class="chapter-num fade-in delay-1">Cap&iacute;tulo 07</div>
     <h1 class="fade-in delay-2">O Futuro</h1>
     <p class="fade-in delay-2" style="color: var(--text-secondary); font-size: 1.3rem;">Grupo de pesquisa cient&iacute;fica</p>
@@ -1288,7 +1367,7 @@
   <!-- ======================== -->
   <div class="slide" data-slide="34">
     <div class="fade-in" style="margin-bottom: 1.2rem;">
-      <i data-lucide="heart-pulse" style="width: 48px; height: 48px; color: var(--accent);"></i>
+      <i data-lucide="heart-pulse" class="icon-heartbeat" style="width: 48px; height: 48px; color: var(--accent);"></i>
     </div>
     <h2 class="fade-in delay-1">O Cora&ccedil;&atilde;o <span class="accent">Continua Batendo</span></h2>
     <p class="fade-in delay-2 mt-3" style="max-width: 700px;">Manter a Agilize funcionando e evoluindo com excel&ecirc;ncia enquanto a lideran&ccedil;a t&eacute;cnica mergulha na pesquisa.</p>
