@@ -1,6 +1,12 @@
 {
   "buildCommand": null,
   "outputDirectory": ".",
+  "rewrites": [
+    { "source": "/comece-a-orquestrar", "destination": "/2026/talk-agentic/index.html" },
+    { "source": "/comece-a-orquestrar/assets/:path*", "destination": "/2026/talk-agentic/assets/:path*" },
+    { "source": "/team-topologies", "destination": "/2026/team-topologies/index.html" },
+    { "source": "/team-topologies/:path*", "destination": "/2026/team-topologies/:path*" }
+  ],
   "headers": [
     {
       "source": "/(.*)",
