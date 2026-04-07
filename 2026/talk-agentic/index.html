@@ -1914,25 +1914,6 @@
         magicReady = true;
       }
 
-      function triggerMagicTypewriter() {
-        if (magicTriggered || !magicReady) return;
-        magicTriggered = true;
-        var line = document.getElementById('magic-line');
-        if (line) line.style.visibility = 'visible';
-        magicSpans.forEach(function(s, idx) {
-          setTimeout(function() {
-            s.style.opacity = '0.75';
-            s.style.filter = 'brightness(1.8) drop-shadow(0 0 12px ' + s.dataset.color + ')';
-            setTimeout(function() {
-              s.style.filter = 'brightness(0.85)';
-              if (idx === magicSpans.length - 1) {
-                setTimeout(function() { startGlowLoop(magicSpans); }, 200);
-              }
-            }, 150);
-          }, idx * 40);
-        });
-      }
-
       function startGlowLoop(spans) {
         spans.forEach(function(s) {
           (function(s) {
@@ -1949,7 +1930,9 @@
           })(s);
         });
       }
-      document.addEventListener('DOMContentLoaded', prepareMagicText);
+      document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(prepareMagicText, 500);
+      });
     })();
 
     function goTo(index) {
@@ -2012,7 +1995,24 @@
     }
 
     function next() {
-      if (current === 29 && !magicTriggered) { triggerMagicTypewriter(); return; }
+      if (current === 29 && !magicTriggered) {
+        magicTriggered = true;
+        var line = document.getElementById('magic-line');
+        if (line) line.style.visibility = 'visible';
+        if (magicSpans.length) {
+          magicSpans.forEach(function(s, idx) {
+            setTimeout(function() {
+              s.style.opacity = '0.75';
+              s.style.filter = 'brightness(1.8) drop-shadow(0 0 12px ' + s.dataset.color + ')';
+              setTimeout(function() {
+                s.style.filter = 'brightness(0.85)';
+                if (idx === magicSpans.length - 1) setTimeout(function() { startGlowLoop(magicSpans); }, 200);
+              }, 150);
+            }, idx * 40);
+          });
+        }
+        return;
+      }
       goTo(current + 1);
     }
     function prev() { goTo(current - 1); }
@@ -2025,13 +2025,6 @@
     document.addEventListener('keydown', (e) => {
       if (helpOverlay.classList.contains('visible') && e.key !== 'h' && e.key !== 'H' && e.key !== 'Escape') {
         helpOverlay.classList.remove('visible');
-        return;
-      }
-
-      // Intercept forward navigation on slide 29 to trigger magic text first
-      if (current === 29 && !magicTriggered && (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ' || e.key === 'PageDown')) {
-        e.preventDefault();
-        triggerMagicTypewriter();
         return;
       }
 
