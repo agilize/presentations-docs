@@ -3,7 +3,6 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="robots" content="noindex, nofollow">
   <title>Pare de Codar. Comece a Orquestrar.</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -189,10 +188,6 @@
 
     /* Only animate when slide is active */
     .slide:not(.active) .fade-in { animation: none; opacity: 0; }
-
-    /* Force slide 33 content visible when active */
-    .slide[data-slide="33"].active { opacity: 1 !important; }
-    .slide[data-slide="33"].active .fade-in { opacity: 1 !important; }
 
     /* ======= SPECIAL SLIDE LAYOUTS ======= */
 
@@ -1612,17 +1607,6 @@
         prev.style.opacity = '';
         isTransitioning = false;
       }, 600);
-
-      // Safety net: force active slide fully visible after transitions
-      setTimeout(() => {
-        const active = slides[current];
-        if (active && active.classList.contains('active')) {
-          active.style.opacity = '1';
-          active.querySelectorAll('.fade-in').forEach(el => {
-            el.style.opacity = '1';
-          });
-        }
-      }, 2500);
     }
 
     function next() { goTo(current + 1); }
@@ -1697,21 +1681,6 @@
   // Initialize Lucide icons
   lucide.createIcons();
 
-  // Debug: verify slide 33 state
-  (function() {
-    const allSlides = document.querySelectorAll('.slide-container > .slide');
-    console.log('[DEBUG] Total slides in container:', allSlides.length);
-    const s33 = document.querySelector('.slide[data-slide="33"]');
-    if (s33) {
-      console.log('[DEBUG] Slide 33 found, children:', s33.children.length, 'innerHTML length:', s33.innerHTML.length);
-      console.log('[DEBUG] Slide 33 classes:', s33.className);
-      console.log('[DEBUG] Slide 33 computed opacity:', getComputedStyle(s33).opacity);
-      console.log('[DEBUG] Slide 33 parent:', s33.parentElement?.className);
-    } else {
-      console.error('[DEBUG] Slide 33 NOT FOUND in DOM!');
-    }
-  })();
-
   // ======= TYPEWRITER EFFECT =======
   (function() {
     const words = ['Orquestrar.', 'Delegar.', 'Escalar.', 'Multiplicar.', 'Pensar.', 'Liderar.', 'Orquestrar.'];
@@ -1760,80 +1729,6 @@
     // Start after a short delay
     setTimeout(() => { pauseEnd = Date.now(); tick(); }, 1200);
   })();
-</script>
-
-<!-- ======= PASSWORD GATE ======= -->
-<div id="passwordGate" style="
-  position: fixed; inset: 0; z-index: 99999;
-  background: #1a1a2e;
-  display: flex; align-items: center; justify-content: center;
-  font-family: 'JetBrains Mono', monospace;
-">
-  <div style="text-align: center; max-width: 400px; padding: 2rem;">
-    <div style="font-size: 2.5rem; margin-bottom: 0.5rem; color: #f0a08a;">&#9608;</div>
-    <h2 style="color: #f2f0ea; font-size: 1.4rem; font-weight: 600; margin-bottom: 0.3rem;">Acesso restrito</h2>
-    <p style="color: #a09c96; font-size: 0.85rem; margin-bottom: 1.5rem;">Apresenta&ccedil;&atilde;o interna Agilize</p>
-    <form id="passwordForm" autocomplete="off" style="display: flex; flex-direction: column; gap: 0.8rem;">
-      <input id="passwordInput" type="password" placeholder="Senha" autofocus
-        style="
-          background: #1e1e32; border: 1px solid #5a5a7a; color: #f2f0ea;
-          padding: 0.8rem 1rem; font-family: inherit; font-size: 1rem;
-          text-align: center; outline: none;
-        "
-      >
-      <button type="submit" style="
-        background: #f0a08a; color: #1a1a2e; border: none;
-        padding: 0.8rem; font-family: inherit; font-size: 0.95rem;
-        font-weight: 700; cursor: pointer; letter-spacing: 0.05em;
-      ">ENTRAR</button>
-      <p id="passwordError" style="color: #ff6b6b; font-size: 0.8rem; display: none;">Senha incorreta</p>
-    </form>
-  </div>
-</div>
-<script>
-(function() {
-  var gate = document.getElementById('passwordGate');
-  var form = document.getElementById('passwordForm');
-  var input = document.getElementById('passwordInput');
-  var error = document.getElementById('passwordError');
-
-  // Check session
-  if (sessionStorage.getItem('presentation_auth') === 'ok') {
-    gate.style.display = 'none';
-    return;
-  }
-
-  // Local file: skip gate
-  if (location.protocol === 'file:') {
-    gate.style.display = 'none';
-    return;
-  }
-
-  form.addEventListener('submit', function(e) {
-    e.preventDefault();
-    error.style.display = 'none';
-    fetch('/api/verify', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ password: input.value })
-    })
-    .then(function(r) { return r.json(); })
-    .then(function(data) {
-      if (data.ok) {
-        sessionStorage.setItem('presentation_auth', 'ok');
-        gate.style.display = 'none';
-      } else {
-        error.style.display = 'block';
-        input.value = '';
-        input.focus();
-      }
-    })
-    .catch(function() {
-      error.textContent = 'Erro de conex\u00e3o';
-      error.style.display = 'block';
-    });
-  });
-})();
 </script>
 
 </body>
