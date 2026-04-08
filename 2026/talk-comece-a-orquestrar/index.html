@@ -920,9 +920,80 @@
     body.zoom-mode {
       cursor: none;
     }
+    /* ======= PASSWORD GATE ======= */
+    #passwordGate {
+      position: fixed; inset: 0;
+      z-index: 100000;
+      background: var(--bg);
+      display: flex; align-items: center; justify-content: center;
+      flex-direction: column; gap: 1rem;
+      font-family: var(--font);
+    }
+    #passwordGate.hidden { display: none; }
+    #passwordGate label {
+      color: var(--text-muted); font-size: 0.85rem;
+      letter-spacing: 0.15em; text-transform: uppercase;
+    }
+    #passwordGate input {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 1.1rem;
+      padding: 0.6rem 1.2rem;
+      border-radius: 6px;
+      text-align: center;
+      outline: none;
+      width: 260px;
+    }
+    #passwordGate input:focus { border-color: var(--accent-dim); }
+    #passwordGate .pw-error {
+      color: var(--red); font-size: 0.8rem;
+      min-height: 1.2em;
+    }
   </style>
 </head>
 <body>
+
+<!-- Password Gate -->
+<div id="passwordGate">
+  <label>senha</label>
+  <input type="password" id="pwInput" placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;" autofocus>
+  <div class="pw-error" id="pwError"></div>
+</div>
+<script>
+(function() {
+  const gate = document.getElementById('passwordGate');
+  const input = document.getElementById('pwInput');
+  const error = document.getElementById('pwError');
+
+  if (sessionStorage.getItem('talk-auth') === '1') {
+    gate.classList.add('hidden');
+  }
+
+  input.addEventListener('keydown', async (e) => {
+    if (e.key !== 'Enter') return;
+    error.textContent = '';
+    try {
+      const res = await fetch('/api/verify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: input.value })
+      });
+      const data = await res.json();
+      if (data.ok) {
+        sessionStorage.setItem('talk-auth', '1');
+        gate.classList.add('hidden');
+      } else {
+        error.textContent = 'senha incorreta';
+        input.value = '';
+      }
+    } catch {
+      error.textContent = 'erro de conexao';
+    }
+  });
+})();
+</script>
 
 <!-- CRT effects -->
 <div class="crt-interference"></div>
