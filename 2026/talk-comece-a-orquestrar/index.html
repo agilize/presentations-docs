@@ -874,11 +874,11 @@
     }
     #zoomLens {
       position: fixed;
-      width: 300px;
-      height: 300px;
+      width: 220px;
+      height: 220px;
       border-radius: 50%;
-      border: 2px solid rgba(240, 160, 138, 0.5);
-      box-shadow: 0 0 20px 4px rgba(240, 160, 138, 0.15), 0 0 60px 8px rgba(0,0,0,0.4);
+      border: 1px solid rgba(240, 160, 138, 0.2);
+      box-shadow: 0 0 12px 2px rgba(0,0,0,0.3);
       pointer-events: none;
       z-index: 99996;
       display: none;
@@ -904,7 +904,7 @@
     #zoomLens .zoom-crosshair::after {
       content: '';
       position: absolute;
-      background: rgba(240, 160, 138, 0.3);
+      background: rgba(240, 160, 138, 0.15);
     }
     #zoomLens .zoom-crosshair::before {
       top: 50%; left: 0; right: 0; height: 1px;
@@ -1711,7 +1711,7 @@
 
 <!-- Keyboard hint -->
 <div class="keyboard-hint" id="keyboardHint">
-  <kbd>&larr;</kbd> <kbd>&rarr;</kbd> navegar &nbsp; <kbd>H</kbd> ajuda &nbsp; <kbd>F</kbd> fullscreen &nbsp; <kbd>L</kbd> laser &nbsp; <kbd>S</kbd> spotlight
+  <kbd>&larr;</kbd> <kbd>&rarr;</kbd> nav &nbsp; <kbd>H</kbd> help &nbsp; <kbd>F</kbd> full &nbsp; <kbd>L</kbd> laser &nbsp; <kbd>S</kbd> spot &nbsp; <kbd>Z</kbd> zoom
 </div>
 
 <!-- Help overlay -->
@@ -1726,6 +1726,7 @@
   <div class="help-key"><kbd>F</kbd> <span>Fullscreen</span></div>
   <div class="help-key"><kbd>L</kbd> <span>Laser pointer com rastro</span></div>
   <div class="help-key"><kbd>S</kbd> <span>Spotlight / holofote focal</span></div>
+  <div class="help-key"><kbd>Z</kbd> <span>Zoom / lente de aumento</span></div>
   <div class="help-key"><kbd>Esc</kbd> <span>Fechar</span></div>
 </div>
 
@@ -2208,8 +2209,8 @@
   const sCtx = spotCanvas.getContext('2d');
 
   const zoomLens = document.getElementById('zoomLens');
-  const ZOOM_SIZE = 300;
-  const ZOOM_FACTOR = 2.5;
+  const ZOOM_SIZE = 220;
+  const ZOOM_FACTOR = 2;
   let zoomClone = null;
 
   let laserActive = false;
