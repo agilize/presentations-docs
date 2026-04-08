@@ -825,6 +825,101 @@
       .big-number { font-size: 5rem; }
       .case-card, .reddit-card { padding: 1.5rem; }
     }
+
+    /* ======= LASER POINTER ======= */
+    .laser-pointer {
+      position: fixed;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 40, 40, 0.95) 0%, rgba(255, 40, 40, 0.6) 30%, rgba(255, 0, 0, 0.2) 60%, transparent 70%);
+      box-shadow: 0 0 12px 4px rgba(255, 0, 0, 0.5), 0 0 30px 8px rgba(255, 0, 0, 0.2);
+      pointer-events: none;
+      z-index: 99999;
+      transform: translate(-50%, -50%);
+      display: none;
+      mix-blend-mode: screen;
+    }
+    .laser-pointer.active {
+      display: block;
+    }
+    body.laser-mode {
+      cursor: none;
+    }
+    #laserCanvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 99998;
+      display: none;
+    }
+    #laserCanvas.active {
+      display: block;
+    }
+    #spotlightOverlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 99997;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    #spotlightOverlay.active {
+      opacity: 1;
+    }
+    body.spotlight-mode {
+      cursor: none;
+    }
+    #zoomLens {
+      position: fixed;
+      width: 300px;
+      height: 300px;
+      border-radius: 50%;
+      border: 2px solid rgba(240, 160, 138, 0.5);
+      box-shadow: 0 0 20px 4px rgba(240, 160, 138, 0.15), 0 0 60px 8px rgba(0,0,0,0.4);
+      pointer-events: none;
+      z-index: 99996;
+      display: none;
+      overflow: hidden;
+      transform: translate(-50%, -50%);
+    }
+    #zoomLens .zoom-clone {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      transform-origin: 0 0;
+      pointer-events: none;
+    }
+    #zoomLens .zoom-crosshair {
+      position: absolute;
+      top: 50%; left: 50%;
+      width: 20px; height: 20px;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      z-index: 1;
+    }
+    #zoomLens .zoom-crosshair::before,
+    #zoomLens .zoom-crosshair::after {
+      content: '';
+      position: absolute;
+      background: rgba(240, 160, 138, 0.3);
+    }
+    #zoomLens .zoom-crosshair::before {
+      top: 50%; left: 0; right: 0; height: 1px;
+      transform: translateY(-50%);
+    }
+    #zoomLens .zoom-crosshair::after {
+      left: 50%; top: 0; bottom: 0; width: 1px;
+      transform: translateX(-50%);
+    }
+    #zoomLens.active {
+      display: block;
+    }
+    body.zoom-mode {
+      cursor: none;
+    }
   </style>
 </head>
 <body>
@@ -1278,7 +1373,7 @@
         Depois registra endpoints descobertos, &aacute;reas fr&aacute;geis e padr&otilde;es de erro &mdash; cada bug resolvido alimenta o pr&oacute;ximo.
       </p>
       <div class="case-highlight">
-        <p>Demo ao vivo.</p>
+        <p>Demo ao vivo: um card real do board resolvido pelo workflow.</p>
       </div>
     </div>
   </div>
@@ -1616,7 +1711,7 @@
 
 <!-- Keyboard hint -->
 <div class="keyboard-hint" id="keyboardHint">
-  <kbd>&larr;</kbd> <kbd>&rarr;</kbd> navegar &nbsp; <kbd>H</kbd> ajuda &nbsp; <kbd>F</kbd> fullscreen
+  <kbd>&larr;</kbd> <kbd>&rarr;</kbd> navegar &nbsp; <kbd>H</kbd> ajuda &nbsp; <kbd>F</kbd> fullscreen &nbsp; <kbd>L</kbd> laser &nbsp; <kbd>S</kbd> spotlight
 </div>
 
 <!-- Help overlay -->
@@ -1629,6 +1724,8 @@
   <div class="help-key"><kbd>End</kbd> <span>&Uacute;ltimo slide</span></div>
   <div class="help-key"><kbd>H</kbd> <span>Mostrar/ocultar ajuda</span></div>
   <div class="help-key"><kbd>F</kbd> <span>Fullscreen</span></div>
+  <div class="help-key"><kbd>L</kbd> <span>Laser pointer com rastro</span></div>
+  <div class="help-key"><kbd>S</kbd> <span>Spotlight / holofote focal</span></div>
   <div class="help-key"><kbd>Esc</kbd> <span>Fechar</span></div>
 </div>
 
@@ -2095,6 +2192,197 @@
     // Start after a short delay
     setTimeout(() => { pauseEnd = Date.now(); tick(); }, 1200);
   })();
+</script>
+
+<!-- Laser Pointer -->
+<div class="laser-pointer" id="laserPointer"></div>
+<canvas id="laserCanvas"></canvas>
+<canvas id="spotlightOverlay"></canvas>
+<div id="zoomLens"><div class="zoom-crosshair"></div></div>
+<script>
+(function() {
+  const laser = document.getElementById('laserPointer');
+  const laserCanvas = document.getElementById('laserCanvas');
+  const lCtx = laserCanvas.getContext('2d');
+  const spotCanvas = document.getElementById('spotlightOverlay');
+  const sCtx = spotCanvas.getContext('2d');
+
+  const zoomLens = document.getElementById('zoomLens');
+  const ZOOM_SIZE = 300;
+  const ZOOM_FACTOR = 2.5;
+  let zoomClone = null;
+
+  let laserActive = false;
+  let spotlightActive = false;
+  let zoomActive = false;
+  let lastX = 0, lastY = 0;
+
+  const points = [];
+  const MAX_POINTS = 80;
+
+  const SPOT_RADIUS = 190;
+  const SPOT_FEATHER = 70;
+  const OVERLAY_ALPHA = 0.78;
+
+  function resize() {
+    laserCanvas.width = spotCanvas.width = window.innerWidth;
+    laserCanvas.height = spotCanvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  function toggleLaser() {
+    laserActive = !laserActive;
+    document.body.classList.toggle('laser-mode', laserActive || spotlightActive);
+    laser.classList.toggle('active', laserActive);
+    laserCanvas.classList.toggle('active', laserActive);
+    if (laserActive) points.length = 0;
+  }
+
+  function toggleSpotlight() {
+    spotlightActive = !spotlightActive;
+    document.body.classList.toggle('spotlight-mode', spotlightActive);
+    document.body.classList.toggle('laser-mode', laserActive || spotlightActive);
+    spotCanvas.classList.toggle('active', spotlightActive);
+  }
+
+  function rebuildZoomClone() {
+    if (zoomClone) zoomClone.remove();
+    zoomClone = document.body.cloneNode(true);
+    zoomClone.classList.add('zoom-clone');
+    zoomClone.style.position = 'absolute';
+    zoomClone.style.top = '0';
+    zoomClone.style.left = '0';
+    zoomClone.style.width = window.innerWidth + 'px';
+    zoomClone.style.height = window.innerHeight + 'px';
+    zoomClone.style.pointerEvents = 'none';
+    zoomClone.style.transformOrigin = '0 0';
+    // Remove the zoom lens from the clone to avoid recursion
+    const clonedLens = zoomClone.querySelector('#zoomLens');
+    if (clonedLens) clonedLens.remove();
+    // Remove laser elements from clone
+    const clonedLaser = zoomClone.querySelector('#laserPointer');
+    if (clonedLaser) clonedLaser.remove();
+    zoomLens.insertBefore(zoomClone, zoomLens.firstChild);
+  }
+
+  function updateZoomPosition() {
+    if (!zoomActive || !zoomClone) return;
+    const half = ZOOM_SIZE / 2;
+    // Position: scale clone so mouse area is centered in lens
+    const tx = -lastX * ZOOM_FACTOR + half;
+    const ty = -lastY * ZOOM_FACTOR + half;
+    zoomClone.style.transform = 'scale(' + ZOOM_FACTOR + ') translate(' + (tx / ZOOM_FACTOR) + 'px, ' + (ty / ZOOM_FACTOR) + 'px)';
+  }
+
+  function toggleZoom() {
+    zoomActive = !zoomActive;
+    document.body.classList.toggle('zoom-mode', zoomActive);
+    zoomLens.classList.toggle('active', zoomActive);
+    if (zoomActive) {
+      rebuildZoomClone();
+      updateZoomPosition();
+    } else if (zoomClone) {
+      zoomClone.remove();
+      zoomClone = null;
+    }
+  }
+
+  document.addEventListener('mousemove', (e) => {
+    lastX = e.clientX;
+    lastY = e.clientY;
+    if (laserActive) {
+      laser.style.left = lastX + 'px';
+      laser.style.top = lastY + 'px';
+      points.push({ x: lastX, y: lastY, t: performance.now() });
+      if (points.length > MAX_POINTS) points.shift();
+    }
+    if (zoomActive) {
+      zoomLens.style.left = lastX + 'px';
+      zoomLens.style.top = lastY + 'px';
+      updateZoomPosition();
+    }
+  });
+
+  function draw() {
+    const w = laserCanvas.width, h = laserCanvas.height;
+
+    lCtx.clearRect(0, 0, w, h);
+    if (laserActive && points.length > 1) {
+      const now = performance.now();
+      const TRAIL_LIFE = 400;
+      while (points.length > 1 && now - points[0].t > TRAIL_LIFE) points.shift();
+
+      if (points.length > 1) {
+        lCtx.lineCap = 'round';
+        lCtx.lineJoin = 'round';
+        for (let i = 1; i < points.length; i++) {
+          const p0 = points[i - 1], p1 = points[i];
+          const alpha = 1 - ((now - p0.t) / TRAIL_LIFE + (now - p1.t) / TRAIL_LIFE) / 2;
+          const width = Math.max(1, 5 * alpha);
+          lCtx.beginPath();
+          lCtx.moveTo(p0.x, p0.y);
+          lCtx.lineTo(p1.x, p1.y);
+          lCtx.strokeStyle = 'rgba(255, 50, 40, ' + (alpha * 0.7) + ')';
+          lCtx.lineWidth = width;
+          lCtx.stroke();
+          lCtx.beginPath();
+          lCtx.moveTo(p0.x, p0.y);
+          lCtx.lineTo(p1.x, p1.y);
+          lCtx.strokeStyle = 'rgba(255, 0, 0, ' + (alpha * 0.2) + ')';
+          lCtx.lineWidth = width + 6;
+          lCtx.stroke();
+        }
+      }
+    }
+
+    sCtx.clearRect(0, 0, w, h);
+    if (spotlightActive) {
+      sCtx.fillStyle = 'rgba(0, 0, 0, ' + OVERLAY_ALPHA + ')';
+      sCtx.fillRect(0, 0, w, h);
+
+      sCtx.save();
+      sCtx.globalCompositeOperation = 'destination-out';
+      const grad = sCtx.createRadialGradient(lastX, lastY, SPOT_RADIUS - SPOT_FEATHER, lastX, lastY, SPOT_RADIUS + SPOT_FEATHER);
+      grad.addColorStop(0, 'rgba(0, 0, 0, 1)');
+      grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+      sCtx.fillStyle = grad;
+      sCtx.beginPath();
+      sCtx.arc(lastX, lastY, SPOT_RADIUS + SPOT_FEATHER, 0, Math.PI * 2);
+      sCtx.fill();
+      sCtx.restore();
+
+      sCtx.save();
+      sCtx.globalCompositeOperation = 'source-atop';
+      const glow = sCtx.createRadialGradient(lastX, lastY, 0, lastX, lastY, SPOT_RADIUS + SPOT_FEATHER);
+      glow.addColorStop(0, 'rgba(255, 255, 240, 0.12)');
+      glow.addColorStop(0.4, 'rgba(255, 255, 240, 0.04)');
+      glow.addColorStop(1, 'rgba(0, 0, 0, 0)');
+      sCtx.fillStyle = glow;
+      sCtx.fillRect(0, 0, w, h);
+      sCtx.restore();
+    }
+
+    requestAnimationFrame(draw);
+  }
+  draw();
+
+  // Rebuild zoom clone when navigating slides
+  const origGoTo = window.goTo;
+  if (typeof origGoTo === 'function') {
+    window.goTo = function() {
+      origGoTo.apply(this, arguments);
+      if (zoomActive) setTimeout(rebuildZoomClone, 100);
+    };
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+    if (e.key === 'l' || e.key === 'L') toggleLaser();
+    if (e.key === 's' || e.key === 'S') toggleSpotlight();
+    if (e.key === 'z' || e.key === 'Z') toggleZoom();
+  });
+})();
 </script>
 
 </body>
