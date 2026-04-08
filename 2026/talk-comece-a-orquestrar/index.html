@@ -920,6 +920,36 @@
     body.zoom-mode {
       cursor: none;
     }
+    /* ======= FIRE PARTICLES ======= */
+    .fire-container {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .fire-particle {
+      position: absolute;
+      bottom: -10px;
+      border-radius: 50%;
+      opacity: 0;
+      animation: fire-rise linear infinite;
+    }
+    @keyframes fire-rise {
+      0% { opacity: 0; transform: translateY(0) scale(1); }
+      10% { opacity: 0.9; }
+      50% { opacity: 0.6; }
+      100% { opacity: 0; transform: translateY(-100vh) scale(0.2); }
+    }
+    .fire-glow {
+      position: absolute;
+      bottom: 0; left: 50%;
+      transform: translateX(-50%);
+      width: 120%;
+      height: 40%;
+      background: radial-gradient(ellipse at bottom center, rgba(232,100,50,0.15) 0%, rgba(232,147,122,0.05) 40%, transparent 70%);
+      pointer-events: none;
+    }
     /* ======= PASSWORD GATE ======= */
     #passwordGate {
       position: fixed; inset: 0;
@@ -1399,16 +1429,19 @@
   <!-- ======================== -->
   <!-- SLIDE 22: TOKEN BURNING -->
   <!-- ======================== -->
-  <div class="slide" data-slide="22">
-    <div class="fade-in" style="margin-bottom: 1rem;">
-      <img src="token-burn.png" alt="Token burning" style="width: 160px; height: 160px; border-radius: 50%; object-fit: cover; opacity: 0.85;">
+  <div class="slide" data-slide="22" style="overflow: hidden;">
+    <div class="fire-container" id="fireContainer">
+      <div class="fire-glow"></div>
     </div>
-    <h2 class="fade-in delay-1">Queime Seus Tokens</h2>
-    <p class="fade-in delay-2 mt-3" style="max-width: 700px;">
+    <div class="fade-in" style="margin-bottom: 1rem; z-index: 1; position: relative;">
+      <i data-lucide="flame" style="width: 64px; height: 64px; color: var(--red); filter: drop-shadow(0 0 20px rgba(232,80,40,0.6));" class="animate-pulse"></i>
+    </div>
+    <h2 class="fade-in delay-1 animate-glitch" style="z-index: 1; position: relative;">Queime Seus <span class="accent">Tokens</span></h2>
+    <p class="fade-in delay-2 mt-3" style="max-width: 700px; z-index: 1; position: relative;">
       Empresas est&atilde;o incentivando times a <span class="accent">atingir a cota m&aacute;xima</span> o tempo inteiro.
       N&atilde;o usar tokens &eacute; indicativo de que a pessoa <span style="color: var(--red);">n&atilde;o est&aacute; trabalhando corretamente com IA.</span>
     </p>
-    <div class="fade-in delay-3 mt-4" style="display: flex; gap: 2rem; justify-content: center; flex-wrap: wrap;">
+    <div class="fade-in delay-3 mt-4" style="display: flex; gap: 2rem; justify-content: center; flex-wrap: wrap; z-index: 1; position: relative;">
       <div class="stat-card" style="min-width: 180px;">
         <div class="stat-value" style="font-size: 1.4rem;">Max 5x</div>
         <div class="stat-label">Tem que torrar</div>
@@ -1418,7 +1451,7 @@
         <div class="stat-label">Torrar e pedir extra</div>
       </div>
     </div>
-    <p class="fade-in delay-4 mt-3 small" style="color: var(--text-muted);">Token parado &eacute; produtividade desperdi&ccedil;ada.</p>
+    <p class="fade-in delay-4 mt-3 small" style="color: var(--text-muted); z-index: 1; position: relative;">Token parado &eacute; produtividade desperdi&ccedil;ada.</p>
   </div>
 
   <!-- ======================== -->
@@ -2359,6 +2392,26 @@
 
     // Start after a short delay
     setTimeout(() => { pauseEnd = Date.now(); tick(); }, 1200);
+  })();
+
+  // Fire particles for "Queime Seus Tokens" slide
+  (function() {
+    const container = document.getElementById('fireContainer');
+    if (!container) return;
+    const colors = ['#e85030', '#f0a08a', '#ff6b35', '#da7e7e', '#ffaa44', '#ff4422'];
+    function spawnParticle() {
+      const p = document.createElement('div');
+      p.className = 'fire-particle';
+      const size = Math.random() * 8 + 3;
+      const x = Math.random() * 100;
+      const duration = Math.random() * 3 + 2;
+      const delay = Math.random() * 0.5;
+      const color = colors[Math.floor(Math.random() * colors.length)];
+      p.style.cssText = 'width:' + size + 'px;height:' + size + 'px;left:' + x + '%;background:' + color + ';box-shadow:0 0 ' + (size * 2) + 'px ' + color + ';animation-duration:' + duration + 's;animation-delay:' + delay + 's;';
+      container.appendChild(p);
+      setTimeout(() => p.remove(), (duration + delay) * 1000);
+    }
+    setInterval(spawnParticle, 80);
   })();
 </script>
 
