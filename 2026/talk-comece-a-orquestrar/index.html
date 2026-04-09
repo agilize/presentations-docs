@@ -2349,7 +2349,7 @@
 
   // ======= TYPEWRITER EFFECT =======
   (function() {
-    const words = ['Orquestrar.', 'Delegar.', 'Escalar.', 'Multiplicar.', 'Pensar.', 'Liderar.', 'Orquestrar.'];
+    const words = ['Orquestrar.', 'Delegar.', 'Escalar.', 'Multiplicar.', 'Pensar.', 'Liderar.'];
     const el = document.getElementById('typewriterWord');
     let wordIndex = 0;
     let charIndex = 0;
@@ -2363,27 +2363,20 @@
       const currentWord = words[wordIndex];
 
       if (!isDeleting) {
-        // Typing
         charIndex++;
         el.textContent = currentWord.substring(0, charIndex);
         if (charIndex === currentWord.length) {
-          // Pause at full word
-          if (wordIndex === words.length - 1) {
-            // Last word — stop looping, keep it displayed
-            return;
-          }
           isDeleting = true;
           pauseEnd = now + 2000;
         } else {
           pauseEnd = now + 80 + Math.random() * 40;
         }
       } else {
-        // Deleting
         charIndex--;
         el.textContent = currentWord.substring(0, charIndex);
         if (charIndex === 0) {
           isDeleting = false;
-          wordIndex++;
+          wordIndex = (wordIndex + 1) % words.length;
           pauseEnd = now + 300;
         } else {
           pauseEnd = now + 40 + Math.random() * 20;
