@@ -2424,28 +2424,57 @@
       spans.push(s);
     }
     const futStart = text.indexOf('futuro.');
+    let phase = 'random'; // random → steady → flicker
+    const startTime = Date.now();
+
+    function litOn(sp, idx) {
+      sp.classList.add('lit');
+      if (idx >= futStart && idx < futStart + 7) {
+        sp.style.color = '';
+        sp.style.textShadow = '0 0 8px rgba(255,180,150,0.9), 0 0 20px rgba(232,147,122,0.6), 0 0 40px rgba(200,100,70,0.3)';
+      }
+    }
+    function litOff(sp, idx) {
+      sp.classList.remove('lit');
+      if (idx >= futStart && idx < futStart + 7) {
+        sp.style.color = 'rgba(200,150,130,0.35)';
+        sp.style.textShadow = '';
+      }
+    }
+
+    // Phase 1: random letter pops (3s)
     function randomGlow() {
+      if (Date.now() - startTime > 3000) { phase = 'steady'; allOn(); return; }
       const count = 3 + Math.floor(Math.random() * 4);
       for (let i = 0; i < count; i++) {
         const idx = Math.floor(Math.random() * spans.length);
         if (spans[idx].textContent.trim() === '') continue;
-        const sp = spans[idx];
-        sp.classList.add('lit');
-        if (idx >= futStart && idx < futStart + 7) {
-          sp.style.color = '';
-          sp.style.textShadow = '0 0 8px rgba(255,180,150,0.9), 0 0 20px rgba(232,147,122,0.6), 0 0 40px rgba(200,100,70,0.3)';
-        }
+        litOn(spans[idx], idx);
         const dur = 200 + Math.random() * 600;
-        setTimeout(() => {
-          sp.classList.remove('lit');
-          if (idx >= futStart && idx < futStart + 7) {
-            sp.style.color = 'rgba(200,150,130,0.35)';
-            sp.style.textShadow = '';
-          }
-        }, dur);
+        setTimeout(() => { if (phase === 'random') litOff(spans[idx], idx); }, dur);
       }
       setTimeout(randomGlow, 100 + Math.random() * 200);
     }
+
+    // Phase 2: all letters on, then transition to flicker
+    function allOn() {
+      spans.forEach((sp, idx) => litOn(sp, idx));
+      setTimeout(() => { phase = 'flicker'; flicker(); }, 2000);
+    }
+
+    // Phase 3: whole phrase dims and brightens like a bad lamp
+    function flicker() {
+      const dim = 0.4 + Math.random() * 0.3;
+      el.style.opacity = dim;
+      const dimDur = 60 + Math.random() * 150;
+      setTimeout(() => {
+        el.style.opacity = 1;
+        const pause = 2000 + Math.random() * 4000;
+        setTimeout(flicker, pause);
+      }, dimDur);
+    }
+    el.style.transition = 'opacity 0.08s';
+
     randomGlow();
   })();
 
