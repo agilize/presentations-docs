@@ -4,11 +4,13 @@
 
 - **Platform**: Vercel (Agilize corporate account)
 - **URL**: https://comece-a-orquestrar.vercel.app
-- **CRITICAL**: Always deploy from the talk subdirectory, NOT the repo root:
+- **CRITICAL — 404 prevention**: This project lives in a subdirectory of a larger repo. The `.vercel/project.json` ONLY exists in this subdirectory. A duplicate was removed from the repo root — **never recreate it there**.
+- **ALWAYS deploy with explicit cd** in a single chained command:
   ```bash
   cd /Users/afialho/workspace/agilize/presentations-docs/2026/talk-comece-a-orquestrar && vercel --prod --yes
   ```
-  The Bash tool resets cwd between calls. If `vercel --prod` runs from the repo root, it deploys the wrong files and causes a **404**. Always use an absolute `cd` before `vercel`.
+- Why: The Bash tool may reset cwd to the repo root between calls. If `vercel` picks up a `.vercel/project.json` from the root, or runs from the root, it deploys the entire repo (no index.html at root) → **404**.
+- If a 404 happens: check `pwd` and verify `.vercel/project.json` does NOT exist at repo root.
 
 ## Workflow
 
