@@ -2267,13 +2267,13 @@
           next.querySelectorAll('.fade-in').forEach(function(el) {
             el.classList.add('show');
           });
-          // Start typewriter on slide 38
-          if (index === 40) startTypewriter();
+          // Start typewriter on final question slide
+          if (index === 44) startTypewriter();
         });
       });
 
-      // Stop typewriter when leaving slide 38
-      if (current === 40 && index !== 40) stopTypewriter();
+      // Stop typewriter when leaving final question slide
+      if (current === 44 && index !== 44) stopTypewriter();
 
       current = index;
       updateUI();
