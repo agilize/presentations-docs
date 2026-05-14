@@ -1,0 +1,1291 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product Engineer — Agilize 2026</title>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; overflow: hidden; font-family: 'Quicksand', sans-serif; }
+
+    :root {
+      --purple-dark: #3D1A6E;
+      --purple: #5C2D91;
+      --purple-light: #7B4FAF;
+      --purple-subtle: #F3EDF9;
+      --white: #FFFFFF;
+      --gray-50: #FAFAFA;
+      --gray-100: #F5F5F5;
+      --gray-200: #E8E8E8;
+      --gray-400: #AAAAAA;
+      --gray-600: #666666;
+      --gray-800: #333333;
+      --text: #2D2D2D;
+      --accent-orange: #E67E22;
+      --accent-blue: #3498DB;
+      --accent-teal: #1ABC9C;
+      --accent-deep-blue: #2980B9;
+      --accent-violet: #9B59B6;
+      --accent-red: #E74C3C;
+      --accent-green: #00E68D;
+      --slide-transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* ── Slide system ── */
+    .slide-container { position: relative; width: calc(100vw / 1.25); height: calc(100vh / 1.25); zoom: 1.25; }
+
+    .slide {
+      position: absolute; top: 0; left: 0;
+      width: 100%; height: 100%;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none;
+      transition: opacity var(--slide-transition), transform var(--slide-transition);
+      padding: 40px 60px;
+      transform: translateX(80px);
+    }
+    .slide.active  { opacity: 1; transform: translateX(0); pointer-events: all; }
+    .slide.exit-left  { opacity: 0; transform: translateX(-80px); }
+    .slide.exit-right { opacity: 0; transform: translateX(80px); }
+
+    /* ── Cover ── */
+    .cover { background: #1B0A2E; color: var(--white); text-align: center; overflow: hidden; }
+    .cover::before, .cover::after { content: none; }
+
+    .cover-blob { position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.7; z-index: 0; }
+    .cover-blob:nth-child(1) { width: 500px; height: 500px; background: #5C2D91; top: -10%; left: -5%; animation: drift1 16s ease-in-out infinite alternate; }
+    .cover-blob:nth-child(2) { width: 400px; height: 400px; background: #1ABC9C; opacity: 0.35; bottom: -15%; right: -5%; animation: drift2 20s ease-in-out infinite alternate; }
+    .cover-blob:nth-child(3) { width: 350px; height: 350px; background: #9B59B6; top: 50%; left: 60%; animation: drift3 18s ease-in-out infinite alternate; }
+    .cover-blob:nth-child(4) { width: 300px; height: 450px; background: #2980B9; opacity: 0.3; top: 10%; right: 20%; animation: drift4 22s ease-in-out infinite alternate; }
+    .cover-blob:nth-child(5) { width: 450px; height: 300px; background: #E67E22; opacity: 0.2; bottom: 10%; left: 30%; animation: drift5 19s ease-in-out infinite alternate; }
+    .cover-blob:nth-child(6) { width: 350px; height: 350px; background: #3D1A6E; top: 30%; left: 10%; animation: drift6 24s ease-in-out infinite alternate; }
+
+    @keyframes drift1 { 0% { transform: translate(0,0); } 100% { transform: translate(30vw,40vh); } }
+    @keyframes drift2 { 0% { transform: translate(0,0); } 100% { transform: translate(-35vw,-30vh); } }
+    @keyframes drift3 { 0% { transform: translate(0,0); } 100% { transform: translate(-25vw,-45vh); } }
+    @keyframes drift4 { 0% { transform: translate(0,0); } 100% { transform: translate(-20vw,35vh); } }
+    @keyframes drift5 { 0% { transform: translate(0,0); } 100% { transform: translate(25vw,-25vh); } }
+    @keyframes drift6 { 0% { transform: translate(0,0); } 100% { transform: translate(20vw,30vh); } }
+
+    @keyframes heartbeat {
+      0%  { transform: scale(1); }    8%  { transform: scale(1.15); }
+      16% { transform: scale(1); }    24% { transform: scale(1.10); }
+      32% { transform: scale(1); }   100% { transform: scale(1); }
+    }
+
+    .cover-logo-heartbeat { animation: heartbeat 1s ease-in-out infinite; display: inline-block; }
+    .cover-content { position: relative; z-index: 2; }
+    .cover .logo-text { font-size: 18px; font-weight: 300; letter-spacing: 8px; text-transform: uppercase; opacity: 0.7; margin-bottom: 40px; }
+    .cover h1 { font-size: clamp(36px, 5vw, 64px); font-weight: 700; line-height: 1.2; margin-bottom: 16px; }
+    .cover h1 span { display: block; font-weight: 300; font-size: 0.55em; opacity: 0.8; margin-top: 10px; }
+    .date-badge { display: inline-block; margin-top: 32px; padding: 10px 28px; border: 1px solid rgba(255,255,255,0.3); border-radius: 30px; font-weight: 500; font-size: 14px; letter-spacing: 1px; }
+    .decorative-line { width: 60px; height: 3px; background: rgba(255,255,255,0.4); border-radius: 2px; margin: 24px auto; }
+    .cover .part-label { font-size: 13px; font-weight: 600; letter-spacing: 4px; text-transform: uppercase; opacity: 0.45; margin-bottom: 20px; }
+    .cover .part-title { font-size: clamp(32px, 5vw, 60px); font-weight: 700; line-height: 1.2; }
+    .cover .part-sub { font-size: 18px; font-weight: 400; opacity: 0.6; margin-top: 16px; }
+
+    /* ── Typography ── */
+    .section-label { font-size: 14px; font-weight: 700; letter-spacing: 4px; text-transform: uppercase; color: var(--purple); margin-bottom: 12px; }
+    .slide-title { font-size: clamp(28px, 3.5vw, 44px); font-weight: 700; color: var(--gray-800); margin-bottom: 40px; text-align: center; }
+    .slide-title em { color: var(--purple); font-style: normal; }
+
+    /* ── Context cards ── */
+    .context-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; max-width: 1000px; width: 100%; }
+    .context-card { background: var(--gray-50); border-radius: 16px; padding: 32px 28px; text-align: center; border: 1px solid var(--gray-200); transition: transform 0.3s ease, box-shadow 0.3s ease; }
+    .context-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(92,45,145,0.08); }
+    .context-icon { width: 56px; height: 56px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 22px; margin: 0 auto 16px; color: var(--purple); }
+    .context-card h3 { font-size: 20px; font-weight: 700; margin-bottom: 8px; color: var(--gray-800); }
+    .context-card p { font-size: 15px; color: var(--gray-600); line-height: 1.6; }
+
+    /* ── Two column ── */
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; max-width: 960px; width: 100%; }
+
+    /* ── Face cards ── */
+    .face-card { border-radius: 20px; padding: 40px 36px; transition: transform 0.3s ease; }
+    .face-card:hover { transform: translateY(-6px); }
+    .face-card .face-icon { font-size: 38px; margin-bottom: 18px; }
+    .face-card h3 { font-size: 21px; font-weight: 700; margin-bottom: 16px; }
+    .face-card ul { list-style: none; text-align: left; }
+    .face-card ul li { font-size: 15px; line-height: 1.8; display: flex; align-items: flex-start; gap: 10px; }
+    .face-card ul li::before { content: '→'; font-weight: 700; flex-shrink: 0; opacity: 0.7; }
+
+    /* ── Comparison ── */
+    .comparison { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; max-width: 900px; width: 100%; }
+    .comp-col { border-radius: 16px; padding: 28px 24px; }
+    .comp-col h3 { font-size: 17px; font-weight: 700; margin-bottom: 18px; text-align: center; letter-spacing: 0.5px; }
+    .comp-item { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 11px; font-size: 14px; line-height: 1.5; color: var(--gray-800); }
+    .comp-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
+
+    /* ── Story card ── */
+    .story-card { background: var(--gray-50); border-radius: 20px; padding: 36px 44px; max-width: 860px; width: 100%; border: 1px solid var(--gray-200); position: relative; }
+    .story-number { position: absolute; top: 28px; right: 36px; font-size: 80px; font-weight: 700; color: var(--gray-200); line-height: 1; }
+    .story-company { display: inline-flex; align-items: center; gap: 8px; padding: 5px 14px; border-radius: 20px; font-size: 12px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 20px; }
+    .story-quote { font-size: clamp(15px, 1.8vw, 18px); line-height: 1.8; color: var(--gray-800); font-style: italic; font-weight: 500; border-left: 3px solid var(--purple); padding-left: 22px; margin: 16px 0; }
+    .story-insight { font-size: 14px; color: var(--gray-600); line-height: 1.7; background: var(--purple-subtle); border-radius: 12px; padding: 14px 18px; margin-top: 16px; }
+    .story-insight strong { color: var(--purple); }
+
+    /* ── Axis grid ── */
+    .axis-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; max-width: 900px; width: 100%; }
+    .axis-card { border-radius: 20px; padding: 36px 32px; transition: transform 0.3s ease; }
+    .axis-card:hover { transform: translateY(-4px); }
+    .axis-card .axis-icon { font-size: 36px; margin-bottom: 16px; }
+    .axis-card h3 { font-size: 20px; font-weight: 700; margin-bottom: 12px; }
+    .axis-card p { font-size: 15px; line-height: 1.7; }
+
+    /* ── Code review box ── */
+    .cr-box { background: #1B0A2E; border-radius: 20px; padding: 36px 48px; max-width: 840px; width: 100%; position: relative; overflow: hidden; }
+    .cr-box::before { content: ''; position: absolute; top: -60px; right: -60px; width: 200px; height: 200px; border-radius: 50%; background: rgba(92,45,145,0.25); }
+    .cr-tag { display: inline-flex; align-items: center; gap: 8px; padding: 6px 16px; border-radius: 20px; font-size: 12px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; background: rgba(0,230,141,0.12); color: #00E68D; margin-bottom: 18px; }
+    .cr-title { font-size: clamp(20px, 2.5vw, 28px); font-weight: 700; color: white; margin-bottom: 24px; line-height: 1.3; }
+    .cr-checks { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .cr-check { display: flex; align-items: center; gap: 10px; font-size: 14px; color: rgba(255,255,255,0.8); }
+    .cr-check i { color: #00E68D; font-size: 13px; width: 16px; flex-shrink: 0; }
+
+    /* ── Agents ── */
+    .agents-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; max-width: 880px; width: 100%; }
+    .agent-card { border-radius: 16px; padding: 28px 22px; text-align: center; border: 1px solid transparent; transition: all 0.3s ease; }
+    .agent-card:hover { transform: translateY(-4px); }
+    .agent-card .agent-icon { font-size: 30px; margin-bottom: 12px; }
+    .agent-card h3 { font-size: 14px; font-weight: 700; margin-bottom: 8px; font-family: monospace; }
+    .agent-card p { font-size: 13px; line-height: 1.6; color: var(--gray-600); }
+
+    /* ── Skills grid ── */
+    .skills-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; max-width: 900px; width: 100%; }
+    .skill-item { background: var(--gray-50); border: 1px solid var(--gray-200); border-radius: 14px; padding: 18px 22px; display: flex; align-items: flex-start; gap: 14px; transition: all 0.3s ease; }
+    .skill-item:hover { border-color: var(--purple-light); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(92,45,145,0.07); }
+    .skill-cmd { font-family: monospace; font-size: 12px; font-weight: 700; color: var(--purple); background: var(--purple-subtle); padding: 4px 10px; border-radius: 6px; white-space: nowrap; flex-shrink: 0; margin-top: 2px; }
+    .skill-desc strong { color: var(--gray-800); font-weight: 700; display: block; margin-bottom: 3px; font-size: 14px; }
+    .skill-desc { font-size: 13px; color: var(--gray-600); line-height: 1.5; }
+
+    /* ── Flow ── */
+    .flow-step { background: var(--white); border: 1px solid var(--gray-200); border-radius: 12px; padding: 14px 18px; text-align: center; font-size: 13px; font-weight: 700; color: var(--gray-800); transition: all 0.3s ease; }
+    .flow-step:hover { border-color: var(--purple); color: var(--purple); }
+    .flow-step.highlight { background: linear-gradient(135deg, #5C2D91, #7B4FAF); color: white; border-color: transparent; }
+    .flow-arrow { font-size: 18px; color: var(--gray-400); padding: 0 8px; flex-shrink: 0; }
+    .flow-sub { font-size: 11px; font-weight: 500; opacity: 0.75; margin-top: 4px; display: block; }
+
+    /* ── Movements ── */
+    .movements-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; max-width: 840px; width: 100%; }
+    .movement-card { background: var(--gray-50); border-radius: 16px; padding: 26px 22px; border: 1px solid var(--gray-200); display: flex; align-items: flex-start; gap: 16px; transition: all 0.3s ease; }
+    .movement-card:hover { border-color: var(--purple-light); transform: translateY(-2px); }
+    .movement-num { width: 38px; height: 38px; border-radius: 50%; background: var(--purple); color: white; font-size: 17px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .movement-card h3 { font-size: 16px; font-weight: 700; color: var(--gray-800); margin-bottom: 5px; }
+    .movement-card p { font-size: 13px; color: var(--gray-600); line-height: 1.6; }
+
+    /* ── SkillHub ── */
+    .skillhub-hero { background: linear-gradient(135deg, #2D1050, #5C2D91); border-radius: 20px; padding: 36px 44px; max-width: 880px; width: 100%; color: white; text-align: center; position: relative; overflow: hidden; }
+    .skillhub-hero::after { content: ''; position: absolute; top: -40%; right: -15%; width: 300px; height: 300px; border-radius: 50%; background: rgba(255,255,255,0.04); }
+    .skillhub-badges { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 22px; }
+    .skillhub-badge { padding: 5px 14px; border-radius: 20px; font-size: 12px; font-weight: 700; border: 1px solid rgba(255,255,255,0.25); color: rgba(255,255,255,0.85); display: flex; align-items: center; gap: 6px; }
+    .skillhub-stats { display: flex; gap: 48px; justify-content: center; margin-top: 28px; }
+    .skillhub-stat .num { font-size: 40px; font-weight: 700; color: var(--accent-green); }
+    .skillhub-stat .lbl { font-size: 12px; opacity: 0.65; margin-top: 2px; }
+
+    /* ── Add flow ── */
+    .add-cmd-box { background: #1B0A2E; border-radius: 14px; padding: 20px 32px; font-family: monospace; font-size: 17px; font-weight: 700; color: #00E68D; margin-bottom: 20px; text-align: center; border: 1px solid rgba(0,230,141,0.25); letter-spacing: 1px; max-width: 760px; width: 100%; }
+    .add-flow { display: flex; flex-direction: column; gap: 10px; max-width: 760px; width: 100%; }
+    .add-step { display: flex; align-items: flex-start; gap: 14px; padding: 14px 18px; background: var(--gray-50); border-radius: 12px; border: 1px solid var(--gray-200); }
+    .add-step-num { width: 26px; height: 26px; border-radius: 50%; background: var(--purple); color: white; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .add-step-text { font-size: 14px; color: var(--gray-800); line-height: 1.5; }
+    .add-step-text code { background: var(--purple-subtle); color: var(--purple); padding: 2px 7px; border-radius: 4px; font-family: monospace; font-size: 12px; font-weight: 700; }
+
+    /* ── Taste ── */
+    .taste-word { font-size: clamp(64px, 10vw, 120px); font-weight: 700; color: var(--purple); line-height: 1; letter-spacing: -3px; margin-bottom: 20px; }
+    .taste-def { font-size: clamp(17px, 2vw, 22px); color: var(--gray-600); line-height: 1.7; font-weight: 400; }
+    .taste-def strong { color: var(--gray-800); font-weight: 700; }
+
+    /* ── Nav UI ── */
+    .nav-bar {
+      position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+      display: flex; gap: 8px; z-index: 100;
+      background: rgba(255,255,255,0.92); backdrop-filter: blur(12px);
+      padding: 10px 20px; border-radius: 40px; box-shadow: 0 4px 24px rgba(0,0,0,0.1);
+    }
+    .nav-dot { width: 12px; height: 12px; border-radius: 50%; background: #CCCCCC; border: none; cursor: pointer; transition: all 0.3s ease; padding: 0; position: relative; }
+    .nav-dot.active { background: var(--purple); width: 36px; border-radius: 6px; }
+    .nav-dot:hover:not(.active) { background: var(--purple-light); opacity: 0.6; }
+
+    .nav-dot .slide-preview {
+      position: absolute; bottom: calc(100% + 16px); left: 50%;
+      transform: translateX(-50%) scale(0.92);
+      width: 200px; height: 130px;
+      background: transparent; border-radius: 10px; overflow: hidden;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.25s ease, transform 0.25s ease;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.25); z-index: 200;
+    }
+    .nav-dot:hover .slide-preview { opacity: 1; transform: translateX(-50%) scale(1); }
+    .slide-preview-thumb { width: 100%; height: 100%; transform-origin: top left; pointer-events: none; }
+    .slide-preview-label {
+      position: absolute; bottom: 6px; left: 50%; transform: translateX(-50%);
+      padding: 4px 12px; background: rgba(0,0,0,0.6); backdrop-filter: blur(8px);
+      font-size: 11px; font-weight: 500; color: #fff; letter-spacing: 0.3px;
+      text-align: center; white-space: nowrap; border-radius: 20px; z-index: 2;
+    }
+
+    .nav-arrows { position: fixed; top: 50%; transform: translateY(-50%); z-index: 100; border: none; background: none; padding: 0; }
+    .nav-arrows.left  { left: 24px; }
+    .nav-arrows.right { right: 24px; }
+    .nav-arrow { width: 48px; height: 48px; border-radius: 50%; border: 2px solid var(--gray-200); background: rgba(255,255,255,0.85); backdrop-filter: blur(8px); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; color: var(--gray-600); font-size: 18px; }
+    .nav-arrow:hover { border-color: var(--purple); color: var(--purple); transform: scale(1.1); }
+
+    .keyboard-hint { position: fixed; top: 24px; right: 24px; z-index: 100; background: rgba(255,255,255,0.88); backdrop-filter: blur(8px); padding: 8px 16px; border-radius: 10px; font-size: 12px; color: var(--gray-600); border: 1px solid var(--gray-200); transition: opacity 0.4s ease; }
+    .keyboard-hint kbd { background: var(--gray-100); border: 1px solid var(--gray-200); border-radius: 4px; padding: 1px 6px; font-family: 'Quicksand', sans-serif; font-size: 11px; font-weight: 600; }
+
+    .slide-counter { position: fixed; top: 24px; left: 24px; z-index: 100; font-size: 13px; font-weight: 600; color: var(--gray-400); }
+    .slide-counter .current { color: var(--purple); font-size: 20px; }
+
+    /* ── Animations ── */
+    .fade-up { opacity: 0; transform: translateY(20px); transition: opacity 0.5s ease, transform 0.5s ease; }
+    .active .fade-up { opacity: 1; transform: translateY(0); }
+    .active .fade-up:nth-child(1) { transition-delay: 0.1s; }
+    .active .fade-up:nth-child(2) { transition-delay: 0.2s; }
+    .active .fade-up:nth-child(3) { transition-delay: 0.3s; }
+    .active .fade-up:nth-child(4) { transition-delay: 0.4s; }
+    .active .fade-up:nth-child(5) { transition-delay: 0.5s; }
+    .active .fade-up:nth-child(6) { transition-delay: 0.6s; }
+    .active .fade-up:nth-child(7) { transition-delay: 0.7s; }
+
+    .stagger > * { opacity: 0; transform: translateY(16px); transition: opacity 0.4s ease, transform 0.4s ease; }
+    .active .stagger > *:nth-child(1)  { opacity: 1; transform: translateY(0); transition-delay: 0.10s; }
+    .active .stagger > *:nth-child(2)  { opacity: 1; transform: translateY(0); transition-delay: 0.15s; }
+    .active .stagger > *:nth-child(3)  { opacity: 1; transform: translateY(0); transition-delay: 0.20s; }
+    .active .stagger > *:nth-child(4)  { opacity: 1; transform: translateY(0); transition-delay: 0.25s; }
+    .active .stagger > *:nth-child(5)  { opacity: 1; transform: translateY(0); transition-delay: 0.30s; }
+    .active .stagger > *:nth-child(6)  { opacity: 1; transform: translateY(0); transition-delay: 0.35s; }
+    .active .stagger > *:nth-child(7)  { opacity: 1; transform: translateY(0); transition-delay: 0.40s; }
+    .active .stagger > *:nth-child(8)  { opacity: 1; transform: translateY(0); transition-delay: 0.45s; }
+    .active .stagger > *:nth-child(9)  { opacity: 1; transform: translateY(0); transition-delay: 0.50s; }
+    .active .stagger > *:nth-child(10) { opacity: 1; transform: translateY(0); transition-delay: 0.55s; }
+
+    /* ── Step cards (card-a-card via avanço) ── */
+    .step-card { opacity: 0; transform: translateY(22px); transition: opacity 0.45s ease, transform 0.45s ease; }
+    .step-card.revealed { opacity: 1; transform: translateY(0); }
+
+    /* ── Seção de referências (rodapé padronizado) ── */
+    .slide-refs {
+      position: absolute; bottom: 68px; left: 60px; right: 60px;
+      display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap;
+    }
+    .slide-refs-label {
+      font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+      color: var(--gray-400); margin-right: 4px; flex-shrink: 0;
+    }
+    .slide-ref-link {
+      display: inline-flex; align-items: center; gap: 7px;
+      font-size: 12px; font-weight: 600; color: var(--gray-600);
+      text-decoration: none; padding: 5px 14px; border-radius: 20px;
+      background: rgba(255,255,255,0.88); backdrop-filter: blur(8px);
+      border: 1px solid var(--gray-200);
+      transition: color 0.2s ease, border-color 0.2s ease;
+    }
+    .slide-ref-link:hover { color: var(--purple); border-color: var(--purple-light); }
+    .slide-ref-link .ref-icon { font-size: 13px; flex-shrink: 0; }
+  </style>
+</head>
+<body>
+
+<!-- UI Chrome -->
+<div class="slide-counter">
+  <span class="current" id="slideNum">01</span> / <span id="totalSlides">18</span>
+</div>
+
+<div id="slideLogo" style="position:fixed;top:24px;left:50%;transform:translateX(-50%);z-index:99;opacity:0;transition:opacity 0.4s ease;">
+  <span style="font-size:14px;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:var(--purple-light);">agilize</span>
+</div>
+
+<div class="keyboard-hint">
+  <kbd><i class="fa-solid fa-arrow-left"></i></kbd> <kbd><i class="fa-solid fa-arrow-right"></i></kbd> to navigate
+</div>
+
+<button class="nav-arrows left"  onclick="prevSlide()"><div class="nav-arrow"><i class="fa-solid fa-chevron-left"></i></div></button>
+<button class="nav-arrows right" onclick="nextSlide()"><div class="nav-arrow"><i class="fa-solid fa-chevron-right"></i></div></button>
+
+<div class="nav-bar" id="navBar"></div>
+
+<div class="slide-container">
+
+  <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ PARTE 1 — O MUNDO MUDOU ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+
+  <!-- 1 · Cover -->
+  <div class="slide cover active" data-slide="0" data-title="Product Engineer">
+    <div class="cover-blob"></div><div class="cover-blob"></div><div class="cover-blob"></div>
+    <div class="cover-blob"></div><div class="cover-blob"></div><div class="cover-blob"></div>
+    <div class="cover-content">
+      <div class="fade-up" style="margin-bottom:28px;">
+        <div class="cover-logo-heartbeat">
+          <span style="font-size:15px;font-weight:700;letter-spacing:6px;text-transform:uppercase;opacity:0.6;">agilize</span>
+        </div>
+      </div>
+      <div class="logo-text fade-up">Engenharia · 2026</div>
+      <div class="decorative-line fade-up"></div>
+      <h1 class="fade-up">O Engenheiro do <s style="opacity:0.32;font-weight:300;text-decoration-color:rgba(255,255,255,0.4);"> Futuro</s> Presente
+        <span>O profissional que vai definir a próxima era do software — e como se tornar esse dev</span>
+      </h1>
+      <div class="date-badge fade-up"><i class="fa-solid fa-microchip"></i>&nbsp; 2026</div>
+      <div class="fade-up" style="margin-top:24px;display:flex;gap:10px;flex-wrap:wrap;justify-content:center;align-items:center;">
+        <span style="font-size:11px;opacity:0.4;font-weight:600;letter-spacing:2px;text-transform:uppercase;">4 partes:</span>
+        <span style="font-size:12px;padding:4px 14px;border:1px solid rgba(255,255,255,0.2);border-radius:20px;opacity:0.65;font-weight:600;">O Mundo Mudou</span>
+        <span style="font-size:12px;padding:4px 14px;border:1px solid rgba(255,255,255,0.2);border-radius:20px;opacity:0.65;font-weight:600;">4 Histórias do Vale</span>
+        <span style="font-size:12px;padding:4px 14px;border:1px solid rgba(255,255,255,0.2);border-radius:20px;opacity:0.65;font-weight:600;">Maria API</span>
+        <span style="font-size:12px;padding:4px 14px;border:1px solid rgba(255,255,255,0.2);border-radius:20px;opacity:0.65;font-weight:600;">Sua Jornada</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2 · Quote -->
+  <div class="slide" data-slide="1" data-title="A frase" style="background:linear-gradient(135deg,#16213E,#1a3a6e);color:white;display:flex;align-items:center;justify-content:center;">
+    <div style="max-width:800px;text-align:center;">
+      <div class="fade-up" style="font-size:28px;opacity:0.35;margin-bottom:40px;">
+        <i class="fa-solid fa-quote-left"></i>
+      </div>
+      <blockquote class="fade-up" style="font-size:clamp(28px,3.5vw,48px);font-weight:500;font-style:italic;line-height:1.5;letter-spacing:0.5px;">
+        Construir a coisa que <span style="font-weight:700;border-bottom:3px solid rgba(255,255,255,0.35);">constrói a coisa</span>.
+      </blockquote>
+      <cite class="fade-up" style="display:block;margin-top:36px;font-size:16px;font-weight:600;opacity:0.55;font-style:normal;">
+        — <strong style="opacity:1;">Waldemar Neto</strong>, após voltar do Vale do Silício · 2026
+      </cite>
+    </div>
+    <div class="slide-refs">
+      <span class="slide-refs-label" style="color:rgba(255,255,255,0.3);">referências</span>
+      <a href="https://www.youtube.com/watch?v=iLyo0J8PRIA" target="_blank" class="slide-ref-link">
+        <i class="fa-brands fa-youtube ref-icon" style="color:#FF0000;"></i>
+        Waldemar Neto — Vale do Silício 2026
+      </a>
+    </div>
+  </div>
+
+  <!-- 3 · O mundo mudou -->
+  <div class="slide" data-slide="2" data-title="O mundo mudou" style="background:var(--white);">
+    <div class="section-label fade-up"><i class="fa-solid fa-earth-americas"></i> O mundo mudou</div>
+    <h2 class="slide-title fade-up">Builders chegaram — e o <em>overlap</em> só cresce</h2>
+    <div class="context-grid">
+      <div class="context-card step-card">
+        <div class="context-icon" style="background:var(--purple-subtle);">
+          <i class="fa-solid fa-chart-pie"></i>
+        </div>
+        <h3>40–50%</h3>
+        <p>dos usuários do Cursor não são devs. Designers, PMs e founders entregam features em produção hoje.</p>
+      </div>
+      <div class="context-card step-card">
+        <div class="context-icon" style="background:#E8F8F0;">
+          <i class="fa-solid fa-layer-group" style="color:var(--accent-teal);"></i>
+        </div>
+        <h3>Infra = alcance</h3>
+        <p>Quanto mais infra segura o dev prover, mais os builders conseguem construir. O overlap só aumenta.</p>
+      </div>
+      <div class="context-card step-card">
+        <div class="context-icon" style="background:#FEF3E8;">
+          <i class="fa-solid fa-door-open" style="color:var(--accent-orange);"></i>
+        </div>
+        <h3>Janela aberta</h3>
+        <p>A IA não fecha o mercado — abre. Mais builders construindo gera mais demanda por quem coloca em produção com qualidade.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4 · O dev profissional -->
+  <div class="slide" data-slide="3" data-title="O dev em 2026" style="background:var(--white);">
+    <div class="section-label fade-up"><i class="fa-solid fa-user-gear"></i> O dev profissional em 2026</div>
+    <h2 class="slide-title fade-up">O que o <em>Vale do Silício</em> espera hoje</h2>
+    <div class="context-grid">
+      <div class="context-card step-card">
+        <div class="context-icon" style="background:var(--purple-subtle);">
+          <i class="fa-solid fa-network-wired"></i>
+        </div>
+        <h3>Orquestrador</h3>
+        <p>Despacha agentes, revisa PRs e coordena trabalho paralelo. Não escreve cada linha — governa o fluxo.</p>
+      </div>
+      <div class="context-card step-card">
+        <div class="context-icon" style="background:#E8F4FD;">
+          <i class="fa-solid fa-chart-line" style="color:var(--accent-blue);"></i>
+        </div>
+        <h3>Autonomia de PM</h3>
+        <p>Acesso a analytics, reuniões com stakeholders, poder de priorizar. Código é uma das skills — não a única.</p>
+      </div>
+      <div class="context-card step-card">
+        <div class="context-icon" style="background:#E8F8F0;">
+          <i class="fa-solid fa-eye" style="color:var(--accent-teal);"></i>
+        </div>
+        <h3>Validador</h3>
+        <p>Garante que o trabalho — de agentes ou builders — está correto, escala e faz sentido arquiteturalmente.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5 · Taste -->
+  <div class="slide" data-slide="4" data-title="Taste" style="background:var(--gray-50);">
+    <div class="section-label fade-up"><i class="fa-solid fa-star"></i> Habilidade do Vale do Silício</div>
+    <div class="taste-word fade-up">taste</div>
+    <h2 class="slide-title fade-up" style="margin-bottom:20px;font-size:clamp(16px,1.8vw,22px);font-weight:500;color:var(--gray-600);">No Vale do Silício, essa habilidade tem nome — e não é isso:</h2>
+    <div style="display:flex;align-items:flex-start;gap:32px;max-width:920px;width:100%;flex-wrap:wrap;justify-content:center;">
+      <!-- Errado: Toguro / sabooor -->
+      <div class="fade-up" style="text-align:center;flex-shrink:0;">
+        <div style="position:relative;display:inline-block;">
+          <img src="https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExaDFxajlod2FueHpjajQ3bTlxNmI3N210ZXhuZjBsNmtsaDF4ZzVxciZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/O2GDz1qaxocyUC85y8/giphy.gif"
+               alt="Toguro — 100%"
+               style="height:155px;border-radius:12px;filter:grayscale(0.4);opacity:0.75;box-shadow:0 6px 24px rgba(0,0,0,0.1);">
+          <div style="position:absolute;top:-10px;right:-10px;width:28px;height:28px;background:#E74C3C;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:15px;font-weight:900;box-shadow:0 2px 8px rgba(231,76,60,0.4);">✕</div>
+        </div>
+        <div style="margin-top:10px;font-size:20px;font-weight:700;color:var(--gray-400);text-decoration:line-through;">sabooor</div>
+        <div style="font-size:11px;color:var(--gray-400);font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-top:4px;">não é uma tradução literal</div>
+      </div>
+      <!-- Certo: definição real -->
+      <div class="fade-up" style="flex:1;min-width:280px;background:white;border-radius:16px;padding:26px 24px;border:1px solid var(--gray-200);box-shadow:0 4px 16px rgba(0,0,0,0.04);">
+        <div style="font-size:12px;font-weight:700;color:var(--purple);letter-spacing:3px;text-transform:uppercase;margin-bottom:12px;">Então o que é taste?</div>
+        <p style="font-size:clamp(14px,1.6vw,17px);color:var(--gray-800);line-height:1.75;font-weight:500;margin-bottom:16px;">
+          <strong>Capacidade de fazer julgamento estético e de qualidade</strong> sobre produto, código e design — <em style="color:var(--gray-500);">sem precisar de uma regra ou demanda explícita.</em>
+        </p>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <span style="background:var(--purple-subtle);color:var(--purple);padding:7px 14px;border-radius:20px;font-size:13px;font-weight:700;display:inline-flex;align-items:center;gap:8px;width:fit-content;"><i class="fa-solid fa-code"></i> saber quando código é bom, sem medir</span>
+          <span style="background:#E8F4FD;color:var(--accent-blue);padding:7px 14px;border-radius:20px;font-size:13px;font-weight:700;display:inline-flex;align-items:center;gap:8px;width:fit-content;"><i class="fa-solid fa-wand-magic-sparkles"></i> sentir quando um produto vai encantar</span>
+          <span style="background:#E8F8F0;color:var(--accent-teal);padding:7px 14px;border-radius:20px;font-size:13px;font-weight:700;display:inline-flex;align-items:center;gap:8px;width:fit-content;"><i class="fa-solid fa-drafting-compass"></i> reconhecer design que comunica</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6 · Nasce o Product Engineer -->
+  <div class="slide" data-slide="5" data-title="Product Engineer" style="background:var(--white);">
+    <div class="section-label fade-up"><i class="fa-solid fa-circle-half-stroke"></i> O nome tem dono</div>
+    <h2 class="slide-title fade-up">Nasce o <em>Product Engineer</em></h2>
+    <div class="two-col">
+      <div class="face-card step-card" style="background:linear-gradient(135deg,#3D1A6E,#5C2D91);color:white;">
+        <div class="face-icon">🎯</div>
+        <h3>Face 1 — Produto</h3>
+        <ul>
+          <li><span>Decide o que construir</span></li>
+          <li><span>Fala com PM, mede impacto</span></li>
+          <li><span>Tem taste — julga sem regra</span></li>
+          <li><span>Conecta código ao negócio</span></li>
+        </ul>
+      </div>
+      <div class="face-card step-card" style="background:linear-gradient(135deg,#1B6B45,#1ABC9C);color:white;">
+        <div class="face-icon">🔧</div>
+        <h3>Face 2 — Harness</h3>
+        <ul>
+          <li><span>Constrói a infra que os builders usam</span></li>
+          <li><span>Code review, specs, agentes de qualidade</span></li>
+          <li><span>Self-healing e automações de fluxo</span></li>
+          <li><span>Entrega rápido sem quebrar produção</span></li>
+        </ul>
+      </div>
+    </div>
+    <p class="step-card" style="margin-top:28px;font-size:14px;color:var(--gray-400);text-align:center;">
+      Só produto → PM disfarçado &nbsp;·&nbsp; Só infra → Platform Engineer com outro nome
+    </p>
+  </div>
+
+  <!-- 7 · Brasil vs Vale -->
+  <div class="slide" data-slide="6" data-title="Brasil vs Vale" style="background:var(--white);">
+    <div class="section-label fade-up"><i class="fa-solid fa-scale-balanced"></i> O gap real</div>
+    <h2 class="slide-title fade-up">Brasil vs Vale — a <em>janela de oportunidade</em></h2>
+    <div class="comparison">
+      <div class="comp-col step-card" style="background:var(--purple-subtle);border:1px solid rgba(92,45,145,0.15);">
+        <h3 style="color:var(--purple);">🌎 Brasil — maioria hoje</h3>
+        <div class="comp-item"><div class="comp-dot" style="background:var(--accent-red);"></div>Recebe ticket pronto refinado por PM+PO</div>
+        <div class="comp-item"><div class="comp-dot" style="background:var(--accent-red);"></div>Sem acesso a analytics de produto</div>
+        <div class="comp-item"><div class="comp-dot" style="background:var(--accent-red);"></div>Não sabe qual métrica a feature move</div>
+        <div class="comp-item"><div class="comp-dot" style="background:var(--accent-red);"></div>IA acelera o código — o resto fica igual</div>
+      </div>
+      <div class="comp-col step-card" style="background:#E8F8F0;border:1px solid rgba(26,188,156,0.15);">
+        <h3 style="color:var(--accent-teal);">🌉 Vale do Silício — padrão</h3>
+        <div class="comp-item"><div class="comp-dot" style="background:var(--accent-teal);"></div>Acesso total a analytics e dados reais</div>
+        <div class="comp-item"><div class="comp-dot" style="background:var(--accent-teal);"></div>Reuniões diretas com stakeholders</div>
+        <div class="comp-item"><div class="comp-dot" style="background:var(--accent-teal);"></div>Autonomia para priorizar o backlog</div>
+        <div class="comp-item"><div class="comp-dot" style="background:var(--accent-teal);"></div>IA multiplica quem já tem alavanca</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ PARTE 2 — 4 HISTÓRIAS ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+
+  <!-- 8 · Divisor -->
+  <div class="slide cover" data-slide="7" data-title="4 Histórias">
+    <div class="cover-blob"></div><div class="cover-blob"></div><div class="cover-blob"></div>
+    <div class="cover-blob"></div><div class="cover-blob"></div><div class="cover-blob"></div>
+    <div class="cover-content">
+      <div class="part-label fade-up">Parte 2</div>
+      <div class="part-title fade-up">4 Histórias<br>do Vale do Silício</div>
+      <div class="part-sub fade-up">Cursor · DataBricks · Stripe · Linear</div>
+    </div>
+  </div>
+
+  <!-- 9 · 4 Histórias condensadas -->
+  <div class="slide" data-slide="8" data-title="4 Histórias" style="background:var(--white);">
+    <div class="section-label fade-up"><i class="fa-solid fa-map-pin"></i> Vale do Silício</div>
+    <h2 class="slide-title fade-up" style="margin-bottom:24px;">4 histórias reais — <em>o que muda na prática</em></h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:960px;width:100%;">
+      <!-- História 1 -->
+      <div class="step-card" style="background:var(--gray-50);border-radius:16px;padding:22px 24px;border:1px solid var(--gray-200);">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+          <div style="width:28px;height:28px;border-radius:50%;background:#FFF0EE;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#FF3621;flex-shrink:0;">1</div>
+          <div style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:#FF3621;letter-spacing:1px;text-transform:uppercase;">
+            <img src="https://logo.clearbit.com/databricks.com" alt="" style="height:13px;object-fit:contain;" onerror="this.style.display='none'"> DataBricks
+          </div>
+        </div>
+        <p style="font-size:13px;color:var(--gray-800);line-height:1.65;font-weight:500;margin-bottom:10px;">
+          "Saio de uma reunião, despacho 2–3 cloud agents. Volto da próxima reunião e têm PRs esperando por mim."
+        </p>
+        <div style="font-size:12px;color:var(--purple);background:var(--purple-subtle);padding:8px 12px;border-radius:8px;font-weight:600;">
+          Intervalos entre reuniões → onde mais código avança
+        </div>
+      </div>
+      <!-- História 2 -->
+      <div class="step-card" style="background:var(--gray-50);border-radius:16px;padding:22px 24px;border:1px solid var(--gray-200);">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+          <div style="width:28px;height:28px;border-radius:50%;background:#F0F0F0;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#000;flex-shrink:0;">2</div>
+          <div style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:#333;letter-spacing:1px;text-transform:uppercase;">
+            <img src="https://logo.clearbit.com/cursor.com" alt="" style="height:13px;object-fit:contain;" onerror="this.style.display='none'"> Cursor — Projetos
+          </div>
+        </div>
+        <p style="font-size:13px;color:var(--gray-800);line-height:1.65;font-weight:500;margin-bottom:10px;">
+          Projeto → Partes → Feature full-stack por parte → Tasks no tamanho certo. Cada feature dispara ~5 cloud agents simultâneos.
+        </p>
+        <div style="font-size:12px;color:var(--accent-blue);background:#E8F4FD;padding:8px 12px;border-radius:8px;font-weight:600;">
+          Coordenação mudou de objeto: de devs para agentes
+        </div>
+      </div>
+      <!-- História 3 -->
+      <div class="step-card" style="background:var(--gray-50);border-radius:16px;padding:22px 24px;border:1px solid var(--gray-200);">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+          <div style="width:28px;height:28px;border-radius:50%;background:#F0F0F0;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#000;flex-shrink:0;">3</div>
+          <div style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:#333;letter-spacing:1px;text-transform:uppercase;">
+            <img src="https://logo.clearbit.com/cursor.com" alt="" style="height:13px;object-fit:contain;" onerror="this.style.display='none'"> Cursor — Dados
+          </div>
+        </div>
+        <p style="font-size:13px;color:var(--gray-800);line-height:1.65;font-weight:500;margin-bottom:10px;">
+          "Quantos usuários teriam mais de X itens?" — MCP vai ao banco, traz o número. Arquitetura decidida antes de escrever uma linha.
+        </p>
+        <div style="font-size:12px;color:var(--accent-teal);background:#E8F8F0;padding:8px 12px;border-radius:8px;font-weight:600;">
+          O agente vira pesquisador. O dev, decisor.
+        </div>
+      </div>
+      <!-- História 4 -->
+      <div class="step-card" style="background:var(--gray-50);border-radius:16px;padding:22px 24px;border:1px solid var(--gray-200);">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+          <div style="width:28px;height:28px;border-radius:50%;background:#F0F0F0;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#000;flex-shrink:0;">4</div>
+          <div style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:#333;letter-spacing:1px;text-transform:uppercase;">
+            <img src="https://logo.clearbit.com/cursor.com" alt="" style="height:13px;object-fit:contain;" onerror="this.style.display='none'"> Cursor — Bug
+          </div>
+        </div>
+        <p style="font-size:13px;color:var(--gray-800);line-height:1.65;font-weight:500;margin-bottom:10px;">
+          "DataDog + Audit Logs + GitHub — cria uma timeline." Um prompt. Diagrama em minutos. PR culpado identificado.
+        </p>
+        <div style="font-size:12px;color:var(--accent-orange);background:#FEF3E8;padding:8px 12px;border-radius:8px;font-weight:600;">
+          Post-mortem de 1 dia → investigação em minutos
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ PARTE 3 — MARIA API ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+
+  <!-- 13 · Divisor -->
+  <div class="slide cover" data-slide="12" data-title="Maria API">
+    <div class="cover-blob"></div><div class="cover-blob"></div><div class="cover-blob"></div>
+    <div class="cover-blob"></div><div class="cover-blob"></div><div class="cover-blob"></div>
+    <div class="cover-content">
+      <div class="part-label fade-up">Parte 3</div>
+      <div class="part-title fade-up">Do Vale para<br>o Brasil</div>
+      <div class="part-sub fade-up">Como a Agilize está construindo isso agora</div>
+      <div class="date-badge fade-up" style="margin-top:28px;">
+        <i class="fa-solid fa-code-branch"></i>&nbsp; Maria API
+      </div>
+    </div>
+  </div>
+
+  <!-- 15 · Code Review automático -->
+  <div class="slide" data-slide="14" data-title="Code Review Auto" style="background:var(--gray-50);">
+    <div class="section-label fade-up"><i class="fa-solid fa-shield-halved"></i> Harness — Qualidade</div>
+    <h2 class="slide-title fade-up" style="margin-bottom:20px;">Code review <em>automático</em> em todo PR</h2>
+    <div class="fade-up" style="display:flex;align-items:center;gap:28px;max-width:1060px;width:100%;">
+      <div class="cr-box" style="flex:1;align-self:stretch;">
+        <div class="cr-tag"><i class="fa-solid fa-circle-check"></i> GitHub Actions — todo PR contra main ou develop</div>
+        <div class="cr-title">Claude Sonnet 4.6 revisa cada Pull Request<br>como um reviewer humano</div>
+        <div class="cr-checks">
+          <div class="cr-check"><i class="fa-solid fa-check-circle"></i> Correção lógica e funcionamento correto</div>
+          <div class="cr-check"><i class="fa-solid fa-check-circle"></i> Aderência à arquitetura hexagonal</div>
+          <div class="cr-check"><i class="fa-solid fa-check-circle"></i> FastAPI, Celery e agentes Agno</div>
+          <div class="cr-check"><i class="fa-solid fa-check-circle"></i> Segurança e performance</div>
+          <div class="cr-check"><i class="fa-solid fa-check-circle"></i> Cobertura de testes e qualidade</div>
+          <div class="cr-check"><i class="fa-solid fa-check-circle"></i> Ruff + inglês obrigatório no código</div>
+        </div>
+      </div>
+      <div style="flex:0 0 auto;align-self:center;">
+        <img src="imgs/claude-review.gif" alt="Claude code review em ação"
+             style="height:clamp(300px,38vh,420px);border-radius:16px;box-shadow:0 12px 48px rgba(0,0,0,0.45);border:2px solid rgba(255,255,255,0.1);display:block;">
+      </div>
+    </div>
+    <p class="fade-up" style="margin-top:18px;font-size:15px;color:var(--gray-500);text-align:center;">
+      Dúvidas? <strong style="color:var(--purple);font-size:16px;">@tech-augusto-romeiro</strong>
+    </p>
+    <div class="slide-refs">
+      <span class="slide-refs-label">referências</span>
+      <a href="https://github.com/agilize/maria-api/tree/main/.github/workflows" target="_blank" class="slide-ref-link">
+        <i class="fa-brands fa-github ref-icon"></i>
+        maria-api — .github/workflows
+      </a>
+    </div>
+  </div>
+
+  <!-- 11b · Resolve PR comments -->
+  <div class="slide" data-slide="14b" data-title="Resolve PR Comments" style="background:var(--white);">
+    <div class="section-label fade-up"><i class="fa-solid fa-comments"></i> Harness — Qualidade</div>
+    <h2 class="slide-title fade-up">Resolução de comentários — <em>fechando o loop</em></h2>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:20px;max-width:860px;width:100%;">
+      <!-- Command box -->
+      <div class="fade-up" style="background:#1B0A2E;border-radius:14px;padding:16px 36px;font-family:monospace;font-size:18px;font-weight:700;color:#00E68D;letter-spacing:1px;border:1px solid rgba(0,230,141,0.2);width:100%;text-align:center;">
+        /resolve-pr-comments
+      </div>
+      <!-- Flow -->
+      <div class="fade-up" style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;width:100%;">
+        <div style="background:var(--gray-50);border-radius:14px;padding:20px 18px;border:1px solid var(--gray-200);text-align:center;">
+          <div style="width:44px;height:44px;border-radius:50%;background:var(--purple-subtle);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:20px;color:var(--purple);">
+            <i class="fa-brands fa-github"></i>
+          </div>
+          <div style="font-size:14px;font-weight:700;color:var(--gray-800);margin-bottom:6px;">Busca comentários</div>
+          <div style="font-size:13px;color:var(--gray-600);line-height:1.5;">Lê todos os threads abertos do PR no GitHub</div>
+        </div>
+        <div style="background:var(--gray-50);border-radius:14px;padding:20px 18px;border:1px solid var(--gray-200);text-align:center;position:relative;">
+          <div style="position:absolute;top:50%;left:-10px;transform:translateY(-50%);color:var(--gray-300);font-size:18px;">→</div>
+          <div style="width:44px;height:44px;border-radius:50%;background:#E8F4FD;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:20px;color:var(--accent-blue);">
+            <i class="fa-solid fa-wand-magic-sparkles"></i>
+          </div>
+          <div style="font-size:14px;font-weight:700;color:var(--gray-800);margin-bottom:6px;">Aplica correções</div>
+          <div style="font-size:13px;color:var(--gray-600);line-height:1.5;">Edita o código conforme cada comentário aprovado</div>
+        </div>
+        <div style="background:var(--gray-50);border-radius:14px;padding:20px 18px;border:1px solid var(--gray-200);text-align:center;position:relative;">
+          <div style="position:absolute;top:50%;left:-10px;transform:translateY(-50%);color:var(--gray-300);font-size:18px;">→</div>
+          <div style="width:44px;height:44px;border-radius:50%;background:#E8F8F0;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:20px;color:var(--accent-teal);">
+            <i class="fa-solid fa-check-double"></i>
+          </div>
+          <div style="font-size:14px;font-weight:700;color:var(--gray-800);margin-bottom:6px;">Resolve threads</div>
+          <div style="font-size:13px;color:var(--gray-600);line-height:1.5;">Marca cada thread como resolvido direto no GitHub</div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-refs">
+      <span class="slide-refs-label">referências</span>
+      <a href="https://github.com/agilize/maria-api/tree/main/.claude/skills/resolve-pr-comments" target="_blank" class="slide-ref-link">
+        <i class="fa-brands fa-github ref-icon"></i>
+        maria-api — skills/resolve-pr-comments
+      </a>
+    </div>
+  </div>
+
+  <!-- Self-healing loop -->
+  <div class="slide" data-slide="14c" data-title="Self-healing Loop" style="background:var(--white);">
+    <div class="section-label fade-up"><i class="fa-solid fa-arrows-rotate"></i> O mercado chama de</div>
+    <h2 class="slide-title fade-up" style="margin-bottom:32px;"><em>Self-healing loop</em></h2>
+
+    <!-- Loop diagram -->
+    <div class="fade-up" style="display:flex;align-items:center;justify-content:center;gap:0;max-width:900px;width:100%;flex-wrap:wrap;">
+
+      <!-- Node 1: PR aberto -->
+      <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
+        <div style="width:80px;height:80px;border-radius:50%;background:var(--gray-100);border:2px solid var(--gray-200);display:flex;align-items:center;justify-content:center;font-size:26px;">🧑‍💻</div>
+        <div style="font-size:12px;font-weight:700;color:var(--gray-600);text-align:center;max-width:80px;line-height:1.4;">PR aberto</div>
+      </div>
+
+      <div style="flex:1;height:2px;background:linear-gradient(90deg,var(--gray-200),var(--purple-light));min-width:32px;max-width:60px;"></div>
+
+      <!-- Node 2: Claude revisa -->
+      <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
+        <div style="width:80px;height:80px;border-radius:50%;background:var(--purple-subtle);border:2px solid var(--purple-light);display:flex;align-items:center;justify-content:center;font-size:26px;">🤖</div>
+        <div style="font-size:12px;font-weight:700;color:var(--purple);text-align:center;max-width:88px;line-height:1.4;">Claude revisa automaticamente</div>
+      </div>
+
+      <div style="flex:1;height:2px;background:linear-gradient(90deg,var(--purple-light),var(--accent-orange));min-width:32px;max-width:60px;"></div>
+
+      <!-- Node 3: Comentários -->
+      <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
+        <div style="width:80px;height:80px;border-radius:50%;background:#FEF3E8;border:2px solid rgba(230,126,34,0.3);display:flex;align-items:center;justify-content:center;font-size:26px;">💬</div>
+        <div style="font-size:12px;font-weight:700;color:var(--accent-orange);text-align:center;max-width:80px;line-height:1.4;">Comentários gerados</div>
+      </div>
+
+      <div style="flex:1;height:2px;background:linear-gradient(90deg,var(--accent-orange),var(--accent-teal));min-width:32px;max-width:60px;"></div>
+
+      <!-- Node 4: /resolve -->
+      <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
+        <div style="width:80px;height:80px;border-radius:50%;background:#E8F8F0;border:2px solid rgba(26,188,156,0.3);display:flex;align-items:center;justify-content:center;font-size:26px;">⚡</div>
+        <div style="font-size:12px;font-weight:700;color:var(--accent-teal);text-align:center;max-width:88px;line-height:1.4;">/resolve-pr-comments</div>
+      </div>
+
+      <div style="flex:1;height:2px;background:linear-gradient(90deg,var(--accent-teal),var(--gray-200));min-width:32px;max-width:60px;"></div>
+
+      <!-- Node 5: Merge -->
+      <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
+        <div style="width:80px;height:80px;border-radius:50%;background:var(--gray-100);border:2px solid var(--gray-200);display:flex;align-items:center;justify-content:center;font-size:26px;">✅</div>
+        <div style="font-size:12px;font-weight:700;color:var(--gray-600);text-align:center;max-width:80px;line-height:1.4;">Merge com qualidade</div>
+      </div>
+
+    </div>
+
+    <!-- Return arrow label -->
+    <div class="fade-up" style="margin-top:14px;display:flex;align-items:center;gap:10px;color:var(--gray-300);font-size:13px;font-weight:600;letter-spacing:1px;">
+      <div style="height:1px;width:60px;background:var(--gray-200);"></div>
+      <i class="fa-solid fa-rotate-left" style="color:var(--gray-300);"></i>
+      repete a cada PR, sem intervenção manual
+      <i class="fa-solid fa-rotate-left fa-flip-horizontal" style="color:var(--gray-300);"></i>
+      <div style="height:1px;width:60px;background:var(--gray-200);"></div>
+    </div>
+
+    <!-- Definition -->
+    <div class="fade-up" style="margin-top:20px;max-width:720px;background:var(--gray-50);border-radius:14px;padding:16px 28px;border:1px solid var(--gray-200);text-align:center;">
+      <p style="font-size:15px;color:var(--gray-700);line-height:1.7;">
+        O sistema <strong style="color:var(--gray-800);">detecta, aponta e corrige</strong> seus próprios problemas de qualidade —
+        sem depender de revisão humana constante. O dev foca no que é <strong style="color:var(--purple);">estratégico</strong>.
+      </p>
+    </div>
+  </div>
+
+  <!-- 16 · Agentes especializados -->
+  <div class="slide" data-slide="15" data-title="Agentes" style="background:var(--white);">
+    <div class="section-label fade-up"><i class="fa-solid fa-robot"></i> Harness — Agentes</div>
+    <h2 class="slide-title fade-up">Agentes <em>especializados</em> no projeto</h2>
+    <div class="agents-grid stagger">
+      <div class="agent-card" style="background:var(--purple-subtle);border-color:rgba(92,45,145,0.15);">
+        <div class="agent-icon">🤖</div>
+        <h3 style="color:var(--purple);">ai-agent-specialist</h3>
+        <p>Cria, configura, debuga e evolui agentes Agno com modelos Gemini via OpenRouter. Checklist de 11 passos para novos agentes.</p>
+      </div>
+      <div class="agent-card" style="background:#E8F4FD;border-color:rgba(52,152,219,0.15);">
+        <div class="agent-icon">🏛️</div>
+        <h3 style="color:var(--accent-blue);">python-architect</h3>
+        <p>Decisões de design, refatoração e performance. FastAPI, Celery, MongoDB async e arquitetura hexagonal.</p>
+      </div>
+      <div class="agent-card" style="background:#E8F8F0;border-color:rgba(26,188,156,0.15);">
+        <div class="agent-icon">🧪</div>
+        <h3 style="color:var(--accent-teal);">test-specialist</h3>
+        <p>Escreve, revisa e debuga testes unitários, de integração e evals com LLM Judge.</p>
+      </div>
+    </div>
+    <p class="fade-up" style="margin-top:20px;font-size:15px;color:var(--gray-500);text-align:center;">
+      Dúvidas? <strong style="color:var(--purple);font-size:16px;">@tech-lucasxavier</strong>
+    </p>
+  </div>
+
+  <!-- 17 · Squad MarIA — new-agent -->
+  <div class="slide" data-slide="16" data-title="Squad MarIA" style="background:var(--white);">
+    <div class="section-label fade-up"><i class="fa-solid fa-wand-magic-sparkles"></i> Código automatizado — 100% com Claude</div>
+    <h2 class="slide-title fade-up" style="margin-bottom:18px;"><em>37 agentes</em> construídos — a estimativa era 36</h2>
+    <!-- 2 momentos lado a lado -->
+    <div style="display:flex;gap:16px;max-width:960px;width:100%;align-items:flex-start;">
+
+      <!-- Momento 1: estimativa + antes -->
+      <div class="step-card" style="flex:1;display:flex;flex-direction:column;gap:12px;">
+        <!-- Stats — só o 36 -->
+        <div style="display:flex;justify-content:center;">
+          <div style="text-align:center;padding:10px 20px;background:var(--gray-50);border-radius:12px;border:1px solid var(--gray-200);">
+            <div style="font-size:28px;font-weight:700;color:var(--gray-400);text-decoration:line-through;">36</div>
+            <div style="font-size:10px;color:var(--gray-400);font-weight:600;letter-spacing:1px;text-transform:uppercase;">estimativa otimista</div>
+          </div>
+        </div>
+        <!-- Antes -->
+        <div style="background:var(--gray-50);border-radius:16px;padding:20px 22px;border:1px solid var(--gray-200);">
+          <div style="font-size:11px;font-weight:700;color:var(--accent-red);letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;"><i class="fa-solid fa-xmark"></i> Antes — fluxo manual</div>
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--gray-700);">
+              <div style="width:22px;height:22px;border-radius:50%;background:var(--gray-200);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--gray-500);flex-shrink:0;">1</div>
+              Card no Jira explicando o agente necessário
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--gray-700);">
+              <div style="width:22px;height:22px;border-radius:50%;background:var(--gray-200);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--gray-500);flex-shrink:0;">2</div>
+              Pesquisa manual de tickets no Zendesk e montagem do dataset
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--gray-700);">
+              <div style="width:22px;height:22px;border-radius:50%;background:var(--gray-200);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--gray-500);flex-shrink:0;">3</div>
+              Revisão da base de conhecimento
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--gray-700);">
+              <div style="width:22px;height:22px;border-radius:50%;background:var(--gray-200);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--gray-500);flex-shrink:0;">4</div>
+              Construção manual do código
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--gray-700);">
+              <div style="width:22px;height:22px;border-radius:50%;background:var(--gray-200);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--gray-500);flex-shrink:0;">5</div>
+              Testes manuais
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Momento 2: realidade + depois -->
+      <div class="step-card" style="flex:1;display:flex;flex-direction:column;gap:12px;">
+        <!-- 37 entregues com IA -->
+        <div style="display:flex;justify-content:center;">
+          <div style="text-align:center;padding:10px 20px;background:var(--purple-subtle);border-radius:12px;border:1px solid rgba(92,45,145,0.2);">
+            <div style="font-size:28px;font-weight:700;color:var(--purple);">37</div>
+            <div style="font-size:10px;color:var(--purple);font-weight:600;letter-spacing:1px;text-transform:uppercase;">entregues com IA</div>
+          </div>
+        </div>
+        <div style="background:var(--purple-subtle);border-radius:16px;padding:20px 22px;border:1px solid rgba(92,45,145,0.15);flex:1;">
+          <div style="font-size:11px;font-weight:700;color:var(--purple);letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;"><i class="fa-solid fa-check"></i> Hoje — um command</div>
+          <div style="background:#1B0A2E;border-radius:10px;padding:10px 16px;font-family:monospace;font-size:14px;font-weight:700;color:#00E68D;letter-spacing:0.5px;margin-bottom:12px;text-align:center;">
+            /new-agent InvoiceAgent MIA-123
+          </div>
+          <div style="display:flex;flex-direction:column;gap:7px;">
+            <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--gray-800);">
+              <i class="fa-solid fa-check" style="color:var(--purple);font-size:11px;width:14px;flex-shrink:0;"></i>
+              Busca contexto do card Jira automaticamente
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--gray-800);">
+              <i class="fa-solid fa-check" style="color:var(--purple);font-size:11px;width:14px;flex-shrink:0;"></i>
+              Baixa dataset real do Zendesk (<code style="font-size:11px;background:rgba(92,45,145,0.1);padding:1px 5px;border-radius:4px;">make build-dataset</code>)
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--gray-800);">
+              <i class="fa-solid fa-check" style="color:var(--purple);font-size:11px;width:14px;flex-shrink:0;"></i>
+              Delega implementação ao <code style="font-size:11px;background:rgba(92,45,145,0.1);padding:1px 5px;border-radius:4px;">ai-agent-specialist</code>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--gray-800);">
+              <i class="fa-solid fa-check" style="color:var(--purple);font-size:11px;width:14px;flex-shrink:0;"></i>
+              Testes com <code style="font-size:11px;background:rgba(92,45,145,0.1);padding:1px 5px;border-radius:4px;">test-specialist</code> + LLM Judge
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--gray-800);">
+              <i class="fa-solid fa-check" style="color:var(--purple);font-size:11px;width:14px;flex-shrink:0;"></i>
+              Aprovação e commit aguardam revisão humana
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <p class="fade-up" style="margin-top:14px;font-size:12px;color:var(--gray-400);text-align:center;">
+      Squad MarIA — responde tickets do Zendesk com agentes de IA construídos e testados 100% via Claude Code
+    </p>
+  </div>
+
+  <!-- 16 · Todas as skills -->
+  <div class="slide" data-slide="18" data-title="Skills" style="background:var(--white);">
+    <div class="section-label fade-up"><i class="fa-solid fa-terminal"></i> Harness — Skills</div>
+    <h2 class="slide-title fade-up" style="margin-bottom:20px;">Todas as skills do <em>harness</em></h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;max-width:960px;width:100%;" class="stagger">
+      <div class="skill-item">
+        <div class="skill-cmd">/new-agent</div>
+        <div class="skill-desc"><strong>Cria um agente de IA completo</strong>Jira → dataset Zendesk → código → testes, 100% automatizado.</div>
+      </div>
+      <div class="skill-item">
+        <div class="skill-cmd">/ship</div>
+        <div class="skill-desc"><strong>Entrega completa</strong>Conventional Commits por tema, push e PR em um único comando.</div>
+      </div>
+      <div class="skill-item">
+        <div class="skill-cmd">/resolve-pr-comments</div>
+        <div class="skill-desc"><strong>Fecha o loop de review</strong>Busca comentários do PR, aplica correções e resolve threads no GitHub.</div>
+      </div>
+      <div class="skill-item">
+        <div class="skill-cmd">/create-pr</div>
+        <div class="skill-desc"><strong>PR com contexto rico</strong>Analisa todos os commits da branch e gera descrição completa.</div>
+      </div>
+      <div class="skill-item">
+        <div class="skill-cmd">/audit-recent-tickets</div>
+        <div class="skill-desc"><strong>Auditoria de qualidade</strong>Detecta erros nos últimos N minutos e dispara alertas no Slack.</div>
+      </div>
+      <div class="skill-item">
+        <div class="skill-cmd">/jira-integration</div>
+        <div class="skill-desc"><strong>Jira sem abrir o browser</strong>Criar, buscar, atualizar, comentar e registrar worklog em issues.</div>
+      </div>
+      <div class="skill-item">
+        <div class="skill-cmd">/mongodb-query</div>
+        <div class="skill-desc"><strong>Query read-only ao banco</strong>Tickets, knowledge base, sessões Agno e jobs via mongosh.</div>
+      </div>
+      <div class="skill-item">
+        <div class="skill-cmd">/langfuse</div>
+        <div class="skill-desc"><strong>Observabilidade de LLMs</strong>Traces, prompts, datasets e scores. Migração de prompts e SDK.</div>
+      </div>
+      <div class="skill-item">
+        <div class="skill-cmd">/slack-integration</div>
+        <div class="skill-desc"><strong>Slack sem sair do terminal</strong>Enviar mensagens, alertas e notificações para canais e usuários.</div>
+      </div>
+      <div class="skill-item">
+        <div class="skill-cmd">/create-cli-command</div>
+        <div class="skill-desc"><strong>Cria novos comandos CLI</strong>Gera a estrutura de um novo comando a partir de uma spec.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ PARTE 4 — SUA JORNADA ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+
+  <!-- Divisor Parte 4 -->
+  <div class="slide cover" data-slide="18b" data-title="Sua Jornada">
+    <div class="cover-blob"></div><div class="cover-blob"></div><div class="cover-blob"></div>
+    <div class="cover-blob"></div><div class="cover-blob"></div><div class="cover-blob"></div>
+    <div class="cover-content">
+      <div class="part-label fade-up">Parte 4</div>
+      <div class="part-title fade-up">Sua Jornada</div>
+      <div class="part-sub fade-up">O que você pode começar essa semana</div>
+    </div>
+  </div>
+
+  <!-- 20 · 4 Movimentos -->
+  <div class="slide" data-slide="19" data-title="4 Movimentos" style="background:var(--white);">
+    <div class="section-label fade-up"><i class="fa-solid fa-person-running"></i> Sua jornada</div>
+    <h2 class="slide-title fade-up">4 movimentos para <em>começar essa semana</em></h2>
+    <div class="movements-grid">
+      <div class="movement-card step-card">
+        <div class="movement-num">1</div>
+        <div>
+          <h3>Mentalidade de produto</h3>
+          <p>Pense como builder, não só como coder. O código é o meio — o impacto no negócio é o fim.</p>
+        </div>
+      </div>
+      <div class="movement-card step-card">
+        <div class="movement-num">2</div>
+        <div>
+          <h3>Automação</h3>
+          <p>Chega de trabalho manual. Se você fez mais de uma vez, automatize. Seu tempo vale mais do que repetição.</p>
+        </div>
+      </div>
+      <div class="movement-card step-card">
+        <div class="movement-num">3</div>
+        <div>
+          <h3>Harness é o segredo</h3>
+          <p>Um template de spec, uma skill de code review, uma automação de testes. Pequeno — mas real.</p>
+        </div>
+      </div>
+      <div class="movement-card step-card" style="border-color:rgba(92,45,145,0.3);background:var(--purple-subtle);">
+        <div class="movement-num" style="background:var(--purple-dark);">4</div>
+        <div>
+          <h3 style="color:var(--purple);">Se demita</h3>
+          <p style="color:var(--purple-light);">Você precisa subir para o próximo nível. Demita-se do que você era — e assuma o que você pode ser.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide engraçado: jeito errado vs certo -->
+  <div class="slide" data-slide="19b" data-title="Mas eu não sei usar IA" style="background:var(--white);">
+    <div class="section-label fade-up">🤔 A pergunta que todo mundo faz</div>
+    <h2 class="slide-title fade-up" style="margin-bottom:20px;">"ain Victor, mas eu <em>não sei usar</em> a IA"</h2>
+
+    <div style="display:flex;gap:20px;max-width:1000px;width:100%;align-items:stretch;">
+
+      <!-- Jeito errado -->
+      <div class="step-card" style="flex:1;display:flex;flex-direction:column;gap:14px;">
+        <div style="background:#FEF2F2;border-radius:18px;padding:22px 24px;border:1px solid rgba(231,76,60,0.2);flex:1;">
+          <div style="font-size:12px;font-weight:700;color:var(--accent-red);letter-spacing:2px;text-transform:uppercase;margin-bottom:14px;">🤦 Jeito errado</div>
+          <div style="background:#1B0A2E;border-radius:10px;padding:11px 16px;font-family:monospace;font-size:12px;color:rgba(255,255,255,0.75);margin-bottom:12px;line-height:1.9;">
+            <span style="color:#00E68D;">user:</span> cria um sistema de autenticação<br>
+            <span style="color:#00E68D;">user:</span> resolve esse bug<br>
+            <span style="color:#00E68D;">user:</span> faz um CRUD<br>
+            <span style="color:rgba(255,255,255,0.3);font-size:11px;">← sem contexto, sem tech, sem spec</span>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:7px;">
+            <div style="font-size:13px;color:#C0392B;display:flex;gap:8px;"><span>✕</span> Pedido vago → resultado genérico</div>
+            <div style="font-size:13px;color:#C0392B;display:flex;gap:8px;"><span>✕</span> Sem contexto → código que não encaixa</div>
+            <div style="font-size:13px;color:#C0392B;display:flex;gap:8px;"><span>✕</span> Sem revisão → aceita tudo sem testar</div>
+          </div>
+          <div style="margin-top:12px;padding:9px 14px;background:rgba(231,76,60,0.08);border-radius:10px;font-size:13px;color:#C0392B;font-weight:700;text-align:center;">
+            Resultado: "a IA não presta"
+          </div>
+        </div>
+        <div style="display:flex;justify-content:center;">
+          <img src="https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExdmJtZGV3Nzk3emxoOHFhZTFmcjB6NWd6bmd2NjM2cjR6N3QyYTRucCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/l3q2wnlw48fuf1l3a/giphy.gif"
+               alt="pessoa sofrendo"
+               style="height:100px;border-radius:10px;opacity:0.85;">
+        </div>
+      </div>
+
+      <!-- Jeito certo -->
+      <div class="step-card" style="flex:1;display:flex;flex-direction:column;gap:14px;">
+        <div style="background:var(--purple-subtle);border-radius:18px;padding:22px 24px;border:1px solid rgba(92,45,145,0.2);flex:1;">
+          <div style="font-size:12px;font-weight:700;color:var(--purple);letter-spacing:2px;text-transform:uppercase;margin-bottom:14px;">✅ Jeito certo</div>
+          <div style="display:flex;flex-direction:column;gap:11px;">
+            <div style="background:white;border-radius:12px;padding:13px 16px;border:1px solid rgba(92,45,145,0.1);">
+              <div style="font-size:12px;font-weight:700;color:var(--purple);margin-bottom:5px;">📋 Planejamento</div>
+              <div style="font-size:13px;color:var(--gray-700);line-height:1.5;">Defina o objetivo, quebre em partes, use <code style="background:var(--purple-subtle);padding:1px 5px;border-radius:4px;font-size:11px;">EnterPlanMode</code> antes de codar.</div>
+            </div>
+            <div style="background:white;border-radius:12px;padding:13px 16px;border:1px solid rgba(92,45,145,0.1);">
+              <div style="font-size:12px;font-weight:700;color:var(--purple);margin-bottom:5px;">📎 Contexto</div>
+              <div style="font-size:13px;color:var(--gray-700);line-height:1.5;">Dê o código relevante, as regras do projeto, a tecnologia, as restrições. A IA trabalha com o que você dá.</div>
+            </div>
+            <div style="background:white;border-radius:12px;padding:13px 16px;border:1px solid rgba(92,45,145,0.1);">
+              <div style="font-size:12px;font-weight:700;color:var(--purple);margin-bottom:5px;">👀 Revisão</div>
+              <div style="font-size:13px;color:var(--gray-700);line-height:1.5;">Leia o que foi gerado. Teste. Dê feedback. Itere. Você é o decisor — a IA é o executor.</div>
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;justify-content:center;">
+          <img src="https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExOXQ5d3UwNHgzOXNvem9kb3UzYmlndXUwYnR2NGlzNjlpeGM1emUxdiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/IbUUbU4xUDJWcgGMGP/giphy.gif"
+               alt="sucesso"
+               style="height:100px;border-radius:10px;opacity:0.9;">
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 21 · SkillHub — o que é -->
+  <div class="slide" data-slide="20" data-title="SkillHub" style="background:var(--gray-50);">
+    <div class="section-label fade-up"><i class="fa-solid fa-store"></i> Harness na Agilize</div>
+    <h2 class="slide-title fade-up">SkillHub — o <em>marketplace interno</em> de harness</h2>
+    <div class="skillhub-hero fade-up">
+      <div style="font-size:40px;margin-bottom:14px;">🏪</div>
+      <h3 style="font-size:22px;font-weight:700;margin-bottom:10px;">Marketplace interno de skills, commands e agents</h3>
+      <p style="font-size:15px;opacity:0.8;line-height:1.6;max-width:580px;margin:0 auto;">
+        Cada skill publicada é uma peça de harness que qualquer dev da Agilize pode reutilizar — sem reinventar a roda, sem perder contexto.
+      </p>
+      <div class="skillhub-badges">
+        <div class="skillhub-badge"><i class="fa-solid fa-star"></i> @official</div>
+        <div class="skillhub-badge"><i class="fa-solid fa-users"></i> @third-party</div>
+        <div class="skillhub-badge"><i class="fa-solid fa-gears"></i> engineering</div>
+        <div class="skillhub-badge"><i class="fa-solid fa-chart-bar"></i> data</div>
+        <div class="skillhub-badge"><i class="fa-solid fa-box"></i> product</div>
+        <div class="skillhub-badge"><i class="fa-solid fa-bolt"></i> productivity</div>
+      </div>
+      <div class="skillhub-stats">
+        <div class="skillhub-stat"><div class="num">3</div><div class="lbl">skills no registry</div></div>
+        <div class="skillhub-stat"><div class="num">2</div><div class="lbl">namespaces ativos</div></div>
+        <div class="skillhub-stat"><div class="num">∞</div><div class="lbl">alavanca gerada</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SkillHub — interface web -->
+  <div class="slide" data-slide="20b" data-title="SkillHub — App" style="background:var(--gray-50);">
+    <div class="section-label fade-up"><i class="fa-solid fa-store"></i> SkillHub</div>
+    <h2 class="slide-title fade-up" style="margin-bottom:20px;">A <em>interface web</em> do marketplace</h2>
+    <div class="fade-up" style="display:flex;justify-content:center;width:100%;">
+      <img src="imgs/skillhub.gif" alt="SkillHub interface"
+           style="max-height:52vh;max-width:100%;border-radius:16px;box-shadow:0 12px 48px rgba(0,0,0,0.18);border:1px solid var(--gray-200);display:block;">
+    </div>
+    <div class="slide-refs">
+      <span class="slide-refs-label">referências</span>
+      <a href="https://github.com/agilize/skillhub-app" target="_blank" class="slide-ref-link">
+        <i class="fa-brands fa-github ref-icon"></i>
+        agilize/skillhub-app
+      </a>
+    </div>
+  </div>
+
+  <!-- 22 · SkillHub — como contribuir -->
+  <div class="slide" data-slide="21" data-title="Como contribuir" style="background:var(--white);">
+    <div class="section-label fade-up"><i class="fa-solid fa-code-pull-request"></i> SkillHub</div>
+    <h2 class="slide-title fade-up">Publicar uma skill em <em>um comando</em></h2>
+    <div class="add-cmd-box fade-up">/skillhub-app:add &lt;nome-da-skill&gt;</div>
+    <div class="add-flow stagger">
+      <div class="add-step">
+        <div class="add-step-num">1</div>
+        <div class="add-step-text">Informa se a skill está em <code>~/.claude/</code> (global) ou em um projeto local</div>
+      </div>
+      <div class="add-step">
+        <div class="add-step-num">2</div>
+        <div class="add-step-text">Detecta commands, agents e arquivos automaticamente — confirma tudo antes de escrever</div>
+      </div>
+      <div class="add-step">
+        <div class="add-step-num">3</div>
+        <div class="add-step-text">Escolhe namespace <code>@official</code> ou <code>@third-party</code>, define categoria e tags</div>
+      </div>
+      <div class="add-step">
+        <div class="add-step-num">4</div>
+        <div class="add-step-text">Gera <code>registry.md</code>, roda <code>make validate</code> e oferece commit + push direto na main</div>
+      </div>
+    </div>
+    <div class="fade-up" style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap;justify-content:center;">
+      <span style="background:var(--purple-subtle);color:var(--purple);padding:6px 14px;border-radius:20px;font-size:13px;font-weight:700;"><i class="fa-solid fa-display"></i> slide-presentations</span>
+      <span style="background:var(--purple-subtle);color:var(--purple);padding:6px 14px;border-radius:20px;font-size:13px;font-weight:700;"><i class="fa-solid fa-robot"></i> agent-builder</span>
+      <span style="background:var(--purple-subtle);color:var(--purple);padding:6px 14px;border-radius:20px;font-size:13px;font-weight:700;"><i class="fa-brands fa-youtube"></i> yt-transcript</span>
+    </div>
+  </div>
+
+  <!-- Próximos passos -->
+  <div class="slide" data-slide="21b" data-title="Próximos Passos" style="background:var(--white);">
+    <div class="section-label fade-up"><i class="fa-solid fa-rocket"></i> Essa semana</div>
+    <h2 class="slide-title fade-up" style="margin-bottom:32px;">Três <em>próximos passos</em> concretos</h2>
+    <div style="display:flex;flex-direction:column;gap:16px;max-width:780px;width:100%;">
+
+      <div class="step-card" style="display:flex;align-items:flex-start;gap:20px;background:var(--gray-50);border-radius:18px;padding:24px 28px;border:1px solid var(--gray-200);">
+        <div style="width:44px;height:44px;border-radius:50%;background:var(--purple);color:white;font-size:20px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">1</div>
+        <div>
+          <h3 style="font-size:17px;font-weight:700;color:var(--gray-800);margin-bottom:6px;">Alguém apresenta algo com IA semana que vem</h3>
+          <p style="font-size:14px;color:var(--gray-600);line-height:1.6;">Não precisa ser grande — um workshop, uma lightning talk, um demo de 10 minutos. O que você já está usando que vale compartilhar?</p>
+        </div>
+      </div>
+
+      <div class="step-card" style="display:flex;align-items:flex-start;gap:20px;background:var(--gray-50);border-radius:18px;padding:24px 28px;border:1px solid var(--gray-200);">
+        <div style="width:44px;height:44px;border-radius:50%;background:var(--purple);color:white;font-size:20px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">2</div>
+        <div>
+          <h3 style="font-size:17px;font-weight:700;color:var(--gray-800);margin-bottom:6px;">Publique sua skill no SkillHub</h3>
+          <p style="font-size:14px;color:var(--gray-600);line-height:1.6;">Qualquer automação que você já tem — um command, um agente, um script — pode virar harness para o time inteiro. <code style="background:var(--purple-subtle);color:var(--purple);padding:2px 7px;border-radius:4px;font-size:12px;font-weight:700;">/skillhub-app:add</code></p>
+        </div>
+      </div>
+
+      <div class="step-card" style="display:flex;align-items:flex-start;gap:20px;background:var(--purple-subtle);border-radius:18px;padding:24px 28px;border:1px solid rgba(92,45,145,0.2);">
+        <div style="width:44px;height:44px;border-radius:50%;background:var(--purple-dark);color:white;font-size:20px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">3</div>
+        <div>
+          <h3 style="font-size:17px;font-weight:700;color:var(--purple-dark);margin-bottom:6px;">Monte um "Claude session" no seu squad</h3>
+          <p style="font-size:14px;color:var(--purple-light);line-height:1.6;">Reúna o time, abra o Claude Code, e mapeiem juntos: quais tarefas do dia a dia são candidatas a automação? Onde está o harness que falta?</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 23 · Fechamento -->
+  <div class="slide cover" data-slide="22" data-title="Onde você está?">
+    <div class="cover-blob"></div><div class="cover-blob"></div><div class="cover-blob"></div>
+    <div class="cover-blob"></div><div class="cover-blob"></div><div class="cover-blob"></div>
+    <div class="cover-content">
+      <p class="fade-up" style="font-size:clamp(28px,4vw,48px);font-weight:700;letter-spacing:1px;color:#FFFFFF;">
+        Onde você está<br>na escala?
+      </p>
+      <div class="decorative-line fade-up"></div>
+      <p class="fade-up" style="font-size:clamp(16px,2vw,20px);opacity:0.65;margin-top:16px;line-height:1.6;">
+        Builder &nbsp;·&nbsp; Dev &nbsp;·&nbsp; <strong style="opacity:1;color:var(--accent-green);">Product Engineer</strong>
+      </p>
+      <p class="fade-up" style="font-size:14px;opacity:0.4;margin-top:36px;letter-spacing:3px;text-transform:uppercase;color:#FFFFFF;">
+        Agilize Engenharia — 2026
+      </p>
+    </div>
+  </div>
+
+</div><!-- .slide-container -->
+
+<script>
+const slides = document.querySelectorAll('.slide');
+const totalSlides = slides.length;
+let currentSlide = 0;
+let isAnimating = false;
+
+// Generate nav dots with preview thumbnails
+const navBar = document.getElementById('navBar');
+for (let i = 0; i < totalSlides; i++) {
+  const dot = document.createElement('button');
+  dot.className = 'nav-dot' + (i === 0 ? ' active' : '');
+  dot.onclick = () => goToSlide(i, false);
+
+  const preview = document.createElement('div');
+  preview.className = 'slide-preview';
+
+  const thumb = document.createElement('div');
+  thumb.className = 'slide-preview-thumb';
+  const clone = slides[i].cloneNode(true);
+  clone.classList.remove('active', 'exit-left', 'exit-right');
+  const origBg = slides[i].style.background || (slides[i].classList.contains('cover') ? '#1B0A2E' : '#FFFFFF');
+  clone.style.cssText = 'position:absolute;top:0;left:0;width:100vw;height:100vh;opacity:1;pointer-events:none;transform:none;display:flex;background:' + origBg;
+  clone.querySelectorAll('.fade-up,.stagger,.stagger>*,.step-card').forEach(el => {
+    el.style.opacity = '1'; el.style.transform = 'none'; el.style.transition = 'none';
+  });
+  const slideW = window.innerWidth / 1.25;
+  const slideH = window.innerHeight / 1.25;
+  const scaleX = 200 / slideW;
+  const scaleY = 130 / slideH;
+  const coverScale = Math.max(scaleX, scaleY);
+  thumb.style.cssText = 'width:' + slideW + 'px;height:' + slideH + 'px;transform:scale(' + coverScale + ');transform-origin:top center;position:absolute;top:0;left:50%;margin-left:' + (-slideW / 2) + 'px;';
+  thumb.appendChild(clone);
+  preview.appendChild(thumb);
+
+  const label = document.createElement('div');
+  label.className = 'slide-preview-label';
+  label.textContent = slides[i].dataset.title || 'Slide ' + (i + 1);
+  preview.appendChild(label);
+
+  dot.appendChild(preview);
+  navBar.appendChild(dot);
+}
+
+document.getElementById('totalSlides').textContent = String(totalSlides).padStart(2, '0');
+// Initial counter color for cover
+document.querySelector('.slide-counter').style.color = 'rgba(255,255,255,0.5)';
+document.querySelector('.slide-counter .current').style.color = 'rgba(255,255,255,0.85)';
+
+// ── Step-card system ──
+const slideStepState = {};
+
+function getStepCards(idx) { return Array.from(slides[idx].querySelectorAll('.step-card')); }
+function getCurrentStep(idx) { return slideStepState[idx] || 0; }
+
+function resetSteps(idx, showAll = false) {
+  const cards = getStepCards(idx);
+  cards.forEach(c => c.classList.remove('revealed'));
+  slideStepState[idx] = 0;
+  if (showAll) { cards.forEach(c => c.classList.add('revealed')); slideStepState[idx] = cards.length; }
+}
+
+function nextSlide() {
+  if (isAnimating) return;
+  const cards = getStepCards(currentSlide);
+  const cur = getCurrentStep(currentSlide);
+  if (cur < cards.length) {
+    cards[cur].classList.add('revealed');
+    slideStepState[currentSlide] = cur + 1;
+  } else {
+    goToSlide(currentSlide + 1, false);
+  }
+}
+
+function prevSlide() {
+  if (isAnimating) return;
+  const cur = getCurrentStep(currentSlide);
+  if (cur > 0) {
+    const cards = getStepCards(currentSlide);
+    cards[cur - 1].classList.remove('revealed');
+    slideStepState[currentSlide] = cur - 1;
+  } else {
+    goToSlide(currentSlide - 1, true);
+  }
+}
+
+function goToSlide(index, showAllSteps = false) {
+  if (index < 0 || index >= totalSlides || index === currentSlide || isAnimating) return;
+  isAnimating = true;
+
+  resetSteps(index, showAllSteps);
+
+  const goingForward = index > currentSlide;
+  const oldSlide = currentSlide;
+
+  slides[oldSlide].classList.remove('active');
+  slides[oldSlide].classList.add(goingForward ? 'exit-left' : 'exit-right');
+
+  slides[index].style.transition = 'none';
+  slides[index].classList.remove('exit-left', 'exit-right');
+  slides[index].style.transform = goingForward ? 'translateX(80px)' : 'translateX(-80px)';
+  slides[index].style.opacity = '0';
+  void slides[index].offsetWidth;
+  slides[index].style.transition = '';
+  slides[index].classList.add('active');
+  slides[index].style.transform = '';
+  slides[index].style.opacity = '';
+
+  currentSlide = index;
+
+  document.querySelectorAll('.nav-dot').forEach((d, i) => d.classList.toggle('active', i === currentSlide));
+  document.getElementById('slideNum').textContent = String(currentSlide + 1).padStart(2, '0');
+
+  const counter = document.querySelector('.slide-counter');
+  const counterCurrent = document.querySelector('.slide-counter .current');
+  const isCover = slides[currentSlide].classList.contains('cover');
+  if (isCover) {
+    counter.style.color = 'rgba(255,255,255,0.5)';
+    counterCurrent.style.color = 'rgba(255,255,255,0.85)';
+  } else {
+    counter.style.color = '';
+    counterCurrent.style.color = '';
+  }
+
+  document.getElementById('slideLogo').style.opacity = (!isCover && currentSlide > 0) ? '1' : '0';
+
+  const hint = document.querySelector('.keyboard-hint');
+  hint.style.opacity = currentSlide === 0 ? '' : '0';
+  hint.style.pointerEvents = currentSlide === 0 ? '' : 'none';
+
+  setTimeout(() => { slides[oldSlide].classList.remove('exit-left', 'exit-right'); isAnimating = false; }, 500);
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); nextSlide(); }
+  if (e.key === 'ArrowLeft') { e.preventDefault(); prevSlide(); }
+  if (e.key === 'Home') { e.preventDefault(); goToSlide(0); }
+  if (e.key === 'End')  { e.preventDefault(); goToSlide(totalSlides - 1); }
+});
+
+let touchStartX = 0;
+document.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; });
+document.addEventListener('touchend',   e => {
+  const diff = touchStartX - e.changedTouches[0].clientX;
+  if (Math.abs(diff) > 50) { diff > 0 ? nextSlide() : prevSlide(); }
+});
+</script>
+</body>
+</html>
