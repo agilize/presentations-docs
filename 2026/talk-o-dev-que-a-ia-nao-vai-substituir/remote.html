@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <title>Remote &mdash; O Dev que a IA N&atilde;o Vai Substituir</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    :root {
+      --bg: #0a0714;
+      --surface: #140e24;
+      --surface-2: #1a1230;
+      --border: #3a2b64;
+      --text: #f7f4ff;
+      --text-secondary: #d9cfec;
+      --muted: #b3a6cf;
+      --accent: #c15fff;
+      --green: #21e3a4;
+      --red: #ff6b7a;
+    }
+    html, body {
+      height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'JetBrains Mono', monospace;
+      overscroll-behavior: none;
+      touch-action: manipulation;
+    }
+    body {
+      padding: calc(env(safe-area-inset-top) + 10px) calc(env(safe-area-inset-right) + 12px) calc(env(safe-area-inset-bottom) + 10px) calc(env(safe-area-inset-left) + 12px);
+    }
+    button { font-family: inherit; color: inherit; background: var(--surface); border: 1px solid var(--border); cursor: pointer; user-select: none; -webkit-user-select: none; }
+    button:active { filter: brightness(1.5); }
+
+    /* ===== connect view ===== */
+    #connectView {
+      height: 100%; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 1.2rem; text-align: center;
+    }
+    #connectView h1 { font-size: 1rem; color: var(--accent); letter-spacing: 0.15em; text-transform: uppercase; }
+    #connectView p { font-size: 0.8rem; color: var(--muted); max-width: 300px; line-height: 1.6; }
+    #codeInput {
+      width: 220px; text-align: center; font-family: inherit;
+      font-size: 2rem; font-weight: 800; letter-spacing: 0.4em; text-transform: uppercase;
+      background: var(--surface); border: 1px solid var(--border); color: var(--text);
+      padding: 0.5em 0 0.5em 0.4em; border-radius: 10px; outline: none;
+    }
+    #codeInput:focus { border-color: var(--accent); }
+    #connectBtn {
+      font-size: 1rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 0.9em 2.4em; border-radius: 10px;
+      background: var(--accent); border: none; color: #0a0714;
+    }
+    #connectMsg { font-size: 0.8rem; color: var(--muted); min-height: 1.4em; }
+
+    /* ===== control view ===== */
+    #controlView { height: 100%; display: none; flex-direction: column; gap: 10px; }
+    header {
+      display: flex; align-items: center; justify-content: space-between;
+      font-size: 0.75rem; color: var(--text-secondary); padding: 2px 4px;
+    }
+    #statusDot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: var(--red); margin-right: 6px; vertical-align: middle; }
+    #statusDot.on { background: var(--green); box-shadow: 0 0 8px var(--green); }
+    #slideInfo { font-weight: 700; color: var(--text); }
+    #slideInfo .cur { color: var(--accent); font-size: 1rem; }
+    #codeChip { color: var(--muted); letter-spacing: 0.2em; }
+
+    .navrow { display: flex; gap: 10px; height: 30vh; }
+    .navrow button {
+      flex: 1; font-size: 3rem; border-radius: 14px; color: var(--accent);
+      background: var(--surface);
+    }
+    .navrow button:active { background: var(--surface-2); border-color: var(--accent); }
+
+    .modes { display: flex; gap: 8px; }
+    .modes button {
+      flex: 1; padding: 1em 0; border-radius: 10px;
+      font-size: 0.8rem; font-weight: 700; letter-spacing: 0.1em;
+    }
+    .modes button.on { border-color: var(--green); color: var(--green); box-shadow: 0 0 10px rgba(33,227,164,0.25); }
+
+    #pad {
+      flex: 1; min-height: 22vh; border: 1px dashed var(--border); border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--muted); font-size: 0.75rem; letter-spacing: 0.08em;
+      touch-action: none; position: relative; overflow: hidden;
+    }
+    #pad .dot {
+      position: absolute; width: 14px; height: 14px; border-radius: 50%;
+      background: var(--accent); box-shadow: 0 0 14px var(--accent);
+      transform: translate(-50%, -50%); pointer-events: none; display: none;
+    }
+    footer { font-size: 0.65rem; color: var(--muted); text-align: center; }
+  </style>
+</head>
+<body>
+
+<div id="connectView">
+  <h1>// Controle Remoto</h1>
+  <p>Aperte <b style="color: var(--accent);">R</b> na apresenta&ccedil;&atilde;o e digite o c&oacute;digo que aparecer na tela.</p>
+  <input id="codeInput" maxlength="4" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="&bull;&bull;&bull;&bull;">
+  <button id="connectBtn">Conectar</button>
+  <div id="connectMsg"></div>
+</div>
+
+<div id="controlView">
+  <header>
+    <span><span id="statusDot"></span><span id="statusTxt">conectando</span></span>
+    <span id="slideInfo"><span class="cur">--</span> / <span id="tot">--</span></span>
+    <span id="codeChip"></span>
+  </header>
+  <div class="navrow">
+    <button id="btnPrev" aria-label="Slide anterior">&larr;</button>
+    <button id="btnNext" aria-label="Pr&oacute;ximo slide">&rarr;</button>
+  </div>
+  <div class="modes">
+    <button data-key="l" id="mLaser">Laser</button>
+    <button data-key="s" id="mSpot">Spot</button>
+    <button data-key="z" id="mZoom">Zoom</button>
+  </div>
+  <div class="modes">
+    <button data-key="h">Help</button>
+    <button data-key="f">Full</button>
+    <button data-key="Home">In&iacute;cio</button>
+    <button data-key="End">Fim</button>
+  </div>
+  <div id="pad">trackpad &mdash; aponte com o dedo (laser/spot/zoom)<div class="dot" id="padDot"></div></div>
+  <footer>full pode exigir um toque no notebook &middot; mantenha a tela do iPhone acesa</footer>
+</div>
+
+<script src="https://unpkg.com/mqtt@5.10.1/dist/mqtt.min.js"></script>
+<script>
+(function() {
+  var BROKERS = ['wss://broker.emqx.io:8084/mqtt', 'wss://broker.hivemq.com:8884/mqtt'];
+  var client = null, base = null;
+
+  var connectView = document.getElementById('connectView');
+  var controlView = document.getElementById('controlView');
+  var codeInput = document.getElementById('codeInput');
+  var connectBtn = document.getElementById('connectBtn');
+  var connectMsg = document.getElementById('connectMsg');
+  var statusDot = document.getElementById('statusDot');
+  var statusTxt = document.getElementById('statusTxt');
+  var slideCur = document.querySelector('#slideInfo .cur');
+  var slideTot = document.getElementById('tot');
+  var codeChip = document.getElementById('codeChip');
+  var pad = document.getElementById('pad');
+  var padDot = document.getElementById('padDot');
+
+  var qsCode = new URLSearchParams(location.search).get('c');
+  codeInput.value = (qsCode || localStorage.getItem('remote-code') || '').toUpperCase().slice(0, 4);
+
+  function send(m) { if (client && base) client.publish(base + '/cmd', JSON.stringify(m)); }
+
+  function tryBroker(i, code) {
+    if (i >= BROKERS.length) { connectMsg.textContent = 'sem conexão com o broker — cheque a internet'; connectBtn.disabled = false; return; }
+    connectMsg.textContent = 'conectando (' + (i + 1) + '/' + BROKERS.length + ')…';
+    var ok = false;
+    var c = mqtt.connect(BROKERS[i], { connectTimeout: 7000, reconnectPeriod: 3000, clean: true });
+    c.on('connect', function() {
+      if (!ok) {
+        ok = true; client = c; base = 'agz-secomp-remote/' + code;
+        c.subscribe(base + '/state');
+        localStorage.setItem('remote-code', code);
+        connectView.style.display = 'none';
+        controlView.style.display = 'flex';
+        codeChip.textContent = code;
+        try { if (navigator.wakeLock) navigator.wakeLock.request('screen').catch(function(){}); } catch (e) {}
+      }
+      statusDot.classList.add('on');
+      statusTxt.textContent = 'conectado';
+      send({ t: 'hello' });
+    });
+    c.on('close', function() { if (ok) { statusDot.classList.remove('on'); statusTxt.textContent = 'reconectando'; } });
+    c.on('message', function(topic, payload) {
+      var m; try { m = JSON.parse(payload.toString()); } catch (e) { return; }
+      if (m.t === 'state') {
+        slideCur.textContent = m.slide; slideTot.textContent = m.total;
+        document.getElementById('mLaser').classList.toggle('on', !!m.laser);
+        document.getElementById('mSpot').classList.toggle('on', !!m.spot);
+        document.getElementById('mZoom').classList.toggle('on', !!m.zoom);
+      }
+    });
+    c.on('error', function() { if (!ok) { c.end(true); tryBroker(i + 1, code); } });
+  }
+
+  connectBtn.addEventListener('click', function() {
+    var code = codeInput.value.trim().toUpperCase();
+    if (code.length !== 4) { connectMsg.textContent = 'código tem 4 caracteres'; return; }
+    connectBtn.disabled = true;
+    tryBroker(0, code);
+  });
+
+  document.getElementById('btnPrev').addEventListener('click', function() { send({ t: 'key', key: 'ArrowLeft' }); });
+  document.getElementById('btnNext').addEventListener('click', function() { send({ t: 'key', key: 'ArrowRight' }); });
+  document.querySelectorAll('.modes button').forEach(function(b) {
+    b.addEventListener('click', function() { send({ t: 'key', key: b.dataset.key }); });
+  });
+
+  // Trackpad: absolute mapping pad -> presenter viewport
+  var lastSent = 0;
+  function padMove(e) {
+    var rect = pad.getBoundingClientRect();
+    var x = Math.min(1, Math.max(0, (e.clientX - rect.left) / rect.width));
+    var y = Math.min(1, Math.max(0, (e.clientY - rect.top) / rect.height));
+    padDot.style.display = 'block';
+    padDot.style.left = (x * 100) + '%';
+    padDot.style.top = (y * 100) + '%';
+    var now = Date.now();
+    if (now - lastSent > 40) { lastSent = now; send({ t: 'move', x: x, y: y }); }
+  }
+  pad.addEventListener('pointerdown', function(e) { try { pad.setPointerCapture(e.pointerId); } catch (err) {} padMove(e); });
+  pad.addEventListener('pointermove', function(e) { if (e.buttons || e.pointerType === 'touch') padMove(e); });
+  pad.addEventListener('pointerup', function() { padDot.style.display = 'none'; });
+
+  if (qsCode && qsCode.length === 4) connectBtn.click();
+})();
+</script>
+
+</body>
+</html>

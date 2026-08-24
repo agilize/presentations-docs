@@ -1998,7 +1998,18 @@
 
 <!-- Keyboard hint -->
 <div class="keyboard-hint" id="keyboardHint">
-  <kbd>&larr;</kbd> <kbd>&rarr;</kbd> nav &nbsp; <kbd>H</kbd> help &nbsp; <kbd>F</kbd> full &nbsp; <kbd>L</kbd> laser &nbsp; <kbd>S</kbd> spot &nbsp; <kbd>Z</kbd> zoom
+  <kbd>&larr;</kbd> <kbd>&rarr;</kbd> nav &nbsp; <kbd>H</kbd> help &nbsp; <kbd>F</kbd> full &nbsp; <kbd>L</kbd> laser &nbsp; <kbd>S</kbd> spot &nbsp; <kbd>Z</kbd> zoom &nbsp; <kbd>R</kbd> remote
+</div>
+
+<!-- Remote control panel -->
+<div id="remotePanel" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 600; background: var(--surface-2); border: 1px solid var(--border-hover); padding: 2rem 2.5rem; text-align: center; box-shadow: 0 20px 80px rgba(0,0,0,0.65); border-radius: 12px;">
+  <h3 style="color: var(--accent); font-size: 1rem; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 1.2rem;">// Controle Remoto</h3>
+  <img src="assets/qr-remote.png" alt="QR code do controle remoto" style="width: 190px; height: 190px; background: #fff; padding: 8px; border-radius: 10px;">
+  <p style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.8rem;">agilize-secomp.vercel.app/remote.html</p>
+  <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 1.2rem; text-transform: uppercase; letter-spacing: 0.1em;">c&oacute;digo</p>
+  <p id="remoteCode" style="font-size: 2.4rem; font-weight: 800; letter-spacing: 0.35em; color: var(--green); margin: 0.2rem 0 1rem;">----</p>
+  <p id="remoteStatus" style="font-size: 0.8rem; color: var(--text-muted); min-height: 1.3em;">iniciando&hellip;</p>
+  <p style="font-size: 0.65rem; color: var(--text-muted); margin-top: 1rem;">R fecha este painel &mdash; a conex&atilde;o continua ativa</p>
 </div>
 
 <!-- Help overlay -->
@@ -2014,6 +2025,7 @@
   <div class="help-key"><kbd>L</kbd> <span>Laser pointer com rastro</span></div>
   <div class="help-key"><kbd>S</kbd> <span>Spotlight / holofote focal</span></div>
   <div class="help-key"><kbd>Z</kbd> <span>Zoom / lente de aumento</span></div>
+  <div class="help-key"><kbd>R</kbd> <span>Controle remoto pelo celular</span></div>
   <div class="help-key"><kbd>Esc</kbd> <span>Fechar</span></div>
 </div>
 
@@ -2775,6 +2787,102 @@
     if (e.key === 'l' || e.key === 'L') toggleLaser();
     if (e.key === 's' || e.key === 'S') toggleSpotlight();
     if (e.key === 'z' || e.key === 'Z') toggleZoom();
+  });
+})();
+</script>
+
+<!-- ======= REMOTE CONTROL (press R) ======= -->
+<script>
+(function() {
+  var BROKERS = ['wss://broker.emqx.io:8084/mqtt', 'wss://broker.hivemq.com:8884/mqtt'];
+  var panel = document.getElementById('remotePanel');
+  var codeEl = document.getElementById('remoteCode');
+  var statusEl = document.getElementById('remoteStatus');
+  var client = null, code = null, started = false;
+
+  function randCode() {
+    var A = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    var out = '';
+    for (var i = 0; i < 4; i++) out += A[Math.floor(Math.random() * A.length)];
+    return out;
+  }
+
+  function press(key) {
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: key, bubbles: true, cancelable: true }));
+  }
+
+  function pubState() {
+    if (!client || !client.connected) return;
+    var st = {
+      t: 'state',
+      slide: document.querySelector('.slide-counter .current-num').textContent,
+      total: document.getElementById('totalSlides').textContent,
+      laser: document.getElementById('laserPointer').classList.contains('active'),
+      spot: document.getElementById('spotlightOverlay').classList.contains('active'),
+      zoom: document.getElementById('zoomLens').classList.contains('active')
+    };
+    client.publish('agz-secomp-remote/' + code + '/state', JSON.stringify(st), { retain: true });
+  }
+
+  function handle(m) {
+    if (m.t === 'key') {
+      press(m.key);
+      setTimeout(pubState, 80);
+    } else if (m.t === 'move') {
+      document.dispatchEvent(new MouseEvent('mousemove', {
+        clientX: m.x * window.innerWidth,
+        clientY: m.y * window.innerHeight,
+        bubbles: true
+      }));
+    } else if (m.t === 'hello') {
+      statusEl.textContent = 'celular conectado';
+      statusEl.style.color = 'var(--green)';
+      pubState();
+      setTimeout(function() { panel.style.display = 'none'; }, 1500);
+    }
+  }
+
+  function tryBroker(i) {
+    if (i >= BROKERS.length) { statusEl.textContent = 'sem conexão com o broker'; return; }
+    statusEl.textContent = 'conectando ao broker (' + (i + 1) + '/' + BROKERS.length + ')…';
+    var ok = false;
+    var c = mqtt.connect(BROKERS[i], { connectTimeout: 7000, reconnectPeriod: 3000, clean: true });
+    c.on('connect', function() {
+      if (!ok) {
+        ok = true; client = c;
+        c.subscribe('agz-secomp-remote/' + code + '/cmd');
+        setInterval(pubState, 800);
+      }
+      statusEl.textContent = 'aguardando o celular…';
+      statusEl.style.color = '';
+      pubState();
+    });
+    c.on('message', function(topic, payload) {
+      var m; try { m = JSON.parse(payload.toString()); } catch (e) { return; }
+      handle(m);
+    });
+    c.on('error', function() { if (!ok) { c.end(true); tryBroker(i + 1); } });
+  }
+
+  function start() {
+    code = randCode();
+    codeEl.textContent = code;
+    if (window.mqtt) { tryBroker(0); return; }
+    statusEl.textContent = 'carregando…';
+    var s = document.createElement('script');
+    s.src = 'https://unpkg.com/mqtt@5.10.1/dist/mqtt.min.js';
+    s.onload = function() { tryBroker(0); };
+    s.onerror = function() { statusEl.textContent = 'falha ao carregar mqtt.js'; };
+    document.head.appendChild(s);
+  }
+
+  document.addEventListener('keydown', function(e) {
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+    if (e.key === 'r' || e.key === 'R') {
+      var visible = panel.style.display !== 'none';
+      panel.style.display = visible ? 'none' : 'block';
+      if (!started) { started = true; start(); }
+    }
   });
 })();
 </script>

@@ -24,6 +24,7 @@
 ## Project Structure
 
 - Single-file HTML presentation: `index.html` (all slides, CSS, JS)
+- Phone remote control: `remote.html` — press **R** in the presentation to show a session code + QR; the phone opens `/remote.html`, enters the code, and gets prev/next, laser/spot/zoom/help/home/end and a trackpad that drives the pointer. Transport: MQTT over WSS (public brokers EMQX → HiveMQ fallback), topic `agz-secomp-remote/<code>/{cmd,state}`. Fullscreen cannot be triggered remotely (browser requires a physical gesture on the laptop).
 - Config: `vercel.json` (no build, outputDirectory ".", noindex headers)
 
 ## Slide Management
