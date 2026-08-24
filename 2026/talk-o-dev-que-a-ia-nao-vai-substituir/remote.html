@@ -68,12 +68,12 @@
     #slideInfo .cur { color: var(--accent); font-size: 1rem; }
     #codeChip { color: var(--muted); letter-spacing: 0.2em; }
 
-    .navrow { display: flex; gap: 10px; height: 30vh; }
-    .navrow button {
-      flex: 1; font-size: 3rem; border-radius: 14px; color: var(--accent);
+    .mainrow { flex: 1; display: flex; gap: 10px; min-height: 42vh; }
+    .mainrow > button {
+      width: 23%; font-size: 2.8rem; border-radius: 14px; color: var(--accent);
       background: var(--surface);
     }
-    .navrow button:active { background: var(--surface-2); border-color: var(--accent); }
+    .mainrow > button:active { background: var(--surface-2); border-color: var(--accent); }
 
     .modes { display: flex; gap: 8px; }
     .modes button {
@@ -83,7 +83,7 @@
     .modes button.on { border-color: var(--green); color: var(--green); box-shadow: 0 0 10px rgba(33,227,164,0.25); }
 
     #pad {
-      flex: 1; min-height: 22vh; border: 1px dashed var(--border); border-radius: 14px;
+      flex: 1; border: 1px dashed var(--border); border-radius: 14px;
       display: flex; align-items: center; justify-content: center;
       color: var(--muted); font-size: 0.75rem; letter-spacing: 0.08em;
       touch-action: none; position: relative; overflow: hidden;
@@ -112,10 +112,6 @@
     <span id="slideInfo"><span class="cur">--</span> / <span id="tot">--</span></span>
     <span id="codeChip"></span>
   </header>
-  <div class="navrow">
-    <button id="btnPrev" aria-label="Slide anterior">&larr;</button>
-    <button id="btnNext" aria-label="Pr&oacute;ximo slide">&rarr;</button>
-  </div>
   <div class="modes">
     <button data-key="l" id="mLaser">Laser</button>
     <button data-key="s" id="mSpot">Spot</button>
@@ -123,12 +119,14 @@
   </div>
   <div class="modes">
     <button data-key="h">Help</button>
-    <button data-key="f">Full</button>
     <button data-key="Home">In&iacute;cio</button>
     <button data-key="End">Fim</button>
   </div>
-  <div id="pad">trackpad &mdash; aponte com o dedo (laser/spot/zoom)<div class="dot" id="padDot"></div></div>
-  <footer>full pode exigir um toque no notebook &middot; mantenha a tela do iPhone acesa</footer>
+  <div class="mainrow">
+    <button id="btnPrev" aria-label="Slide anterior">&larr;</button>
+    <div id="pad">trackpad<div class="dot" id="padDot"></div></div>
+    <button id="btnNext" aria-label="Pr&oacute;ximo slide">&rarr;</button>
+  </div>
 </div>
 
 <script src="https://unpkg.com/mqtt@5.10.1/dist/mqtt.min.js"></script>
