@@ -1,0 +1,2718 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>O Dev que a IA N&atilde;o Vai Substituir</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    /* ======= RESET & BASE ======= */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #0a0714;
+      --surface: #140e24;
+      --surface-2: #1a1230;
+      --surface-3: #211840;
+      --border: #3a2b64;
+      --border-hover: #54408c;
+      --text: #f7f4ff;
+      --text-secondary: #d9cfec;
+      --text-muted: #a495c2;
+      --accent: #c15fff;
+      --accent-dim: #9d3df2;
+      --accent-glow: rgba(193, 95, 255, 0.10);
+      --blue: #7eb8da;
+      --green: #7ec9a0;
+      --red: #ff6b7a;
+      --pink: #f5a0c0;
+      --purple: #b07eda;
+      --yellow: #dac87e;
+      --font: 'JetBrains Mono', 'SF Mono', 'Fira Code', monospace;
+    }
+
+    html, body {
+      width: 100%; height: 100%;
+      overflow: hidden;
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ======= CRT EFFECTS ======= */
+    body::after {
+      content: ''; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.12) 2px, rgba(0,0,0,0.12) 4px);
+      pointer-events: none; z-index: 9999;
+    }
+    body::before {
+      content: ''; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.4) 100%);
+      pointer-events: none; z-index: 9998;
+    }
+
+    .crt-interference {
+      position: fixed; top: 0; left: 0; right: 0;
+      height: 80px; pointer-events: none; z-index: 9997;
+      background: linear-gradient(180deg, transparent 0%, rgba(193,95,255,0.03) 30%, rgba(126,184,218,0.04) 50%, rgba(193,95,255,0.03) 70%, transparent 100%);
+      animation: roll-band 4s linear infinite;
+    }
+    @keyframes roll-band { 0% { top: -80px; } 100% { top: 100vh; } }
+
+    /* ======= MATRIX RAIN BACKGROUND ======= */
+    #matrix-canvas {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      pointer-events: none; z-index: 0; opacity: 0.06;
+    }
+
+    /* ======= SLIDE ENGINE ======= */
+    .slide-container {
+      position: relative; width: 100%; height: 100vh; z-index: 1;
+    }
+
+    .slide {
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+      display: flex; align-items: center; justify-content: center;
+      padding: 4rem;
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+      pointer-events: none;
+      flex-direction: column;
+      text-align: center;
+    }
+
+    .slide.active {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    .slide.exit-up {
+      opacity: 0;
+      transform: translateY(-30px);
+    }
+
+    /* ======= TYPOGRAPHY ======= */
+    .slide h1 {
+      font-size: 4.5rem; font-weight: 800; letter-spacing: -0.04em;
+      line-height: 1.1; margin-bottom: 1rem;
+      text-shadow: 0 0 40px rgba(193, 95, 255, 0.25);
+    }
+    .slide h2 {
+      font-size: 3rem; font-weight: 700; letter-spacing: -0.03em;
+      line-height: 1.2; margin-bottom: 1rem;
+      text-shadow: 0 0 30px rgba(193, 95, 255, 0.2);
+    }
+    .slide h3 {
+      font-size: 2rem; font-weight: 600; letter-spacing: -0.02em;
+      line-height: 1.3; margin-bottom: 0.8rem;
+    }
+    .slide p {
+      font-size: 1.6rem; line-height: 1.7; color: var(--text-secondary);
+      max-width: 950px;
+    }
+    .slide .small { font-size: 1.3rem; color: var(--text-secondary); }
+    .slide .accent { color: var(--accent); }
+    .slide .blue { color: var(--blue); }
+    .slide .green { color: var(--green); }
+    .slide .purple { color: var(--purple); }
+    .slide .yellow { color: var(--yellow); }
+    .slide .red { color: var(--red); }
+    .slide .dim { color: var(--text-muted); }
+
+    /* ======= GLITCH ANIMATIONS ======= */
+    @keyframes glitch-burst {
+      0% { transform: none; text-shadow: 0 0 20px rgba(193,95,255,0.15); }
+      2% { transform: translate(-3px, 0); text-shadow: -3px 0 rgba(126,184,218,0.6), 3px 0 rgba(193,95,255,0.6); }
+      4% { transform: translate(3px, 1px) skewX(-2deg); text-shadow: 3px 0 rgba(126,201,160,0.5), -3px 0 rgba(176,126,218,0.5); }
+      6% { transform: translate(-1px, -1px); text-shadow: -2px 0 rgba(193,95,255,0.7), 2px 0 rgba(126,184,218,0.4); }
+      8%, 18% { transform: none; text-shadow: 0 0 20px rgba(193,95,255,0.15); }
+      20% { transform: translate(2px, 0) skewX(1deg); text-shadow: 1px 0 rgba(218,200,126,0.5), -1px 0 rgba(193,95,255,0.5); }
+      22% { transform: translate(-2px, 1px); text-shadow: -3px 0 rgba(126,184,218,0.5), 2px 0 rgba(193,95,255,0.5); }
+      24%, 38% { transform: none; text-shadow: 0 0 20px rgba(193,95,255,0.15); }
+      40% { transform: translate(3px, -1px) skewX(-1deg); text-shadow: 3px 0 rgba(193,95,255,0.6), -2px 0 rgba(126,201,160,0.5); }
+      42% { transform: translate(-2px, 0); text-shadow: -2px 0 rgba(176,126,218,0.6), 3px 0 rgba(126,184,218,0.4); }
+      44% { transform: translate(1px, 1px) skewX(2deg); text-shadow: 2px 0 rgba(218,200,126,0.5), -1px 0 rgba(193,95,255,0.6); }
+      46%, 58% { transform: none; text-shadow: 0 0 20px rgba(193,95,255,0.15); }
+      60% { transform: translate(-3px, 1px); text-shadow: -3px 0 rgba(193,95,255,0.7), 3px 0 rgba(126,184,218,0.5); }
+      62% { transform: translate(2px, -1px) skewX(-2deg); text-shadow: 2px 0 rgba(126,201,160,0.6), -2px 0 rgba(176,126,218,0.5); }
+      64%, 78% { transform: none; text-shadow: 0 0 20px rgba(193,95,255,0.15); }
+      80% { transform: translate(2px, 0) skewX(1deg); text-shadow: -2px 0 rgba(126,184,218,0.6), 3px 0 rgba(193,95,255,0.5); }
+      82% { transform: translate(-1px, -1px); text-shadow: 3px 0 rgba(218,200,126,0.5), -3px 0 rgba(126,201,160,0.4); }
+      84%, 100% { transform: none; text-shadow: 0 0 20px rgba(193,95,255,0.15); }
+    }
+
+    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+    @keyframes typing {
+      from { width: 0; }
+      to { width: 100%; }
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 0 20px rgba(193, 95, 255, 0.1); }
+      50% { box-shadow: 0 0 40px rgba(193, 95, 255, 0.25); }
+    }
+
+    @keyframes screen-flicker {
+      0%, 100% { opacity: 1; }
+      70% { opacity: 1; }
+      70.5% { opacity: 0.95; }
+      71% { opacity: 1; }
+      85% { opacity: 1; }
+      85.3% { opacity: 0.97; }
+      85.6% { opacity: 1; }
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    @keyframes countUp {
+      from { opacity: 0; transform: scale(0.5); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .animate-glitch { animation: glitch-burst 2s linear infinite; }
+    .animate-float { animation: float 3s ease-in-out infinite; }
+    .cursor-blink { animation: blink 1s step-end infinite; }
+    .animate-flicker { animation: screen-flicker 5s ease-in-out infinite; }
+    .animate-pulse { animation: pulse-glow 2s ease-in-out infinite; }
+
+    /* ======= ICON ANIMATIONS ======= */
+    @keyframes heartbeat {
+      0%, 100% { transform: scale(1); }
+      10% { transform: scale(1.15); }
+      20% { transform: scale(1); }
+      30% { transform: scale(1.1); }
+      40% { transform: scale(1); }
+    }
+    @keyframes flame-flicker {
+      0%, 100% { transform: scaleY(1) rotate(0deg); filter: brightness(1); }
+      25% { transform: scaleY(1.08) rotate(-2deg); filter: brightness(1.2); }
+      50% { transform: scaleY(0.95) rotate(1deg); filter: brightness(0.9); }
+      75% { transform: scaleY(1.05) rotate(-1deg); filter: brightness(1.15); }
+    }
+    @keyframes crown-shine {
+      0%, 100% { transform: rotate(0deg); }
+      10% { transform: rotate(12deg); }
+      20% { transform: rotate(-10deg); }
+      30% { transform: rotate(8deg); }
+      40% { transform: rotate(-6deg); }
+      50% { transform: rotate(4deg); }
+      60% { transform: rotate(-3deg); }
+      70% { transform: rotate(0deg); }
+    }
+    @keyframes rock-crack {
+      0%, 90%, 100% { transform: translate(0,0) rotate(0); }
+      92% { transform: translate(-2px, 1px) rotate(-0.5deg); }
+      94% { transform: translate(2px, -1px) rotate(0.5deg); }
+      96% { transform: translate(-1px, 0) rotate(-0.3deg); }
+      98% { transform: translate(1px, 1px) rotate(0.3deg); }
+    }
+    @keyframes rocket-hover {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
+    }
+    @keyframes icon-spin-slow {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(-360deg); }
+    }
+    @keyframes telescope-zoom {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.08); }
+    }
+    @keyframes bot-blink {
+      0%, 100% { opacity: 1; }
+      8% { opacity: 0.3; }
+      10% { opacity: 1; }
+      22% { opacity: 0.3; }
+      24% { opacity: 1; }
+      25% { opacity: 0.3; }
+      27% { opacity: 1; }
+      45% { opacity: 1; }
+      47% { opacity: 0.3; }
+      49% { opacity: 1; }
+      60% { opacity: 0.3; }
+      62% { opacity: 1; }
+      63% { opacity: 0.3; }
+      65% { opacity: 1; }
+      80% { opacity: 1; }
+      82% { opacity: 0.3; }
+      84% { opacity: 1; }
+    }
+    @keyframes mic-pulse {
+      0%, 100% { transform: scale(1); filter: drop-shadow(0 0 0 transparent); }
+      50% { transform: scale(1.05); filter: drop-shadow(0 0 10px rgba(100,149,237,0.4)); }
+    }
+    @keyframes chart-grow {
+      0%, 100% { transform: scaleY(1); }
+      50% { transform: scaleY(1.08); }
+    }
+    @keyframes terminal-cursor {
+      0%, 100% { filter: brightness(1); }
+      40% { filter: brightness(1); }
+      50% { filter: brightness(1.5) drop-shadow(0 0 8px rgba(168,130,255,0.5)); }
+      60% { filter: brightness(1); }
+    }
+    @keyframes workflow-spin {
+      0%, 100% { transform: rotate(0deg); }
+      25% { transform: rotate(5deg); }
+      75% { transform: rotate(-5deg); }
+    }
+    .icon-heartbeat { animation: heartbeat 1.5s ease-in-out infinite; display: inline-block; }
+    .icon-flame { animation: flame-flicker 0.8s ease-in-out infinite; display: inline-block; transform-origin: bottom center; }
+    .icon-crown { animation: crown-shine 1.2s ease-in-out infinite; display: inline-block; transform-origin: center bottom; }
+    .icon-rock { animation: rock-crack 4s ease-in-out infinite; display: inline-block; }
+    .icon-rocket { animation: rocket-hover 2s ease-in-out infinite; display: inline-block; }
+    .icon-spin { animation: icon-spin-slow 8s linear infinite; display: inline-block; }
+    .icon-telescope { animation: telescope-zoom 3s ease-in-out infinite; display: inline-block; }
+    .icon-bot { animation: bot-blink 2.5s ease-in-out infinite; display: inline-block; }
+    .icon-mic { animation: mic-pulse 2s ease-in-out infinite; display: inline-block; }
+    .icon-chart { animation: chart-grow 2.5s ease-in-out infinite; display: inline-block; transform-origin: bottom center; }
+    .icon-terminal { animation: terminal-cursor 2s ease-in-out infinite; display: inline-block; }
+    .icon-workflow { animation: workflow-spin 3s ease-in-out infinite; display: inline-block; }
+    .icon-float { animation: float 3s ease-in-out infinite; display: inline-block; }
+    @keyframes gamepad-shake {
+      0%, 75%, 100% { transform: rotate(0deg); }
+      78% { transform: rotate(8deg); }
+      81% { transform: rotate(-7deg); }
+      84% { transform: rotate(5deg); }
+      87% { transform: rotate(-4deg); }
+      90% { transform: rotate(2deg); }
+      93% { transform: rotate(0deg); }
+    }
+    .icon-gamepad { animation: gamepad-shake 3s ease-in-out infinite; display: inline-block; }
+
+    /* Delayed fade-in for staggered elements */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    .fade-in.show { opacity: 1; transform: translateY(0); }
+    .delay-1 { transition-delay: 0.3s; }
+    .delay-2 { transition-delay: 0.6s; }
+    .delay-3 { transition-delay: 0.9s; }
+    .delay-4 { transition-delay: 1.2s; }
+    .delay-5 { transition-delay: 1.5s; }
+    .delay-6 { transition-delay: 1.8s; }
+
+    /* Hide fade-in elements on non-active slides */
+    .slide:not(.active) .fade-in { opacity: 0; transform: translateY(20px); transition: none; }
+
+    /* ======= SPECIAL SLIDE LAYOUTS ======= */
+
+    /* Title slide */
+    .title-slide h1 { font-size: 5rem; }
+    .title-slide .subtitle {
+      font-size: 1.3rem; color: var(--text-secondary); margin-top: 1rem;
+      max-width: 700px; line-height: 1.6;
+    }
+    .title-slide .presenters {
+      margin-top: 2.5rem; display: flex; gap: 2rem; flex-wrap: wrap;
+      justify-content: center;
+    }
+    .presenter-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 0.8rem 1.5rem;
+      display: flex; flex-direction: column; align-items: center; gap: 0.2rem;
+    }
+    .presenter-name { font-weight: 700; font-size: 1.15rem; color: var(--text); }
+    .presenter-role { font-size: 0.85rem; color: var(--accent); text-transform: uppercase; letter-spacing: 0.1em; }
+
+    /* Chapter title slides */
+    .chapter-slide {
+      background: linear-gradient(135deg, var(--bg) 0%, var(--surface) 100%);
+    }
+    .chapter-slide .chapter-num {
+      font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.2em;
+      color: var(--accent-dim); margin-bottom: 1rem;
+    }
+    .chapter-slide h1 {
+      font-size: 4rem;
+      background: linear-gradient(135deg, var(--accent) 0%, #e9a7ff 50%, var(--accent) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* Quote slides */
+    .quote-slide {
+      padding: 4rem 6rem;
+    }
+    .quote-slide .big-quote {
+      font-size: 2.8rem; font-weight: 600; line-height: 1.45;
+      color: var(--text); max-width: 1050px;
+      position: relative; padding-left: 2.5rem;
+      border-left: 5px solid var(--accent);
+      text-align: left;
+    }
+    .quote-slide .big-quote .highlight {
+      color: var(--accent);
+      text-shadow: 0 0 30px rgba(193, 95, 255, 0.4);
+    }
+    .quote-slide .attribution {
+      margin-top: 2rem; font-size: 1.3rem; color: var(--text-secondary);
+      padding-left: 2.5rem; text-align: left;
+    }
+
+    /* Reddit post slide */
+    .reddit-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 2.5rem;
+      max-width: 800px; width: 100%;
+      text-align: left;
+      position: relative;
+      overflow: hidden;
+    }
+    .reddit-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0;
+      height: 3px; background: linear-gradient(90deg, var(--accent), var(--purple), var(--blue));
+    }
+    .reddit-header {
+      display: flex; align-items: center; gap: 0.8rem;
+      margin-bottom: 1.2rem;
+    }
+    .reddit-icon {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: var(--accent); display: flex; align-items: center;
+      justify-content: center; font-weight: 800; font-size: 1.1rem; color: var(--bg);
+    }
+    .reddit-sub { font-size: 1rem; color: var(--accent); font-weight: 600; }
+    .reddit-meta { font-size: 0.85rem; color: var(--text-secondary); }
+    .reddit-title {
+      font-size: 1.5rem; font-weight: 700; color: var(--text);
+      margin-bottom: 1rem; line-height: 1.4;
+    }
+    .reddit-body { font-size: 1.1rem; color: var(--text-secondary); line-height: 1.7; }
+    /* Reddit screenshot image */
+    .reddit-screenshot {
+      max-width: 680px; width: 100%;
+      border: 1px solid var(--border);
+      box-shadow: 0 8px 40px rgba(0,0,0,0.4);
+    }
+
+    /* Stats slide */
+    .stats-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem; max-width: 900px; width: 100%;
+    }
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 2rem 1.5rem;
+      text-align: center;
+      transition: border-color 0.3s;
+    }
+    .stat-card:hover { border-color: var(--accent-dim); }
+    .stat-value {
+      font-size: 3.5rem; font-weight: 800; color: var(--accent);
+      text-shadow: 0 0 20px rgba(193, 95, 255, 0.35);
+      letter-spacing: -0.03em;
+    }
+    .stat-label {
+      font-size: 1rem; color: var(--text-secondary); text-transform: uppercase;
+      letter-spacing: 0.08em; margin-top: 0.5rem;
+    }
+
+    /* Case card slide */
+    .case-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 3rem;
+      max-width: 850px; width: 100%;
+      text-align: left;
+      position: relative;
+    }
+    .case-card::before {
+      content: '\250C\2500'; position: absolute; top: 0.6rem; left: 0.8rem;
+      color: var(--border-hover); font-size: 0.7rem;
+    }
+    .case-tag {
+      display: inline-block; font-size: 0.85rem; text-transform: uppercase;
+      letter-spacing: 0.1em; padding: 0.3em 1em; font-weight: 700;
+      margin-bottom: 1rem;
+    }
+    .case-tag.tag-green { background: rgba(126,201,160,0.12); color: var(--green); }
+    .case-tag.tag-blue { background: rgba(126,184,218,0.12); color: var(--blue); }
+    .case-tag.tag-purple { background: rgba(176,126,218,0.12); color: var(--purple); }
+    .case-tag.tag-yellow { background: rgba(218,200,126,0.12); color: var(--yellow); }
+    .case-tag.tag-red { background: rgba(218,126,126,0.12); color: var(--red); }
+    .case-tag.tag-pink { background: rgba(245,160,192,0.12); color: var(--pink); }
+    .case-card h2 { font-size: 2.6rem; margin-bottom: 1rem; }
+    .case-card p { font-size: 1.4rem; color: var(--text-secondary); line-height: 1.7; }
+    .case-highlight {
+      background: var(--accent-glow);
+      border-left: 3px solid var(--accent);
+      padding: 1.2rem 1.5rem; margin-top: 1.5rem;
+    }
+    .case-highlight p { font-size: 1.4rem; color: var(--accent); font-weight: 600; }
+
+    /* Timeline items */
+    .timeline-visual {
+      display: flex; align-items: center; gap: 1.5rem;
+      max-width: 900px; width: 100%;
+    }
+    .timeline-dot {
+      width: 16px; height: 16px; border-radius: 50%;
+      background: var(--accent); flex-shrink: 0;
+      box-shadow: 0 0 20px rgba(193, 95, 255, 0.4);
+    }
+    .timeline-line {
+      width: 2px; height: 60px; background: var(--border);
+      flex-shrink: 0;
+    }
+
+    /* Link cards */
+    .link-card {
+      display: inline-flex; align-items: center; gap: 1rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 1.2rem 2rem;
+      text-decoration: none; color: var(--text);
+      transition: all 0.3s;
+      margin: 0.5rem;
+    }
+    .link-card:hover {
+      border-color: var(--accent);
+      box-shadow: 0 0 20px rgba(193, 95, 255, 0.15);
+      transform: translateY(-2px);
+    }
+    .link-badge {
+      font-size: 0.8rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.08em; padding: 0.3em 0.8em;
+      background: rgba(193, 95, 255, 0.15); color: var(--accent);
+    }
+    .link-text { font-size: 1.1rem; font-weight: 500; }
+    .link-arrow { color: var(--accent); font-size: 1.4rem; }
+
+    /* Comparison layout */
+    .comparison {
+      display: grid; grid-template-columns: 1fr auto 1fr;
+      gap: 2rem; align-items: center;
+      max-width: 900px; width: 100%;
+    }
+    .comparison-side {
+      text-align: center; padding: 2rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+    }
+    .comparison-vs {
+      font-size: 2rem; font-weight: 800; color: var(--accent);
+      text-shadow: 0 0 20px rgba(193, 95, 255, 0.4);
+    }
+
+    /* Big number */
+    .big-number {
+      font-size: 8rem; font-weight: 800; color: var(--accent);
+      text-shadow: 0 0 60px rgba(193, 95, 255, 0.3);
+      letter-spacing: -0.05em; line-height: 1;
+    }
+
+    /* Announcement card */
+    .announcement {
+      background: linear-gradient(135deg, var(--surface) 0%, var(--surface-2) 100%);
+      border: 1px solid var(--accent-dim);
+      padding: 3rem;
+      max-width: 850px; width: 100%;
+      text-align: center;
+      animation: pulse-glow 3s ease-in-out infinite;
+    }
+    .announcement h2 { color: var(--accent); }
+
+    /* Word cloud */
+    .word-cloud {
+      display: flex; flex-wrap: wrap; justify-content: center; align-items: center;
+      gap: 0.4rem 0.9rem; max-width: 750px; margin: 0 auto; line-height: 1.6;
+    }
+    .word-cloud span {
+      font-family: 'JetBrains Mono', monospace; font-weight: 600; opacity: 0.4;
+      transition: opacity 0.6s ease, filter 0.6s ease;
+      filter: brightness(0.7);
+    }
+    .word-cloud span.wc-glow {
+      opacity: 1;
+      filter: brightness(1.6) drop-shadow(0 0 6px currentColor);
+    }
+    .word-cloud span:hover { opacity: 1; filter: brightness(1.4); }
+
+    /* People grid */
+    .people-grid {
+      display: flex; gap: 1.5rem; flex-wrap: wrap;
+      justify-content: center; margin-top: 1.5rem;
+    }
+    .person-chip {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      padding: 0.6rem 1.2rem;
+      display: flex; flex-direction: column; align-items: center; gap: 0.2rem;
+    }
+    .person-chip .name { font-weight: 700; font-size: 1.15rem; }
+    .person-chip .role { font-size: 0.85rem; color: var(--accent); text-transform: uppercase; letter-spacing: 0.08em; }
+
+    /* Terminal prompt */
+    .terminal-prompt {
+      font-size: 1.6rem; color: var(--text-secondary);
+      text-align: left; max-width: 700px; width: 100%;
+    }
+    .terminal-prompt .prompt-char { color: var(--accent); }
+    .terminal-prompt .command { color: var(--text); font-weight: 600; }
+    .terminal-prompt .flag { color: var(--blue); }
+    .terminal-prompt .arg { color: var(--green); }
+
+    /* ======= PROGRESS BAR ======= */
+    .progress-bar {
+      position: fixed; bottom: 0; left: 0; right: 0; height: 2px;
+      background: var(--surface-2); z-index: 100;
+    }
+    .progress-fill {
+      height: 100%; background: linear-gradient(90deg, var(--accent), var(--purple));
+      transition: width 0.4s ease;
+      box-shadow: 0 0 10px rgba(193, 95, 255, 0.5);
+    }
+
+    /* ======= SLIDE COUNTER ======= */
+    .slide-counter {
+      position: fixed; top: 42px; left: 20px; z-index: 100;
+      font-size: 1rem; color: #f7f4ff;
+      letter-spacing: 0.05em; font-weight: 500;
+    }
+    .slide-counter .current-num { color: var(--accent); font-weight: 700; font-size: 1.4rem; }
+
+    /* ======= NAV ARROWS ======= */
+    .nav-arrows {
+      position: fixed; top: 50%; transform: translateY(-50%);
+      z-index: 100; border: none; background: none; padding: 0;
+    }
+    .nav-arrows.left { left: 20px; }
+    .nav-arrows.right { right: 20px; }
+
+    .nav-arrow {
+      width: 48px; height: 48px;
+      border: 1px solid #5c4996;
+      background: rgba(22, 16, 44, 0.95);
+      backdrop-filter: blur(8px);
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      transition: all 0.3s ease;
+      color: #f7f4ff; font-size: 20px;
+      font-family: var(--font);
+    }
+    .nav-arrow:hover {
+      border-color: var(--accent); color: var(--accent);
+      box-shadow: 0 0 12px rgba(193, 95, 255, 0.15);
+      transform: scale(1.08);
+    }
+    .nav-arrow:active { transform: scale(0.95); }
+
+    /* ======= NAV BAR (dots) ======= */
+    .nav-bar {
+      position: fixed;
+      bottom: 14px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 5px;
+      z-index: 100;
+      background: rgba(22, 16, 44, 0.95);
+      backdrop-filter: blur(12px);
+      padding: 10px 16px;
+      border: 1px solid #4a3a78;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+    }
+
+    .nav-dot {
+      width: 12px; height: 12px;
+      background: #4a3a78;
+      border: 1px solid #5c4996;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      padding: 0;
+      position: relative;
+    }
+    .nav-dot:hover:not(.active) {
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+    .nav-dot.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      width: 30px;
+      box-shadow: 0 0 10px rgba(193, 95, 255, 0.5);
+    }
+
+    /* Chapter dot markers */
+    .nav-dot.chapter-dot:not(.active) {
+      background: #7a5fc0;
+      border-color: #8f6fd8;
+    }
+
+    /* ======= SLIDE PREVIEW TOOLTIP ======= */
+    .slide-preview {
+      position: absolute;
+      bottom: calc(100% + 14px);
+      left: 50%;
+      transform: translateX(-50%) scale(0.92);
+      width: 200px;
+      height: 128px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease, transform 0.25s ease;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+      z-index: 200;
+    }
+    .nav-dot:hover .slide-preview {
+      opacity: 1;
+      transform: translateX(-50%) scale(1);
+    }
+    .slide-preview-thumb {
+      width: 100%; height: 100%;
+      transform-origin: top left;
+      pointer-events: none;
+    }
+    .slide-preview-label {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      padding: 5px 10px;
+      background: rgba(10, 7, 20, 0.88);
+      backdrop-filter: blur(8px);
+      font-size: 0.6rem;
+      font-weight: 600;
+      color: var(--accent);
+      letter-spacing: 0.05em;
+      text-align: center;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      z-index: 2;
+      border-top: 1px solid var(--border);
+    }
+    /* Preview arrow pointer */
+    .slide-preview::after {
+      content: '';
+      position: absolute; bottom: -5px; left: 50%; transform: translateX(-50%) rotate(45deg);
+      width: 8px; height: 8px;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* ======= KEYBOARD HINT ======= */
+    .keyboard-hint {
+      position: fixed; top: 42px; right: 20px; z-index: 100;
+      background: rgba(22, 16, 44, 0.95);
+      backdrop-filter: blur(8px);
+      padding: 10px 18px;
+      border: 1px solid #4a3a78;
+      font-size: 0.85rem;
+      color: #f7f4ff;
+      font-weight: 500;
+      transition: opacity 0.4s ease;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .keyboard-hint kbd {
+      background: #2c2152;
+      border: 1px solid #5c4996;
+      padding: 3px 10px;
+      font-family: var(--font);
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    /* ======= TERMINAL BAR ======= */
+    .terminal-bar {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      display: flex; align-items: center; gap: 0.6rem;
+      background: var(--surface-2); border-bottom: 1px solid var(--border);
+      padding: 0.4rem 1rem; font-size: 0.7rem; color: var(--text-muted);
+    }
+    .terminal-dots { display: flex; gap: 0.35rem; }
+    .terminal-dots span { width: 10px; height: 10px; border-radius: 50%; }
+    .terminal-dots span:nth-child(1) { background: var(--red); }
+    .terminal-dots span:nth-child(2) { background: var(--yellow); }
+    .terminal-dots span:nth-child(3) { background: var(--green); }
+    .terminal-title { flex: 1; text-align: center; letter-spacing: 0.04em; }
+
+    /* ======= LOGO ======= */
+    .logo-container {
+      margin-top: 2rem; display: flex; align-items: center;
+      justify-content: center; gap: 1rem;
+    }
+    .logo-container img { height: 22px; opacity: 0.6; }
+    .logo-sep { color: var(--text-muted); font-size: 0.8rem; }
+
+    /* ======= HELPER CLASSES ======= */
+    .mt-1 { margin-top: 0.5rem; }
+    .mt-2 { margin-top: 1rem; }
+    .mt-3 { margin-top: 1.5rem; }
+    .mt-4 { margin-top: 2rem; }
+    .mt-5 { margin-top: 3rem; }
+    .mb-2 { margin-bottom: 1rem; }
+    .mb-3 { margin-bottom: 1.5rem; }
+    .text-left { text-align: left; }
+    .text-center { text-align: center; }
+    .max-w-700 { max-width: 700px; }
+    .max-w-800 { max-width: 800px; }
+    .max-w-900 { max-width: 900px; }
+    .w-full { width: 100%; }
+    .flex-center { display: flex; align-items: center; justify-content: center; }
+    .gap-1 { gap: 0.5rem; }
+    .gap-2 { gap: 1rem; }
+    .gap-3 { gap: 1.5rem; }
+
+    /* Two-column layout */
+    .two-col {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 2rem; max-width: 900px; width: 100%;
+      text-align: left;
+    }
+
+    /* Inline tag */
+    .tag-inline {
+      display: inline-block; font-size: 0.65rem; text-transform: uppercase;
+      letter-spacing: 0.1em; padding: 0.2em 0.6em; font-weight: 700;
+      background: var(--accent-glow); color: var(--accent);
+      vertical-align: middle; margin-right: 0.5rem;
+    }
+
+    /* ======= KEYBOARD HELP ======= */
+    .help-overlay {
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(10, 7, 20, 0.95); z-index: 500;
+      display: none; align-items: center; justify-content: center;
+      flex-direction: column; gap: 1rem;
+    }
+    .help-overlay.visible { display: flex; }
+    .help-overlay h3 { color: var(--accent); font-size: 1.2rem; margin-bottom: 1rem; }
+    .help-key {
+      display: flex; align-items: center; gap: 1rem;
+      font-size: 0.9rem; color: var(--text-secondary);
+    }
+    .help-key kbd {
+      background: var(--surface-2); border: 1px solid var(--border);
+      padding: 0.3em 0.7em; font-family: var(--font); font-size: 0.8rem;
+      color: var(--accent); min-width: 2rem; text-align: center;
+    }
+
+    /* ======= RESPONSIVE ======= */
+    @media (max-width: 900px) {
+      .slide { padding: 2rem; }
+      .slide h1 { font-size: 2.8rem; }
+      .slide h2 { font-size: 2rem; }
+      .slide h3 { font-size: 1.3rem; }
+      .slide p { font-size: 1rem; }
+      .title-slide h1 { font-size: 3rem; }
+      .quote-slide { padding: 2rem; }
+      .quote-slide .big-quote { font-size: 1.8rem; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .two-col { grid-template-columns: 1fr; }
+      .comparison { grid-template-columns: 1fr; }
+      .big-number { font-size: 5rem; }
+      .case-card, .reddit-card { padding: 1.5rem; }
+    }
+
+    /* ======= LASER POINTER ======= */
+    .laser-pointer {
+      position: fixed;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 40, 40, 0.95) 0%, rgba(255, 40, 40, 0.6) 30%, rgba(255, 0, 0, 0.2) 60%, transparent 70%);
+      box-shadow: 0 0 12px 4px rgba(255, 0, 0, 0.5), 0 0 30px 8px rgba(255, 0, 0, 0.2);
+      pointer-events: none;
+      z-index: 99999;
+      transform: translate(-50%, -50%);
+      display: none;
+      mix-blend-mode: screen;
+    }
+    .laser-pointer.active {
+      display: block;
+    }
+    body.laser-mode {
+      cursor: none;
+    }
+    #laserCanvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 99998;
+      display: none;
+    }
+    #laserCanvas.active {
+      display: block;
+    }
+    #spotlightOverlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 99997;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    #spotlightOverlay.active {
+      opacity: 1;
+    }
+    body.spotlight-mode {
+      cursor: none;
+    }
+    #zoomLens {
+      position: fixed;
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      border: 1px solid rgba(193, 95, 255, 0.2);
+      box-shadow: 0 0 12px 2px rgba(0,0,0,0.3);
+      pointer-events: none;
+      z-index: 99996;
+      display: none;
+      overflow: hidden;
+      transform: translate(-50%, -50%);
+    }
+    #zoomLens .zoom-clone {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      transform-origin: 0 0;
+      pointer-events: none;
+    }
+    #zoomLens .zoom-crosshair {
+      position: absolute;
+      top: 50%; left: 50%;
+      width: 20px; height: 20px;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      z-index: 1;
+    }
+    #zoomLens .zoom-crosshair::before,
+    #zoomLens .zoom-crosshair::after {
+      content: '';
+      position: absolute;
+      background: rgba(193, 95, 255, 0.15);
+    }
+    #zoomLens .zoom-crosshair::before {
+      top: 50%; left: 0; right: 0; height: 1px;
+      transform: translateY(-50%);
+    }
+    #zoomLens .zoom-crosshair::after {
+      left: 50%; top: 0; bottom: 0; width: 1px;
+      transform: translateX(-50%);
+    }
+    #zoomLens.active {
+      display: block;
+    }
+    body.zoom-mode {
+      cursor: none;
+    }
+    /* ======= FIRE PARTICLES ======= */
+    .fire-container {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .fire-particle {
+      position: absolute;
+      bottom: -10px;
+      border-radius: 50%;
+      opacity: 0;
+      filter: blur(3px);
+      animation: fire-rise linear infinite;
+    }
+    .fire-particle.ember {
+      filter: blur(6px);
+    }
+    @keyframes fire-rise {
+      0% { opacity: 0; transform: translateY(0) scale(1.2); }
+      8% { opacity: 0.8; }
+      30% { opacity: 0.6; transform: translateY(-30vh) scale(1); }
+      60% { opacity: 0.3; }
+      100% { opacity: 0; transform: translateY(-100vh) scale(0.1); }
+    }
+    .fire-glow {
+      position: absolute;
+      bottom: 0; left: 50%;
+      transform: translateX(-50%);
+      width: 160%;
+      height: 70%;
+      background: radial-gradient(ellipse at 50% 100%, rgba(255,60,10,0.45) 0%, rgba(232,80,30,0.3) 15%, rgba(255,110,50,0.12) 35%, rgba(255,100,50,0.04) 55%, transparent 75%);
+      pointer-events: none;
+      animation: fire-glow-pulse 2s ease-in-out infinite alternate;
+    }
+    @keyframes fire-glow-pulse {
+      0% { opacity: 0.75; }
+      100% { opacity: 1; }
+    }
+    /* ======= PASSWORD GATE ======= */
+    #passwordGate {
+      position: fixed; inset: 0;
+      z-index: 100000;
+      background: var(--bg);
+      display: flex; align-items: center; justify-content: center;
+      flex-direction: column; gap: 1rem;
+      font-family: var(--font);
+    }
+    #passwordGate.hidden { display: none; }
+    #passwordGate label {
+      color: var(--text-muted); font-size: 0.85rem;
+      letter-spacing: 0.15em; text-transform: uppercase;
+    }
+    #passwordGate input {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 1.1rem;
+      padding: 0.6rem 1.2rem;
+      border-radius: 6px;
+      text-align: center;
+      outline: none;
+      width: 260px;
+    }
+    #passwordGate input:focus { border-color: var(--accent-dim); }
+    #passwordGate .pw-error {
+      color: var(--red); font-size: 0.8rem;
+      min-height: 1.2em;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Password Gate -->
+<div id="passwordGate">
+  <label>senha</label>
+  <input type="password" id="pwInput" placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;" autofocus>
+  <div class="pw-error" id="pwError"></div>
+</div>
+<script>
+(function() {
+  const gate = document.getElementById('passwordGate');
+  const input = document.getElementById('pwInput');
+  const error = document.getElementById('pwError');
+
+  const isLocalhost = ['localhost', '127.0.0.1', ''].includes(location.hostname);
+
+  if (isLocalhost || sessionStorage.getItem('talk-auth') === '1') {
+    gate.classList.add('hidden');
+    return;
+  }
+
+  input.addEventListener('keydown', async (e) => {
+    if (e.key !== 'Enter') return;
+    error.textContent = '';
+    try {
+      const res = await fetch('/api/verify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: input.value })
+      });
+      const data = await res.json();
+      if (data.ok) {
+        sessionStorage.setItem('talk-auth', '1');
+        gate.classList.add('hidden');
+      } else {
+        error.textContent = 'senha incorreta';
+        input.value = '';
+      }
+    } catch {
+      error.textContent = 'erro de conexao';
+    }
+  });
+})();
+</script>
+
+<!-- CRT effects -->
+<div class="crt-interference"></div>
+
+<!-- Matrix rain canvas -->
+<canvas id="matrix-canvas"></canvas>
+
+<!-- Terminal bar -->
+<div class="terminal-bar">
+  <div class="terminal-dots"><span></span><span></span><span></span></div>
+  <div class="terminal-title">o-dev-que-a-ia-nao-vai-substituir &mdash; ufba &mdash; 2026</div>
+</div>
+
+<!-- ======================================================== -->
+<!-- SLIDES -->
+<!-- ======================================================== -->
+<div class="slide-container" id="slideContainer">
+
+  <!-- ======================== -->
+  <!-- SLIDE 0: TITLE -->
+  <!-- ======================== -->
+  <div class="slide title-slide active" data-slide="0">
+    <div class="fade-in">
+      <p class="small" style="letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent-dim);">$ ./agilize --talk ufba --2026</p>
+    </div>
+    <h1 class="fade-in delay-1">
+      O dev que a IA<br><span class="accent">n&atilde;o vai <span id="typewriterWord"></span><span id="typewriterCursor" class="cursor-blink" style="color: var(--accent); font-weight: 400;">_</span></span>
+    </h1>
+    <p class="subtitle fade-in delay-2">O que um CTO realmente contrata &mdash; e valoriza &mdash; em 2026.</p>
+    <div class="presenters fade-in delay-3">
+      <div class="presenter-card">
+        <span class="presenter-name">Adriano Fialho</span>
+        <span class="presenter-role">Co-founder &amp; CTO &mdash; Agilize</span>
+      </div>
+    </div>
+    <div class="logo-container fade-in delay-4">
+      <img src="assets/logo-branca.png" alt="Agilize">
+    </div>
+  </div>
+
+  <!-- ======================== -->
+  <!-- SLIDE 1: WHOAMI -->
+  <!-- ======================== -->
+  <div class="slide" data-slide="1">
+    <div class="fade-in">
+      <p class="small" style="letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent-dim);">$ whoami</p>
+    </div>
+    <h2 class="fade-in delay-1 mt-2">Adriano <span class="accent">Fialho</span></h2>
+    <p class="fade-in delay-1" style="font-size: 1.4rem;">Co-founder e CTO @ <span class="accent">Agilize</span></p>
+    <div class="fade-in delay-2 mt-4" style="display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;">
+      <div class="presenter-card"><span class="presenter-name">Google for Startups</span><span class="presenter-role">Accelerator 2019</span></div>
+      <div class="presenter-card"><span class="presenter-name">Endeavor</span><span class="presenter-role">Empreendedor</span></div>
+      <div class="presenter-card"><span class="presenter-name">Stone &middot; L4 &middot; AXA</span><span class="presenter-role">Investidores</span></div>
+      <div class="presenter-card"><span class="presenter-name">Vit&oacute;ria</span><span class="presenter-role">Torcedor sofredor</span></div>
+    </div>
+    <div class="logo-container fade-in delay-3">
+      <img src="assets/logo-branca.png" alt="Agilize">
+    </div>
+  </div>
+
+  <!-- ======================== -->
+  <!-- SLIDE 2: THE ANXIETY -->
+  <!-- ======================== -->
+  <div class="slide" data-slide="2">
+    <h1 class="fade-in animate-glitch" style="font-size: 3.8rem;">"A IA vai me <span class="red">substituir</span>?"</h1>
+    <p class="fade-in delay-1 mt-3">
+      A ansiedade n&ordm; 1 de quem estuda<br>e trabalha com tecnologia hoje.
+    </p>
+    <p class="fade-in delay-2 mt-4 small">
+      Resposta curta: n&atilde;o &eacute; <span class="accent">sim</span> nem <span class="accent">n&atilde;o</span>.<br>&Eacute; <span class="accent">"depende do dev que voc&ecirc; decidir ser."</span>
+    </p>
+  </div>
+
+  <!-- ======================== -->
+  <!-- SLIDE 3: THE SHOCK -->
+  <!-- ======================== -->
+  <div class="slide" data-slide="3">
+    <img src="assets/reddit-post.png" alt="Reddit post about Anthropic" class="reddit-screenshot fade-in">
+  </div>
+
+  <!-- ======================== -->
+  <!-- SLIDE 2: QUOTE 1 -->
+  <!-- ======================== -->
+  <div class="slide quote-slide" data-slide="4">
+    <div class="fade-in">
+      <div class="big-quote">
+        "The mental model isn't <span class="highlight">'use AI to code faster.'</span> It's <span class="highlight">'you are the PM, the agents are your engineers,</span> and your job is to keep all of them unblocked.'"
+      </div>
+      <p style="color: var(--text-muted); font-size: 0.65rem; margin-top: 1rem; font-style: italic;">O modelo mental n&atilde;o &eacute; &ldquo;usar IA pra codar mais r&aacute;pido&rdquo;. &Eacute; &ldquo;voc&ecirc; &eacute; o PM, os agentes s&atilde;o seus engenheiros, e seu trabalho &eacute; manter todos desbloqueados.&rdquo;</p>
+      <div class="attribution">// r/csMajors &mdash; sobre o time da Anthropic</div>
+    </div>
+  </div>
+
+  <!-- ======================== -->
+  <!-- SLIDE 3: QUOTE 2 -->
+  <!-- ======================== -->
+  <div class="slide quote-slide" data-slide="5">
+    <div class="fade-in">
+      <div class="big-quote">
+        "If you're just <span class="highlight">watching an agent code, you're already behind.</span> That idle time should be spent spinning up another agent and directing it somewhere else."
+      </div>
+      <p style="color: var(--text-muted); font-size: 0.65rem; margin-top: 1rem; font-style: italic;">Se voc&ecirc; s&oacute; est&aacute; assistindo um agente codar, j&aacute; ficou pra tr&aacute;s. Esse tempo ocioso deveria ser gasto iniciando outro agente.</p>
+      <div class="attribution">// r/csMajors &mdash; sobre o time da Anthropic</div>
+    </div>
+  </div>
+
+  <!-- ======================== -->
+  <!-- SLIDE 4: QUOTE 3 -->
+  <!-- ======================== -->
+  <div class="slide quote-slide" data-slide="6">
+    <div class="fade-in">
+      <div class="big-quote">
+        "The productivity gap between people who think this way and people who don't is <span class="highlight">already enormous.</span>"
+      </div>
+      <p style="color: var(--text-muted); font-size: 0.65rem; margin-top: 1rem; font-style: italic;">O gap de produtividade entre quem pensa assim e quem n&atilde;o pensa j&aacute; &eacute; enorme.</p>
+      <div class="attribution">// r/csMajors &mdash; sobre o time da Anthropic</div>
+    </div>
+  </div>
+
+  <!-- ======================== -->
+  <!-- SLIDE 5: THE QUESTION -->
+  <!-- ======================== -->
+  <div class="slide" data-slide="7">
+    <h2 class="fade-in animate-glitch">Se isso j&aacute; &eacute; verdade<br>na <span class="accent">Anthropic</span>,</h2>
+    <h2 class="fade-in delay-2" style="color: var(--text-secondary); font-size: 2.2rem;">quanto tempo at&eacute; ser verdade<br><span class="accent" style="font-size: 3.5rem;">em todo lugar?</span></h2>
+  </div>
+
+  <!-- ======================== -->
+  <!-- SLIDE 6: CHAPTER - A JORNADA -->
+  <!-- ======================== -->
+  <div class="slide chapter-slide" data-slide="8">
+    <div class="fade-in" style="margin-bottom: 1.2rem;"><i data-lucide="map" class="icon-float" style="width: 48px; height: 48px; color: var(--accent);"></i></div>
+    <div class="chapter-num fade-in delay-1">Cap&iacute;tulo 01</div>
+    <h1 class="fade-in delay-2">A Jornada</h1>
+    <p class="fade-in delay-2" style="color: var(--text-secondary); font-size: 1.3rem;">Da era das cavernas ao fogo</p>
+  </div>
+
+  <!-- ======================== -->
+  <!-- SLIDE 7: STONE AGE -->
+  <!-- ======================== -->
+  <div class="slide" data-slide="9">
+    <div class="fade-in" style="margin-bottom: 1rem;"><i data-lucide="mountain" class="icon-rock" style="width: 52px; height: 52px; color: var(--accent);"></i></div>
+    <h2 class="fade-in delay-1">A <span class="accent">Idade da Pedra</span><br>do Desenvolvimento</h2>
+    <p class="fade-in delay-1 mt-3">
+      C&oacute;digo bruto. Linha por linha. Caractere por caractere.<br>
+      Stack Overflow era a biblioteca de Alexandria.<br>
+      Copiar e colar de f&oacute;rum era <span class="accent">t&eacute;cnica avan&ccedil;ada.</span>
+    </p>
+    <p class="fade-in delay-2 mt-3 small">
+      O valor de um dev se media pela capacidade de produzir c&oacute;digo manualmente.
+    </p>
+  </div>
+
+  <!-- ======================== -->
+  <!-- SLIDE 8: FIRST TOOLS -->
+  <!-- ======================== -->
+  <div class="slide" data-slide="10">
+    <h2 class="fade-in">Os Primeiros Sinais</h2>
+    <div class="fade-in delay-1 mt-4" style="display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;">
+      <div class="presenter-card"><span class="presenter-name">Snippets</span></div>
+      <div class="presenter-card"><span class="presenter-name">Templates</span></div>
+      <div class="presenter-card"><span class="presenter-name">IDEs</span></div>
+      <div class="presenter-card"><span class="presenter-name">Autocomplete</span></div>
+      <div class="presenter-card"><span class="presenter-name">Linters</span></div>
+      <div class="presenter-card"><span class="presenter-name">Formatters</span></div>
+    </div>
+    <p class="fade-in delay-2 mt-4 small">
+      <span class="accent">"Isso &eacute; muleta"</span> &mdash; <span class="accent">"Dev de verdade n&atilde;o precisa disso"</span><br>
+      Essa resist&ecirc;ncia se repetiu em cada nova onda.
+    </p>
+  </div>
+
+  <!-- ======================== -->
+  <!-- SLIDE 9: COPILOT -->
+  <!-- ======================== -->
+  <div class="slide" data-slide="11">
+    <h2 class="fade-in">A Chegada do <span class="accent">Copilot</span></h2>
+    <div class="comparison fade-in delay-1 mt-4">
+      <div class="comparison-side">
+        <h3 class="green">Curiosos</h3>
+        <p class="mt-2 small">Experimentando, testando, aprendendo</p>
+      </div>
+      <div class="comparison-vs">VS</div>
+      <div class="comparison-side">
+        <h3 class="red">C&eacute;ticos</h3>
+        <p class="mt-2 small">"Vai gerar c&oacute;digo ruim"<br>"Vai criar depend&ecirc;ncia"<br>"&Eacute; pl&aacute;gio"</p>
+      </div>
+    </div>
+    <p class="fade-in delay-2 mt-3 small">O mercado se dividiu. A resist&ecirc;ncia era real.</p>
+  </div>
+
+  <!-- ======================== -->
+  <!-- SLIDE: FORA, IA! (TDC) -->
+  <!-- ======================== -->
+  <div class="slide" data-slide="12">
+    <h2 class="fade-in animate-glitch">"<span class="red">FORA, IA!</span>"</h2>
+    <div class="mt-4" style="max-width: 780px; text-align: left;">
+      <p class="fade-in delay-1" style="margin-bottom: 1rem; color: var(--text); font-style: italic; font-size: 1.7rem;">"Prefiro escrever do zero."</p>
+      <p class="fade-in delay-2" style="margin-bottom: 1rem; color: var(--text); font-style: italic; font-size: 1.7rem;">"O c&oacute;digo da IA &eacute; bagun&ccedil;ado."</p>
+      <p class="fade-in delay-3" style="margin-bottom: 1rem; color: var(--text); font-style: italic; font-size: 1.7rem;">"N&atilde;o vou confiar meu trabalho nisso."</p>
+      <p class="fade-in delay-4" style="margin-bottom: 1rem; color: var(--text); font-style: italic; font-size: 1.7rem;">"A IA se perde e faz coisas que n&atilde;o pedi."</p>
+      <p class="fade-in delay-5" style="color: var(--text); font-style: italic; font-size: 1.7rem;">"Se for pra arrumar depois, prefiro fazer logo."</p>
+    </div>
+    <p class="fade-in delay-6 mt-4 small">Rea&ccedil;&otilde;es reais &mdash; inclusive dentro da Agilize.</p>
+  </div>
+
+  <!-- ======================== -->
+  <!-- SLIDE: IDENTIDADE (TDC) -->
+  <!-- ======================== -->
+  <div class="slide quote-slide" data-slide="13">
+    <div class="fade-in">
+      <div class="big-quote">
+        A resist&ecirc;ncia n&atilde;o era sobre <span class="highlight">IA</span>&hellip;<br>Era sobre <span class="highlight">identidade.</span>
+      </div>
+      <p style="color: var(--text-muted); font-size: 1.1rem; margin-top: 1.5rem; font-style: italic; padding-left: 2.5rem; text-align: left;">Quando seu valor sempre foi medido por escrever c&oacute;digo, o que sobra quando algo escreve por voc&ecirc;?</p>
+      <div class="attribution">// a verdadeira barreira</div>
+    </div>
+  </div>
+
+  <!-- ======================== -->
+  <!-- SLIDE 10: AGILIZE ADVANCES -->
+  <!-- ======================== -->
+  <div class="slide" data-slide="14">
+    <h2 class="fade-in">Enquanto isso,<br>na <span class="accent">Agilize...</span></h2>
+    <p class="fade-in delay-1 mt-3">
+      Decidimos <span class="accent">experimentar antes de julgar.</span>
+    </p>
+    <div class="fade-in delay-2 mt-4 word-cloud">
+      <span style="font-size: 2.2rem; color: var(--accent);">Claude</span>
+      <span style="font-size: 1.8rem; color: var(--blue);">Cursor</span>
+      <span style="font-size: 1.6rem; color: var(--green);">Copilot</span>
+      <span style="font-size: 2rem; color: var(--blue);">ChatGPT</span>
+      <span style="font-size: 1.1rem; color: var(--purple);">v0</span>
+      <span style="font-size: 1.4rem; color: var(--yellow);">Bolt</span>
+      <span style="font-size: 1.7rem; color: var(--green);">Gemini</span>
+      <span style="font-size: 1.5rem; color: var(--red);">Deepseek</span>
+      <span style="font-size: 1.3rem; color: var(--purple);">Augment</span>
+      <span style="font-size: 1.9rem; color: var(--yellow);">Manus</span>
+      <span style="font-size: 1.1rem; color: var(--accent);">Windsurf</span>
+      <span style="font-size: 1.4rem; color: var(--blue);">Copilot Chat</span>
+      <span style="font-size: 1rem; color: var(--green);">Tabnine</span>
+      <span style="font-size: 1.6rem; color: var(--red);">Llama</span>
+      <span style="font-size: 1.2rem; color: var(--purple);">Mistral</span>
+      <span style="font-size: 1rem; color: var(--yellow);">Codeium</span>
+      <span style="font-size: 1.5rem; color: var(--accent);">Claude Code</span>
+      <span style="font-size: 1.1rem; color: var(--blue);">Perplexity</span>
+      <span style="font-size: 1.3rem; color: var(--green);">Lovable</span>
+      <span style="font-size: 0.95rem; color: var(--red);">Qwen</span>
+      <span style="font-size: 1.2rem; color: var(--yellow);">Replit Agent</span>
+      <span style="font-size: 1rem; color: var(--purple);">Devin</span>
+      <span style="font-size: 1.4rem; color: var(--blue);">Grok</span>
+      <span style="font-size: 0.95rem; color: var(--green);">Amazon Q</span>
+      <span style="font-size: 1.1rem; color: var(--accent);">Aider</span>
+      <span style="font-size: 1rem; color: var(--red);">Codex</span>
+      <span style="font-size: 1.3rem; color: var(--yellow);">NotebookLM</span>
+      <span style="font-size: 0.95rem; color: var(--purple);">Cody</span>
+      <span style="font-size: 1.1rem; color: var(--blue);">Gemma</span>
+      <span style="font-size: 1rem; color: var(--green);">Continue</span>
+    </div>
+    <p class="fade-in delay-3 mt-3 small">
+      Coisas que levariam semanas saindo em dias.<br>Problemas complexos resolvidos em horas.
+    </p>
+  </div>
+
+  <!-- ======================== -->
+  <!-- SLIDE: HELLO WORLD - LIA (TDC) -->
+  <!-- ======================== -->
+  <div class="slide" data-slide="15">
+    <div class="case-card fade-in">
+      <span class="case-tag tag-purple">Meu "Hello World" com IA</span>
+      <div style="margin-bottom: 0.8rem;"><i data-lucide="sparkles" class="icon-bot" style="width: 44px; height: 44px; color: var(--accent);"></i></div>
+      <h2>Lia</h2>
+      <p>
+        O primeiro app <span class="accent">100% feito com IA</span> na Agilize.
+      </p>
+      <p class="mt-2">
+        Criada em <span class="accent">12 horas</span> &mdash; Go, Node.js e AWS Lambda.
+      </p>
+      <div class="case-highlight">
+        <p>N&atilde;o era autocomplete. Era um sistema inteiro, de ponta a ponta.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================== -->
+  <!-- SLIDE: CURIOSIDADE VS ORGULHO (TDC) -->
+  <!-- ======================== -->
+  <div class="slide" data-slide="16">
+    <h2 class="fade-in">+ <span class="green">Curiosidade</span> &nbsp;&nbsp;&minus; <span class="red">Orgulho</span></h2>
+    <div class="mt-4" style="max-width: 720px; text-align: left;">
+      <p class="fade-in delay-1" style="margin-bottom: 1.2rem; color: var(--text); font-style: italic; font-size: 1.9rem;">"Como voc&ecirc; fez esse bot no Slack?"</p>
+      <p class="fade-in delay-2" style="margin-bottom: 1.2rem; color: var(--text); font-style: italic; font-size: 1.9rem;">"Quais prompts voc&ecirc; usou?"</p>
+      <p class="fade-in delay-3" style="color: var(--text); font-style: italic; font-size: 1.9rem;">"A IA gerou o dashboard inteiro?"</p>
+    </div>
+    <p class="fade-in delay-4 mt-4 small">
+      A resist&ecirc;ncia n&atilde;o morre no debate. <span class="accent">Morre no resultado.</span>
+    </p>
+  </div>
+
+  <!-- ======================== -->
+  <!-- SLIDE 11: DISCOVERY OF FIRE -->
+  <!-- ======================== -->
+  <div class="slide" data-slide="17">
+    <div class="fade-in" style="margin-bottom: 1rem;"><i data-lucide="flame" class="icon-flame" style="width: 52px; height: 52px; color: var(--accent);"></i></div>
+    <h2 class="fade-in delay-1">A <span class="accent">Descoberta do Fogo</span></h2>
+    <p class="fade-in delay-1 mt-3">
+      Quando a IA parou de ser assistente<br>
+      e come&ccedil;ou a <span class="accent">trabalhar de verdade.</span>
+    </p>
+    <p class="fade-in delay-2 mt-3" style="max-width: 700px;">
+      N&atilde;o s&oacute; sugerindo c&oacute;digo enquanto a gente digitava &mdash; mas pegando uma tarefa e <span class="accent">executando do in&iacute;cio ao fim.</span>
+    </p>
+  </div>
+
+  <!-- ======================== -->
+  <!-- SLIDE 12: CULTURAL BARRIER -->
+  <!-- ======================== -->
+  <div class="slide" data-slide="18">
+    <h2 class="fade-in">A barreira n&atilde;o foi <span class="red">t&eacute;cnica.</span></h2>
+    <h2 class="fade-in delay-1">Foi <span class="accent">cultural.</span></h2>
+    <div class="fade-in delay-2 mt-4" style="max-width: 700px; text-align: left;">
+      <p style="margin-bottom: 1.2rem; color: var(--text); font-style: italic; font-size: 2rem;">"Ser&aacute; que vai fazer certo?"</p>
+      <p style="margin-bottom: 1.2rem; color: var(--text); font-style: italic; font-size: 2rem;">"Eu deveria estar acompanhando..."</p>
+      <p style="color: var(--text); font-style: italic; font-size: 2rem;">"E se der ruim?"</p>
+    </div>
+    <p class="fade-in delay-3 mt-4 small" style="max-width: 800px;">
+      Gera&ccedil;&otilde;es de devs foram treinadas pra acreditar que o valor est&aacute; em <span class="accent">escrever</span> o c&oacute;digo.<br>O valor est&aacute; em <span class="accent">resolver problemas.</span>
+    </p>
+  </div>
+
+  <!-- ======================== -->
+  <!-- SLIDE 13: CURRENT WORLD -->
+  <!-- ======================== -->
+  <div class="slide" data-slide="19">
+    <div class="fade-in" style="margin-bottom: 1rem;"><i data-lucide="wind" class="icon-float" style="width: 48px; height: 48px; color: var(--accent);"></i></div>
+    <h2 class="fade-in delay-1">O Mundo <span class="accent">Hoje</span></h2>
+    <div class="fade-in delay-1 mt-4" style="display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;">
+      <div class="stat-card" style="min-width: 180px;">
+        <div class="stat-value" style="font-size: 1.4rem;">Agentes aut&ocirc;nomos</div>
+      </div>
+      <div class="stat-card" style="min-width: 180px;">
+        <div class="stat-value" style="font-size: 1.4rem;">M&uacute;ltiplos em paralelo</div>
+      </div>
+      <div class="stat-card" style="min-width: 180px;">
+        <div class="stat-value" style="font-size: 1.4rem;">Dev como orquestrador</div>
+      </div>
+    </div>
+    <p class="fade-in delay-2 mt-4">
+      Uma parte enorme do mercado <span class="accent">ainda est&aacute; descobrindo o fogo.</span><br>
+      A velocidade da mudan&ccedil;a acelerou. E a dist&acirc;ncia s&oacute; aumenta.
+    </p>
+  </div>
+
+  <!-- ======================== -->
+  <!-- SLIDE 14: THE GAP -->
+  <!-- ======================== -->
+  <div class="slide" data-slide="20">
+    <p class="fade-in small" style="letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent-dim);">O gap de produtividade</p>
+    <h1 class="fade-in delay-1 mt-3 animate-glitch" style="font-size: 8rem; font-weight: 800; color: var(--accent); letter-spacing: -0.05em; line-height: 1;">100x</h1>
+    <p class="fade-in delay-2 mt-3">
+      A diferen&ccedil;a entre quem orquestra cinco agentes em paralelo<br>
+      e quem ainda escreve c&oacute;digo linha por linha<br>
+      <span class="accent">n&atilde;o &eacute; linear. &Eacute; de ordens de magnitude.</span>
+    </p>
+  </div>
+
+  <!-- ======================== -->
+  <!-- SLIDE 15: JOURNEY MESSAGE -->
+  <!-- ======================== -->
+  <div class="slide" data-slide="21">
+    <h2 class="fade-in">O que fez <span class="accent">diferen&ccedil;a?</span></h2>
+    <p class="fade-in delay-1 mt-3" style="max-width: 750px;">
+      A disposi&ccedil;&atilde;o de <span class="accent">experimentar mesmo com medo.</span><br>De ajustar a cultura mesmo quando era desconfort&aacute;vel.<br><br>De aceitar que o jeito antigo de trabalhar<br><span class="accent">n&atilde;o era sagrado.</span>
+    </p>
+    <p class="fade-in delay-2 mt-4 small">
+      Essa disposi&ccedil;&atilde;o &eacute; o que separa quem lidera de quem corre atr&aacute;s.
+    </p>
+  </div>
+
+  <!-- ======================== -->
+  <!-- SLIDE 16: CHAPTER - A VIRADA -->
+  <!-- ======================== -->
+  <div class="slide chapter-slide" data-slide="22">
+    <div class="fade-in" style="margin-bottom: 1.2rem;"><i data-lucide="rotate-ccw" class="icon-spin" style="width: 48px; height: 48px; color: var(--accent);"></i></div>
+    <div class="chapter-num fade-in delay-1">Cap&iacute;tulo 02</div>
+    <h1 class="fade-in delay-2">A Virada</h1>
+    <p class="fade-in delay-2" style="color: var(--text-secondary); font-size: 1.3rem;">De executor para orquestrador</p>
+  </div>
+
+  <!-- ======================== -->
+  <!-- SLIDE 17: PARADIGM SHIFT -->
+  <!-- ======================== -->
+  <div class="slide" data-slide="23">
+    <div class="comparison fade-in">
+      <div class="comparison-side" style="border-color: var(--red); opacity: 0.7;">
+        <div style="margin-bottom: 0.6rem;"><i data-lucide="code" style="width: 32px; height: 32px; color: var(--red);"></i></div>
+        <p class="small red" style="text-transform: uppercase; letter-spacing: 0.1em;">Antes</p>
+        <h3 class="mt-2" style="font-size: 2rem;">Como eu <span class="red">fa&ccedil;o</span> isso?</h3>
+        <p class="mt-2" style="font-size: 1.3rem;">IA como ferramenta. Voc&ecirc; no centro. Executando.</p>
+      </div>
+      <div class="comparison-vs">&rarr;</div>
+      <div class="comparison-side" style="border-color: var(--accent);">
+        <div style="margin-bottom: 0.6rem;"><i data-lucide="wand-2" style="width: 32px; height: 32px; color: var(--accent);"></i></div>
+        <p class="small accent" style="text-transform: uppercase; letter-spacing: 0.1em;">Agora</p>
+        <h3 class="mt-2" style="font-size: 2rem;">Como eu <span class="accent">orquestro</span> isso?</h3>
+        <p class="mt-2" style="font-size: 1.3rem;">Agente executa. Voc&ecirc; orquestra. M&uacute;ltiplos em paralelo.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================== -->
+  <!-- SLIDE 18: NEW ROLE -->
+  <!-- ======================== -->
+  <div class="slide" data-slide="24">
+    <div class="fade-in" style="margin-bottom: 0.8rem; display: flex; gap: 1.5rem; justify-content: center;">
+      <i data-lucide="crown" class="icon-crown" style="width: 52px; height: 52px; color: var(--accent);"></i>
+      <i data-lucide="bot" class="icon-bot" style="width: 52px; height: 52px; color: var(--blue);"></i>
+    </div>
+    <h2 class="fade-in delay-1">Voc&ecirc; &eacute; o <span class="accent">PM.</span></h2>
+    <h2 class="fade-in delay-2">Os agentes s&atilde;o seus <span style="color: var(--blue);">engenheiros.</span></h2>
+    <h2 class="fade-in delay-3" style="color: var(--text-secondary); font-size: 2rem; margin-top: 1rem;">Seu trabalho: manter todos <span class="accent">desbloqueados.</span></h2>
+    <p class="fade-in delay-4 mt-4 small" style="max-width: 700px;">
+      Isso vale pra todo mundo. Dev, PM, designer, analista.<br>
+      Quem aprender a orquestrar <span class="accent">multiplica sua capacidade.</span>
+    </p>
+  </div>
+
+  <!-- ======================== -->
+  <!-- SLIDE: O NOVO DEV (TDC) -->
+  <!-- ======================== -->
+  <div class="slide" data-slide="25">
+    <div class="fade-in" style="margin-bottom: 1rem;"><i data-lucide="user-cog" class="icon-float" style="width: 48px; height: 48px; color: var(--accent);"></i></div>
+    <h2 class="fade-in delay-1">O <span class="accent">Novo Dev</span></h2>
+    <div class="fade-in delay-1 mt-4" style="display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; max-width: 900px;">
+      <div class="stat-card" style="min-width: 200px;">
+        <div class="stat-value" style="font-size: 1.3rem;">De executor<br>a estrategista</div>
+      </div>
+      <div class="stat-card" style="min-width: 200px;">
+        <div class="stat-value" style="font-size: 1.3rem;">Curador do que<br>a IA gera</div>
+      </div>
+      <div class="stat-card" style="min-width: 200px;">
+        <div class="stat-value" style="font-size: 1.3rem;">Clareza, inten&ccedil;&atilde;o<br>e dire&ccedil;&atilde;o</div>
+      </div>
+      <div class="stat-card" style="min-width: 200px;">
+        <div class="stat-value" style="font-size: 1.3rem;">Prompt &eacute;<br>skill t&eacute;cnica</div>
+      </div>
+    </div>
+    <p class="fade-in delay-2 mt-4 small" style="max-width: 750px;">
+      O c&oacute;digo continua importando.<br>Mas quem decide <span class="accent">o qu&ecirc; e por qu&ecirc;</span> vale mais do que quem s&oacute; digita.
+    </p>
+  </div>
+
+  <!-- ======================== -->
+  <!-- SLIDE 19: CHAPTER - BENCHMARK -->
+  <!-- ======================== -->
+  <div class="slide chapter-slide" data-slide="26">
+    <div class="fade-in" style="margin-bottom: 1.2rem;"><i data-lucide="bar-chart-3" class="icon-chart" style="width: 48px; height: 48px; color: var(--accent);"></i></div>
+    <div class="chapter-num fade-in delay-1">Cap&iacute;tulo 03</div>
+    <h1 class="fade-in delay-2">Benchmark</h1>
+    <p class="fade-in delay-2" style="color: var(--text-secondary); font-size: 1.3rem;">O que o mercado est&aacute; dizendo</p>
+  </div>
+
+  <!-- ======================== -->
+  <!-- SLIDE 20: MARKET DATA -->
+  <!-- ======================== -->
+  <div class="slide" data-slide="27">
+    <div class="fade-in" style="margin-bottom: 0.8rem;"><i data-lucide="trending-up" class="icon-rocket" style="width: 44px; height: 44px; color: var(--accent);"></i></div>
+    <h3 class="fade-in delay-1 mb-3" style="color: var(--text-secondary);">Dados da Anthropic &mdash; 2026</h3>
+    <div class="stats-grid fade-in delay-1">
+      <div class="stat-card">
+        <div class="stat-value">90%</div>
+        <div class="stat-label">C&oacute;digo escrito por IA</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">59%</div>
+        <div class="stat-label">Trabalho di&aacute;rio usa IA</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">67%</div>
+        <div class="stat-label">Mais PRs/engenheiro</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">5-30</div>
+        <div class="stat-label">PRs shipped/dia</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">74</div>
+        <div class="stat-label">Releases em 52 dias</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">200%</div>
+        <div class="stat-label">Ganho de produtividade</div>
+      </div>
+    </div>
+    <p class="fade-in delay-2 mt-3 small">Esses ganhos est&atilde;o se tornando o novo baseline de competitividade.</p>
+  </div>
+
+  <!-- ======================== -->
+  <!-- SLIDE 21: STRIPE CASE -->
+  <!-- ======================== -->
+  <div class="slide" data-slide="28">
+    <div class="fade-in" style="margin-bottom: 0.8rem;"><i data-lucide="zap" class="icon-flame" style="width: 44px; height: 44px; color: var(--yellow);"></i></div>
+    <h3 class="fade-in delay-1" style="color: var(--text-secondary);">Stripe &mdash; 2025</h3>
+    <div class="fade-in delay-1 mt-3">
+      <span class="big-number" style="font-size: 5rem; color: var(--yellow);">1.300+</span>
+    </div>
+    <p class="fade-in delay-2 mt-2" style="font-size: 1.3rem;">
+      Pull Requests por semana <span class="accent">gerados por agentes de IA.</span>
+    </p>
+    <p class="fade-in delay-3 mt-3 small" style="color: var(--text-secondary); max-width: 650px; margin: 0 auto;">
+      Agentes de IA j&aacute; escrevem ~25% de todo o c&oacute;digo da Stripe.
+      N&atilde;o &eacute; experimento. &Eacute; <span class="accent">opera&ccedil;&atilde;o.</span>
+    </p>
+  </div>
+
+  <!-- ======================== -->
+  <!-- SLIDE 22: TOKEN BURNING -->
+  <!-- ======================== -->
+  <div class="slide" data-slide="29" style="overflow: hidden;">
+    <div class="fire-container" id="fireContainer">
+      <div class="fire-glow"></div>
+    </div>
+    <div class="fade-in" style="margin-bottom: 1rem; z-index: 1; position: relative;">
+      <i data-lucide="flame" class="icon-flame" style="width: 52px; height: 52px; color: var(--accent);"></i>
+    </div>
+    <h2 class="fade-in delay-1 animate-glitch" style="z-index: 1; position: relative;">Token Burners <span class="accent">Culture</span></h2>
+    <p class="fade-in delay-2 mt-2" style="max-width: 700px; z-index: 1; position: relative; font-size: 1.3rem;">
+      N&atilde;o usar tokens &eacute; indicativo de que a pessoa <span style="color: var(--red);">n&atilde;o est&aacute; trabalhando corretamente com IA.</span>
+    </p>
+    <div class="fade-in delay-3 mt-3" style="z-index: 1; position: relative; display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; max-width: 800px; font-size: 0.8rem;">
+      <span style="color: var(--blue);"><strong>Meta</strong> &mdash; 75% do c&oacute;digo via IA, leaderboard de tokens</span>
+      <span style="color: var(--green);"><strong>NVIDIA</strong> &mdash; $250k/ano em tokens por engenheiro</span>
+      <span style="color: var(--yellow);"><strong>Shopify</strong> &mdash; prove que IA n&atilde;o resolve antes de contratar</span>
+      <span style="color: var(--purple);"><strong>Duolingo</strong> &mdash; comece com IA em toda tarefa</span>
+      <span style="color: var(--red);"><strong>Amazon</strong> &mdash; meta de 80% de uso semanal do Kiro</span>
+    </div>
+    <div class="fade-in delay-3 mt-3" style="display: flex; gap: 2rem; justify-content: center; flex-wrap: wrap; z-index: 1; position: relative;">
+      <div class="stat-card" style="min-width: 180px;">
+        <div class="stat-value" style="font-size: 1.4rem;">Max 5x</div>
+        <div class="stat-label">Tem que torrar</div>
+      </div>
+      <div class="stat-card" style="min-width: 180px;">
+        <div class="stat-value" style="font-size: 1.4rem;">Max 20x</div>
+        <div class="stat-label">Torrar e pedir extra</div>
+      </div>
+    </div>
+    <p class="fade-in delay-4 mt-3 small animate-glitch" style="color: var(--text-muted); z-index: 1; position: relative;">Token parado &eacute; produtividade desperdi&ccedil;ada.</p>
+  </div>
+
+  <!-- ======================== -->
+  <!-- SLIDE 23: CHAPTER - CASES -->
+  <!-- ======================== -->
+  <div class="slide chapter-slide" data-slide="30">
+    <div class="fade-in" style="margin-bottom: 1.2rem;"><i data-lucide="rocket" class="icon-rocket" style="width: 48px; height: 48px; color: var(--accent);"></i></div>
+    <div class="chapter-num fade-in delay-1">Cap&iacute;tulo 04</div>
+    <h1 class="fade-in delay-2">Cases Reais</h1>
+    <p class="fade-in delay-2" style="color: var(--text-secondary); font-size: 1.3rem;">O que j&aacute; fizemos na Agilize</p>
+  </div>
+
+  <!-- ======================== -->
+  <!-- SLIDE: NA AGILIZE HOJE (TDC) -->
+  <!-- ======================== -->
+  <div class="slide" data-slide="31">
+    <div class="fade-in" style="margin-bottom: 1rem;"><i data-lucide="activity" class="icon-heartbeat" style="width: 48px; height: 48px; color: var(--accent);"></i></div>
+    <h2 class="fade-in delay-1">Na Agilize, <span class="accent">hoje</span></h2>
+    <div class="fade-in delay-1 mt-4" style="display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; max-width: 950px;">
+      <div class="stat-card" style="min-width: 190px;">
+        <div class="stat-value" style="font-size: 1.3rem;">IA virou cultura</div>
+        <div class="stat-label">integrada ao time</div>
+      </div>
+      <div class="stat-card" style="min-width: 190px;">
+        <div class="stat-value">40%</div>
+        <div class="stat-label">dos tickets resolvidos por IA</div>
+      </div>
+      <div class="stat-card" style="min-width: 190px;">
+        <div class="stat-value" style="font-size: 1.3rem;">Contadores</div>
+        <div class="stat-label">criando software</div>
+      </div>
+      <div class="stat-card" style="min-width: 190px;">
+        <div class="stat-value" style="font-size: 1.3rem;">Comercial</div>
+        <div class="stat-label">IA vende sozinha</div>
+      </div>
+    </div>
+    <p class="fade-in delay-2 mt-4 small">N&atilde;o &eacute; roadmap. &Eacute; o dia a dia de uma empresa em Salvador.</p>
+  </div>
+
+  <!-- ======================== -->
+  <!-- SLIDE 24: CASE 2 - LUIZ -->
+  <!-- ======================== -->
+  <div class="slide" data-slide="32">
+    <div class="case-card fade-in">
+      <span class="case-tag tag-red">Case 01</span>
+      <div style="margin-bottom: 0.8rem;"><i data-lucide="bug" class="icon-bot" style="width: 44px; height: 44px; color: var(--red);"></i></div>
+      <h2>Bug Zero Touch</h2>
+      <p>
+        Workflow que simula como <span class="accent">a gente debuga</span>: l&ecirc; o card do Jira, analisa o c&oacute;digo,
+        consulta endpoints de produ&ccedil;&atilde;o, monta hip&oacute;tese, testa localmente e abre o PR.
+      </p>
+      <p class="mt-2" style="font-size: 0.85rem; color: var(--text-secondary);">
+        Jira &rarr; contexto do c&oacute;digo &rarr; dados quentes de produ&ccedil;&atilde;o &rarr; hip&oacute;tese &rarr; teste local &rarr; <span class="accent">PR aberto.</span><br>
+        Depois registra endpoints descobertos, &aacute;reas fr&aacute;geis e padr&otilde;es de erro &mdash; cada bug resolvido alimenta o pr&oacute;ximo.
+      </p>
+      <div class="case-highlight">
+        <p>Demo ao vivo: um card real do board resolvido pelo workflow.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================== -->
+  <!-- SLIDE 25: CASE 3 - ERNESTO BUG RESOLUTION -->
+  <!-- ======================== -->
+  <div class="slide" data-slide="33">
+    <div class="case-card fade-in">
+      <span class="case-tag tag-purple">Case 02</span>
+      <div style="margin-bottom: 0.8rem;"><i data-lucide="bug" class="icon-bot" style="width: 44px; height: 44px; color: var(--purple);"></i></div>
+      <h2>Do Bug ao PR. Voc&ecirc; S&oacute; Aprova.</h2>
+      <p>
+        Bug criado &rarr; webhook &rarr; sistema classifica &rarr; agente corrige &rarr; <span class="accent">abre o PR.</span>
+      </p>
+      <p class="mt-2">
+        Interface com kanban, tela para acompanhar o Claude Code trabalhando em cada issue, tela para responder perguntas do agente.
+      </p>
+      <div class="case-highlight">
+        <p>Mesmo problema, outra &oacute;tica. O resultado &eacute; igual: <span style="color: var(--green);">task done</span> <i data-lucide="check" style="width: 16px; height: 16px; color: var(--green); display: inline; vertical-align: middle;"></i></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================== -->
+  <!-- SLIDE 26: CASE 4 - BITBUCKET TO GITHUB -->
+  <!-- ======================== -->
+  <div class="slide" data-slide="34">
+    <div class="case-card fade-in">
+      <span class="case-tag tag-blue">Case 03</span>
+      <div style="margin-bottom: 0.8rem;"><i data-lucide="git-branch" style="width: 44px; height: 44px; color: var(--blue);"></i></div>
+      <h2>Bitbucket &rarr; GitHub</h2>
+      <p>
+        Automa&ccedil;&atilde;o ponta a ponta: skill no Claude Code orquestra migra&ccedil;&atilde;o, cria infra via templates + Action, provisiona no GitHub, ajusta pipeline e change de origin.
+      </p>
+      <p class="mt-2">
+        Fluxo de PRs <span class="accent">develop &rarr; main</span>. Processo <span class="accent">100% automatizado.</span>
+      </p>
+      <div class="case-highlight">
+        <p>A vers&atilde;o real: voc&ecirc; responde 3 perguntas.</p>
+        <p class="mt-2" style="text-align: left; font-size: 0.9rem;">
+          <span style="color: var(--blue);">1.</span> Qual o nome do repo?<br>
+          <span style="color: var(--blue);">2.</span> Qual o nome do ECR?<br>
+          <span style="color: var(--blue);">3.</span> Qual o nome do Vault?
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================== -->
+  <!-- SLIDE 23: CASE 1 - AUTIA -->
+  <!-- ======================== -->
+  <div class="slide" data-slide="35">
+    <div class="case-card fade-in">
+      <span class="case-tag tag-green">Case 04</span>
+      <div style="margin-bottom: 0.8rem;"><i data-lucide="users" class="icon-float" style="width: 44px; height: 44px; color: var(--green);"></i></div>
+      <h2>AutIA: Citizen Developers</h2>
+      <p>
+        <span class="accent">Contadores</span> desenvolvendo software e automatizando o pr&oacute;prio trabalho.
+      </p>
+      <p class="mt-2">
+        Sem tech. Sem produto. Sem depender de ningu&eacute;m.<br>
+        Projeto ser&aacute; ampliado em 2026.
+      </p>
+      <div class="case-highlight" style="border-left-color: var(--green);">
+        <p style="color: var(--green);">Quem entende o problema constr&oacute;i a solu&ccedil;&atilde;o. Essa &eacute; a regra.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================== -->
+  <!-- SLIDE 27: CASE 5 - ALINE WHATSAPP -->
+  <!-- ======================== -->
+  <div class="slide" data-slide="36">
+    <div class="case-card fade-in">
+      <span class="case-tag tag-green">Case 05</span>
+      <div style="margin-bottom: 0.8rem;"><i data-lucide="message-circle" style="width: 44px; height: 44px; color: var(--green);"></i></div>
+      <h2>Aline: Abertura de Empresa via WhatsApp</h2>
+      <p>
+        Feita com <span class="accent">Agno + Python</span>, toda com vibe coding. Abrindo empresas de ponta a ponta.
+      </p>
+      <div class="case-highlight" style="border-left-color: var(--green);">
+        <p style="color: var(--green);">Cliente mandou &aacute;udio de 6 minutos descrevendo como queria abrir a empresa.</p>
+        <p class="mt-2">Aline entendeu tudo, respondeu s&oacute; pra confirmar os dados. <span class="accent">Abertura saiu em 1 dia.</span></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================== -->
+  <!-- SLIDE 28: CASE 6 - NEOCORTEX -->
+  <!-- ======================== -->
+  <div class="slide" data-slide="37">
+    <div class="case-card fade-in">
+      <span class="case-tag tag-purple">Case 06</span>
+      <div style="margin-bottom: 0.8rem;"><i data-lucide="brain" style="width: 44px; height: 44px; color: var(--purple);"></i></div>
+      <h2>NeoCortex: C&eacute;rebro Externo</h2>
+      <p>
+        Servidor <span class="accent">MCP</span> em Go que d&aacute; ao Claude Code <span class="accent">mem&oacute;ria persistente</span>, gest&atilde;o de tarefas e contexto sob demanda.
+      </p>
+      <p class="mt-2" style="text-align: left; max-width: 600px; margin: 0.8rem auto 0;">
+        <i data-lucide="database" style="width: 14px; height: 14px; color: var(--purple); display: inline; vertical-align: middle;"></i> <strong>Knowledge Base</strong> &mdash; decis&otilde;es, padr&otilde;es, learnings com busca full-text<br>
+        <i data-lucide="list-checks" style="width: 14px; height: 14px; color: var(--purple); display: inline; vertical-align: middle;"></i> <strong>Task Management</strong> &mdash; subtasks, fases, depend&ecirc;ncias, sess&otilde;es<br>
+        <i data-lucide="cpu" style="width: 14px; height: 14px; color: var(--purple); display: inline; vertical-align: middle;"></i> <strong>Context Serving</strong> &mdash; monta contexto inteligente com token budgeting
+      </p>
+      <div class="case-highlight">
+        <p>Substitui o Obsidian como knowledge store. Mem&oacute;ria que sobrevive entre conversas.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================== -->
+  <!-- SLIDE 29: CASE 7 - MARIA START TASK -->
+  <!-- ======================== -->
+  <div class="slide" data-slide="38">
+    <div class="case-card fade-in">
+      <span class="case-tag tag-pink">Case 07</span>
+      <div style="margin-bottom: 0.8rem;"><i data-lucide="terminal" style="width: 44px; height: 44px; color: var(--pink);"></i></div>
+      <h2>/maria-start-task</h2>
+      <p>
+        Um comando que orquestra o ciclo completo: do <span class="accent">card no Jira</span> ao <span class="accent">PR aberto</span>, for&ccedil;ando que cada agente seja constru&iacute;do a partir de <span class="accent">tickets reais do Zendesk.</span>
+      </p>
+      <p class="mt-2" style="font-size: 0.85rem;">
+        Jira &rarr; branch &rarr; assign &rarr; dataset real &rarr; implementa&ccedil;&atilde;o &rarr; eval com LLM Judge &rarr; PR &rarr; Jira atualizado.
+      </p>
+      <div class="case-highlight" style="border-left-color: var(--green);">
+        <p style="color: var(--green);">Antes: 1&ndash;2 dias por agente. Depois: <span style="color: var(--accent);">10&ndash;20 minutos.</span></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================== -->
+  <!-- SLIDE 30: CASE 8 - JIRA CLONE -->
+  <!-- ======================== -->
+  <div class="slide" data-slide="39">
+    <div class="case-card fade-in">
+      <span class="case-tag tag-green">Case 08</span>
+      <div style="margin-bottom: 0.8rem;"><i data-lucide="layout-dashboard" class="icon-crown" style="width: 44px; height: 44px; color: var(--green);"></i></div>
+      <h2>Agilijira: O Clone do Jira</h2>
+      <p>
+        Um sistema completo que vai substituir o Jira na empresa.
+        <span class="accent">3 horas</span> de trabalho humano + <span class="accent">12h</span> de trabalho da IA.
+      </p>
+      <p class="mt-2">
+        Shots curtos de <span class="accent">5 a 15 minutos</span> de orquestra&ccedil;&atilde;o. Agentes aut&ocirc;nomos rodando em paralelo, executando enquanto cuidava de outras coisas.
+      </p>
+      <div class="case-highlight">
+        <p>Voc&ecirc; n&atilde;o fica assistindo o agente trabalhar. Voc&ecirc; dispara outro agente enquanto o primeiro executa.</p>
+      </div>
+      <div class="case-highlight" style="border-left-color: var(--green);">
+        <p style="color: var(--green);">Potencial economia de R$ 150 mil/ano.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================== -->
+  <!-- SLIDE 31: CASE 9 - AGILIFY -->
+  <!-- ======================== -->
+  <div class="slide" data-slide="40">
+    <div class="case-card fade-in">
+      <span class="case-tag tag-yellow">Case 09</span>
+      <div style="margin-bottom: 0.8rem;"><i data-lucide="workflow" class="icon-workflow" style="width: 44px; height: 44px; color: var(--yellow);"></i></div>
+      <h2>Agilify: O Clone do Pipefy</h2>
+      <p>
+        Constru&iacute;do <span class="accent">sozinho</span> por um CPO. N&atilde;o &eacute; dev de forma&ccedil;&atilde;o. N&atilde;o tem time dedicado.
+      </p>
+      <p class="mt-2">
+        Orquestrou agentes e entregou um produto completo.
+      </p>
+      <div class="case-highlight" style="border-left-color: var(--green);">
+        <p style="color: var(--green);">Potencial impacto financeiro: economia de R$ 1,5 milh&atilde;o/ano para a Agilize.</p>
+      </div>
+      <p class="mt-3 small">
+        A capacidade de construir n&atilde;o est&aacute; mais restrita a quem sabe programar.<br>
+        Est&aacute; dispon&iacute;vel pra quem sabe <span class="accent">orquestrar.</span>
+      </p>
+    </div>
+  </div>
+
+  <!-- ======================== -->
+  <!-- SLIDE 32: CASE 10 - VOICE/TELEGRAM -->
+  <!-- ======================== -->
+  <div class="slide" data-slide="41">
+    <div class="case-card fade-in">
+      <span class="case-tag tag-blue">Case 10</span>
+      <div style="margin-bottom: 0.8rem;"><i data-lucide="mic" class="icon-mic" style="width: 44px; height: 44px; color: var(--blue);"></i></div>
+      <h2>Voz no Celular, C&oacute;digo na Tela</h2>
+      <p>
+        Um &aacute;udio no <span style="color: var(--blue);">Telegram</span>, direto do celular, vira tarefa executada por agentes.
+      </p>
+      <p class="mt-2">
+        Sem abrir o notebook. Sem digitar uma linha.<br>
+        <i data-lucide="check" style="width: 14px; height: 14px; color: var(--accent); display: inline; vertical-align: middle;"></i> Programar andando.<br>
+        <i data-lucide="check" style="width: 14px; height: 14px; color: var(--accent); display: inline; vertical-align: middle;"></i> Programar dirigindo.<br>
+        <i data-lucide="check" style="width: 14px; height: 14px; color: var(--accent); display: inline; vertical-align: middle;"></i> Programar enquanto faz qualquer coisa.<br>
+        <span style="display: block; margin-top: 0.6rem;"><i data-lucide="gamepad-2" class="icon-gamepad" style="width: 36px; height: 36px; display: inline; vertical-align: middle; color: var(--purple);"></i> <span id="magic-text" style="font-size: 1.6rem; font-weight: 700;">Programar enquanto brinca com seu filho.</span></span>
+      </p>
+      <p style="display:none;">
+      </p>
+      <p class="mt-3 small" style="color: var(--text-muted);">O limite deixa de ser a velocidade de digita&ccedil;&atilde;o e passa a ser a clareza do pensamento.</p>
+    </div>
+  </div>
+
+  <!-- ======================== -->
+  <!-- SLIDE 31: CHAPTER - DEEP STUDY -->
+  <!-- ======================== -->
+  <div class="slide chapter-slide" data-slide="42">
+    <div class="fade-in" style="margin-bottom: 1.2rem;"><i data-lucide="book-open" class="icon-float" style="width: 48px; height: 48px; color: var(--accent);"></i></div>
+    <div class="chapter-num fade-in delay-1">Cap&iacute;tulo 05</div>
+    <h1 class="fade-in delay-2">Deep Study</h1>
+    <p class="fade-in delay-2" style="color: var(--text-secondary); font-size: 1.3rem;">Como a Anthropic constr&oacute;i software</p>
+  </div>
+
+  <!-- ======================== -->
+  <!-- SLIDE 31: ANTHROPIC WAY -->
+  <!-- ======================== -->
+  <div class="slide" data-slide="43">
+    <div class="fade-in" style="margin-bottom: 0.8rem;"><i data-lucide="building" class="icon-float" style="width: 44px; height: 44px; color: var(--accent);"></i></div>
+    <h3 class="fade-in delay-1" style="color: var(--text-secondary);">Dados reais do time da Anthropic</h3>
+    <div class="two-col fade-in delay-1 mt-4">
+      <div style="background: var(--surface); border: 1px solid var(--border); padding: 1.5rem;">
+        <h3 class="accent mb-2">Workflow</h3>
+        <p class="small">Times "fully AI aligned". M&uacute;ltiplos agentes rodando em paralelo. Engenheiros como gerentes de projeto dos agentes.</p>
+      </div>
+      <div style="background: var(--surface); border: 1px solid var(--border); padding: 1.5rem;">
+        <h3 class="accent mb-2">Resultado</h3>
+        <p class="small">A Anthropic shipando mais que qualquer outra empresa em 2026. N&atilde;o &eacute; coincid&ecirc;ncia. &Eacute; consequ&ecirc;ncia.</p>
+      </div>
+    </div>
+    <div class="fade-in delay-2 mt-4">
+      <a href="https://building-like-anthropic.vercel.app/" target="_blank" class="link-card">
+        <span class="link-badge">Deep Study</span>
+        <span class="link-text">building-like-anthropic.vercel.app</span>
+        <span class="link-arrow">&rarr;</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- ======================== -->
+  <!-- SLIDE: CHAPTER - O DEV DE 2026 -->
+  <!-- ======================== -->
+  <div class="slide chapter-slide" data-slide="44">
+    <div class="fade-in" style="margin-bottom: 1.2rem;"><i data-lucide="badge-check" class="icon-crown" style="width: 48px; height: 48px; color: var(--accent);"></i></div>
+    <div class="chapter-num fade-in delay-1">Cap&iacute;tulo 06</div>
+    <h1 class="fade-in delay-2">O Dev de 2026</h1>
+    <p class="fade-in delay-2" style="color: var(--text-secondary); font-size: 1.3rem;">O que um CTO realmente contrata e valoriza</p>
+  </div>
+
+  <!-- ======================== -->
+  <!-- SLIDE: PERDEU VS GANHOU VALOR -->
+  <!-- ======================== -->
+  <div class="slide" data-slide="45">
+    <h2 class="fade-in mb-3">O que eu olho <span class="accent">num dev</span> hoje</h2>
+    <div class="comparison fade-in delay-1 mt-3">
+      <div class="comparison-side" style="border-color: var(--red); opacity: 0.75;">
+        <div style="margin-bottom: 0.6rem;"><i data-lucide="trending-down" style="width: 32px; height: 32px; color: var(--red);"></i></div>
+        <p class="small red" style="text-transform: uppercase; letter-spacing: 0.1em;">Perdeu valor</p>
+        <p class="mt-2" style="font-size: 1.25rem; line-height: 2;">Digitar r&aacute;pido<br>Decorar sintaxe<br>Medir esfor&ccedil;o em linhas de c&oacute;digo<br>Fazer tudo sozinho</p>
+      </div>
+      <div class="comparison-vs">&rarr;</div>
+      <div class="comparison-side" style="border-color: var(--accent);">
+        <div style="margin-bottom: 0.6rem;"><i data-lucide="trending-up" style="width: 32px; height: 32px; color: var(--accent);"></i></div>
+        <p class="small accent" style="text-transform: uppercase; letter-spacing: 0.1em;">Ganhou valor</p>
+        <p class="mt-2" style="font-size: 1.25rem; line-height: 2;">Clareza de pensamento<br>Entender o problema e o neg&oacute;cio<br>Orquestrar agentes em paralelo<br>Julgamento: saber o que &eacute; bom</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================== -->
+  <!-- SLIDE: A RESPOSTA -->
+  <!-- ======================== -->
+  <div class="slide quote-slide" data-slide="46">
+    <div class="fade-in">
+      <div class="big-quote">
+        A IA substitui quem s&oacute; <span class="highlight">executa</span>.<br>
+        E multiplica quem <span class="highlight">pensa, direciona e orquestra</span>.
+      </div>
+      <div class="attribution">// o dev que eu contrato &mdash; e que a IA n&atilde;o substitui</div>
+    </div>
+  </div>
+
+  <!-- ======================== -->
+  <!-- SLIDE 32: CHAPTER - COMO COMECAR -->
+  <!-- ======================== -->
+  <div class="slide chapter-slide" data-slide="47">
+    <div class="fade-in" style="margin-bottom: 1.2rem;"><i data-lucide="play-circle" class="icon-crown" style="width: 48px; height: 48px; color: var(--accent);"></i></div>
+    <div class="chapter-num fade-in delay-1">Cap&iacute;tulo 07</div>
+    <h1 class="fade-in delay-2">Como Come&ccedil;ar</h1>
+    <p class="fade-in delay-2" style="color: var(--text-secondary); font-size: 1.3rem;">Primeiros passos pra quem quer come&ccedil;ar hoje</p>
+  </div>
+
+  <!-- ======================== -->
+  <!-- SLIDE 33: RESOURCES -->
+  <!-- ======================== -->
+  <div class="slide" data-slide="48">
+    <h2 class="fade-in">A barreira n&atilde;o &eacute; <span class="accent">acesso.</span></h2>
+    <h2 class="fade-in delay-1" style="color: var(--text-secondary); font-size: 2rem;">A barreira &eacute; decidir <span class="accent">come&ccedil;ar.</span></h2>
+    <div class="fade-in delay-2 mt-5" style="display: flex; flex-direction: column; gap: 1rem; align-items: center;">
+      <a href="https://cccourses.vercel.app/" target="_blank" class="link-card">
+        <span class="link-badge">Curso</span>
+        <span class="link-text">Claude Code para Engenheiros &mdash; 29 m&oacute;dulos</span>
+        <span class="link-arrow">&rarr;</span>
+      </a>
+      <a href="https://building-like-anthropic.vercel.app/" target="_blank" class="link-card">
+        <span class="link-badge">Deep Study</span>
+        <span class="link-text">Como a Anthropic constr&oacute;i software</span>
+        <span class="link-arrow">&rarr;</span>
+      </a>
+    </div>
+    <p class="fade-in delay-3 mt-4 small">
+      Quanto mais cedo come&ccedil;ar, maior a vantagem acumulada.
+    </p>
+  </div>
+
+  <!-- ======================== -->
+  <!-- SLIDE 37: O MUNDO MUDOU -->
+  <!-- ======================== -->
+  <div class="slide" data-slide="49" style="background: url('assets/bg-mundo-mudou.png') center center / cover no-repeat;">
+    <div style="position: absolute; inset: 0; background: rgba(10, 10, 20, 0.65);"></div>
+    <div style="position: relative; z-index: 1;">
+      <h1 class="fade-in animate-glitch" style="font-size: 3.8rem;">
+        O mundo <span class="accent">j&aacute; mudou.</span>
+      </h1>
+      <p class="fade-in delay-1 mt-3" style="font-size: 1.6rem; color: var(--text-secondary); max-width: 750px;">
+        Quem n&atilde;o come&ccedil;ar <span class="accent">agora</span>, vai passar anos tentando entender por que ficou pra tr&aacute;s.
+      </p>
+    </div>
+  </div>
+
+  <!-- ======================== -->
+  <!-- SLIDE 38: THE FINAL QUESTION -->
+  <!-- ======================== -->
+  <div class="slide" data-slide="50">
+    <h1 id="typewriter-final" class="fade-in" style="font-size: 3.2rem; line-height: 1.3; min-height: 4em;"></h1>
+  </div>
+
+  <!-- ======================== -->
+  <!-- SLIDE 39: LINKS -->
+  <!-- ======================== -->
+  <div class="slide" data-slide="51">
+    <div class="fade-in animate-glitch" style="margin-bottom: 2rem;">
+      <img src="assets/logo-branca.png" alt="Agilize" style="height: 80px; opacity: 1;">
+    </div>
+    <h2 class="fade-in delay-1" style="font-size: 2.2rem; color: #fff; text-shadow: 0 0 8px rgba(255,255,255,0.9), 0 0 20px rgba(200,220,255,0.6), 0 0 40px rgba(150,180,255,0.3);">Se posicionando pra <span class="accent" style="text-shadow: 0 0 8px rgba(230,170,255,0.9), 0 0 20px rgba(193,95,255,0.6), 0 0 40px rgba(130,40,200,0.3);">liderar</span>, n&atilde;o pra correr atr&aacute;s.</h2>
+    <p class="fade-in delay-2 mt-4 small">Adriano Fialho &mdash; Co-founder e CTO @ Agilize</p>
+    <p class="fade-in delay-3 mt-2 small" style="color: var(--text-muted);">// EOF &mdash; O dev que a IA n&atilde;o vai substituir &mdash; UFBA 2026</p>
+  </div>
+
+</div>
+
+<!-- Nav arrows -->
+<button class="nav-arrows left" id="navLeft">
+  <div class="nav-arrow">&larr;</div>
+</button>
+<button class="nav-arrows right" id="navRight">
+  <div class="nav-arrow">&rarr;</div>
+</button>
+
+<!-- Nav bar (dots) -->
+<div class="nav-bar" id="navBar"></div>
+
+<!-- Progress bar -->
+<div class="progress-bar">
+  <div class="progress-fill" id="progressFill"></div>
+</div>
+
+<!-- Slide counter -->
+<div class="slide-counter" id="slideCounter"><span class="current-num">01</span> / <span id="totalSlides">52</span></div>
+
+<!-- Keyboard hint -->
+<div class="keyboard-hint" id="keyboardHint">
+  <kbd>&larr;</kbd> <kbd>&rarr;</kbd> nav &nbsp; <kbd>H</kbd> help &nbsp; <kbd>F</kbd> full &nbsp; <kbd>L</kbd> laser &nbsp; <kbd>S</kbd> spot &nbsp; <kbd>Z</kbd> zoom
+</div>
+
+<!-- Help overlay -->
+<div class="help-overlay" id="helpOverlay">
+  <h3>// Navega&ccedil;&atilde;o</h3>
+  <div class="help-key"><kbd>&rarr;</kbd> <span>Pr&oacute;ximo slide</span></div>
+  <div class="help-key"><kbd>&larr;</kbd> <span>Slide anterior</span></div>
+  <div class="help-key"><kbd>Space</kbd> <span>Pr&oacute;ximo slide</span></div>
+  <div class="help-key"><kbd>Home</kbd> <span>Primeiro slide</span></div>
+  <div class="help-key"><kbd>End</kbd> <span>&Uacute;ltimo slide</span></div>
+  <div class="help-key"><kbd>H</kbd> <span>Mostrar/ocultar ajuda</span></div>
+  <div class="help-key"><kbd>F</kbd> <span>Fullscreen</span></div>
+  <div class="help-key"><kbd>L</kbd> <span>Laser pointer com rastro</span></div>
+  <div class="help-key"><kbd>S</kbd> <span>Spotlight / holofote focal</span></div>
+  <div class="help-key"><kbd>Z</kbd> <span>Zoom / lente de aumento</span></div>
+  <div class="help-key"><kbd>Esc</kbd> <span>Fechar</span></div>
+</div>
+
+<script>
+  // ======= MATRIX RAIN =======
+  (function() {
+    const canvas = document.getElementById('matrix-canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const chars = 'アカサタナハマヤラワ01{}[]<>/\\|=+-_*&^%$#@!;:'.split('');
+    const fontSize = 14;
+    const columns = Math.floor(canvas.width / fontSize);
+    const drops = Array(columns).fill(1);
+
+    function draw() {
+      ctx.fillStyle = 'rgba(10, 7, 20, 0.05)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = '#c15fff';
+      ctx.font = fontSize + 'px JetBrains Mono';
+
+      for (let i = 0; i < drops.length; i++) {
+        const text = chars[Math.floor(Math.random() * chars.length)];
+        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+        if (drops[i] * fontSize > canvas.height && Math.random() > 0.985) {
+          drops[i] = 0;
+        }
+        drops[i]++;
+      }
+    }
+    setInterval(draw, 60);
+
+    window.addEventListener('resize', () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
+  })();
+
+  // ======= SLIDE ENGINE =======
+  (function() {
+    const slides = document.querySelectorAll('.slide');
+    const totalSlides = slides.length;
+    let current = 0;
+    let isTransitioning = false;
+
+    const progressFill = document.getElementById('progressFill');
+    const helpOverlay = document.getElementById('helpOverlay');
+    const navBar = document.getElementById('navBar');
+    const navLeft = document.getElementById('navLeft');
+    const navRight = document.getElementById('navRight');
+    const keyboardHint = document.getElementById('keyboardHint');
+
+    // Slide titles for preview tooltips
+    const slideTitles = [
+      'O dev que a IA não vai substituir',
+      'Quem sou eu',
+      'A Ansiedade nº 1',
+      'O Choque de Realidade',
+      'Mental Model',
+      'Idle Time',
+      'Productivity Gap',
+      'A Pergunta',
+      'Cap 01: A Jornada',
+      'Idade da Pedra',
+      'Primeiros Sinais',
+      'Copilot',
+      'FORA, IA!',
+      'Era sobre Identidade',
+      'Experimentar antes de julgar',
+      'Hello World: Lia',
+      '+Curiosidade −Orgulho',
+      'Descoberta do Fogo',
+      'Barreira Cultural',
+      'O Mundo Hoje',
+      'O Gap: 100x',
+      'O que fez diferença?',
+      'Cap 02: A Virada',
+      'Executor vs Orquestrador',
+      'Você é o PM',
+      'O Novo Dev',
+      'Cap 03: Benchmark',
+      'Dados Anthropic',
+      'Stripe: 1300+ PRs',
+      'Token Burners Culture',
+      'Cap 04: Cases Reais',
+      'Na Agilize Hoje',
+      'Case 01: Bug Zero Touch',
+      'Case 02: Bugs Automáticos',
+      'Case 03: Bitbucket → GitHub',
+      'Case 04: AutIA',
+      'Case 05: Aline WhatsApp',
+      'Case 06: NeoCortex',
+      'Case 07: /maria-start-task',
+      'Case 08: Agilijira',
+      'Case 09: Agilify',
+      'Case 10: Voz / Telegram',
+      'Cap 05: Deep Study',
+      'Anthropic Way',
+      'Cap 06: O Dev de 2026',
+      'Perdeu vs Ganhou Valor',
+      'A Resposta',
+      'Cap 07: Como Começar',
+      'Recursos',
+      'O Mundo Já Mudou',
+      'A IA não vai te substituir…',
+      'Fechamento'
+    ];
+
+    // Chapter slides (for dot styling)
+    const chapterSlides = [0, 8, 22, 26, 30, 42, 44, 47];
+
+    // Build nav dots with preview thumbnails
+    function buildNavBar() {
+      for (let i = 0; i < totalSlides; i++) {
+        const dot = document.createElement('button');
+        dot.className = 'nav-dot' + (i === 0 ? ' active' : '') + (chapterSlides.includes(i) ? ' chapter-dot' : '');
+        dot.onclick = (e) => { e.stopPropagation(); goTo(i); };
+
+        // Create preview tooltip
+        const preview = document.createElement('div');
+        preview.className = 'slide-preview';
+
+        // Clone slide as scaled thumbnail
+        const thumb = document.createElement('div');
+        thumb.className = 'slide-preview-thumb';
+        const clone = slides[i].cloneNode(true);
+        clone.classList.remove('active', 'exit-up');
+        clone.style.position = 'absolute';
+        clone.style.top = '0';
+        clone.style.left = '0';
+        clone.style.width = '100vw';
+        clone.style.height = '100vh';
+        clone.style.opacity = '1';
+        clone.style.pointerEvents = 'none';
+        clone.style.transform = 'none';
+        clone.style.display = 'flex';
+        clone.style.background = getComputedStyle(slides[i]).background || 'var(--bg)';
+        // Remove animations from clone
+        clone.querySelectorAll('.fade-in').forEach(el => {
+          el.style.opacity = '1';
+          el.style.transform = 'none';
+          el.style.transition = 'none';
+          el.style.animation = 'none';
+        });
+        clone.querySelectorAll('.animate-glitch, .cursor-blink, .animate-pulse, .animate-float').forEach(el => {
+          el.style.animation = 'none';
+        });
+
+        const scaleX = 200 / window.innerWidth;
+        const scaleY = 128 / window.innerHeight;
+        const coverScale = Math.max(scaleX, scaleY);
+        thumb.style.width = window.innerWidth + 'px';
+        thumb.style.height = window.innerHeight + 'px';
+        thumb.style.transform = 'scale(' + coverScale + ')';
+        thumb.style.transformOrigin = 'top center';
+        thumb.style.position = 'absolute';
+        thumb.style.top = '0';
+        thumb.style.left = '50%';
+        thumb.style.marginLeft = -(window.innerWidth / 2) + 'px';
+        thumb.appendChild(clone);
+        preview.appendChild(thumb);
+
+        // Title label
+        const label = document.createElement('div');
+        label.className = 'slide-preview-label';
+        label.textContent = slideTitles[i] || 'Slide ' + (i + 1);
+        preview.appendChild(label);
+
+        dot.appendChild(preview);
+        navBar.appendChild(dot);
+      }
+    }
+    buildNavBar();
+
+    // Update total slides counter
+    document.getElementById('totalSlides').textContent = String(totalSlides).padStart(2, '0');
+
+    function updateUI() {
+      const progress = ((current + 1) / totalSlides) * 100;
+      progressFill.style.width = progress + '%';
+
+      // Update counter
+      document.querySelector('.slide-counter .current-num').textContent = String(current + 1).padStart(2, '0');
+
+      // Update nav dots
+      document.querySelectorAll('.nav-dot').forEach((d, i) => {
+        d.classList.toggle('active', i === current);
+      });
+
+      // Hide arrows at edges
+      navLeft.style.opacity = current === 0 ? '0.2' : '1';
+      navLeft.style.pointerEvents = current === 0 ? 'none' : 'auto';
+      navRight.style.opacity = current === totalSlides - 1 ? '0.2' : '1';
+      navRight.style.pointerEvents = current === totalSlides - 1 ? 'none' : 'auto';
+
+      // Fade keyboard hint after first slide
+      keyboardHint.style.opacity = current === 0 ? '1' : '0';
+      keyboardHint.style.pointerEvents = current === 0 ? 'auto' : 'none';
+    }
+
+    // Typewriter effect for slide 38
+    var typewriterTimer = null;
+    function startTypewriter() {
+      var el = document.getElementById('typewriter-final');
+      if (!el) return;
+      el.innerHTML = '<span class="cursor-blink" style="color: var(--accent);">_</span>';
+      var parts = [
+        { text: 'A IA n\u00e3o vai te substituir.\n', style: '' },
+        { text: 'Quem usa ela melhor que voc\u00ea', style: 'color: var(--accent); font-size: 4rem;' },
+        { text: '\nvai.', style: '' }
+      ];
+      var pIdx = 0, cIdx = 0, html = '';
+      function type() {
+        if (pIdx >= parts.length) {
+          el.innerHTML = html + '<span class="cursor-blink" style="color: var(--accent); font-weight: 400;">_</span>';
+          return;
+        }
+        var p = parts[pIdx];
+        var ch = p.text[cIdx];
+        if (cIdx === 0 && p.style) html += '<span style="' + p.style + '">';
+        if (ch === '\n') html += '<br>';
+        else html += ch;
+        cIdx++;
+        if (cIdx >= p.text.length) {
+          if (p.style) html += '</span>';
+          pIdx++; cIdx = 0;
+        }
+        el.innerHTML = html + '<span class="cursor-blink" style="color: var(--accent); font-weight: 400;">_</span>';
+        typewriterTimer = setTimeout(type, pIdx === 1 && cIdx > 0 ? 90 : 70);
+      }
+      typewriterTimer = setTimeout(type, 500);
+    }
+    function stopTypewriter() {
+      if (typewriterTimer) { clearTimeout(typewriterTimer); typewriterTimer = null; }
+    }
+
+    // Word cloud random glow
+    (function() {
+      var wcSpans = [];
+      var wcTimers = [];
+      function initWordCloud() {
+        wcSpans = Array.from(document.querySelectorAll('.word-cloud span'));
+        if (!wcSpans.length) return;
+        wcSpans.forEach(function(span) {
+          var delay = Math.random() * 3000 + 500;
+          function glow() {
+            span.classList.add('wc-glow');
+            var onDur = Math.random() * 800 + 400;
+            var t1 = setTimeout(function() {
+              span.classList.remove('wc-glow');
+              var offDur = Math.random() * 2500 + 1000;
+              var t2 = setTimeout(glow, offDur);
+              wcTimers.push(t2);
+            }, onDur);
+            wcTimers.push(t1);
+          }
+          var t = setTimeout(glow, delay);
+          wcTimers.push(t);
+        });
+      }
+      document.addEventListener('DOMContentLoaded', initWordCloud);
+    })();
+
+    // Magic rainbow text for "brinca com seu filho"
+    (function() {
+      var colors = ['#ff6b6b','#ffd93d','#6bcb77','#4d96ff','#ff6bdf','#a66cff','#ff9f43','#00d2d3','#ff4757','#2ed573'];
+      function init() {
+        var el = document.getElementById('magic-text');
+        if (!el) return;
+        var text = el.textContent;
+        el.innerHTML = '';
+        var spans = [];
+        for (var i = 0; i < text.length; i++) {
+          var span = document.createElement('span');
+          span.textContent = text[i];
+          var c = colors[Math.floor(Math.random() * colors.length)];
+          span.dataset.color = c;
+          span.style.cssText = 'color:' + c + ';transition:filter 0.3s ease,opacity 0.3s ease;opacity:0.75;filter:brightness(0.85);';
+          el.appendChild(span);
+          spans.push(span);
+        }
+        // Glow loop
+        spans.forEach(function(s) {
+          (function(s) {
+            function glow() {
+              s.style.filter = 'brightness(2.2) drop-shadow(0 0 14px ' + s.dataset.color + ')';
+              s.style.opacity = '1';
+              setTimeout(function() {
+                s.style.filter = 'brightness(0.85)';
+                s.style.opacity = '0.75';
+                setTimeout(glow, Math.random() * 800 + 400);
+              }, Math.random() * 300 + 150);
+            }
+            setTimeout(glow, Math.random() * 1000);
+          })(s);
+        });
+      }
+      document.addEventListener('DOMContentLoaded', function() { setTimeout(init, 500); });
+    })();
+
+    function goTo(index) {
+      if (index < 0 || index >= totalSlides || index === current || isTransitioning) return;
+      isTransitioning = true;
+
+      const goingForward = index > current;
+      const prev = slides[current];
+      const next = slides[index];
+
+      // Exit: remove show class and deactivate
+      prev.querySelectorAll('.fade-in.show').forEach(el => el.classList.remove('show'));
+      prev.classList.remove('active');
+      prev.classList.add('exit-up');
+
+      // Prepare entry with directional offset
+      next.style.transition = 'none';
+      next.classList.remove('exit-up');
+      next.querySelectorAll('.fade-in.show').forEach(el => el.classList.remove('show'));
+      next.style.transform = goingForward ? 'translateY(30px)' : 'translateY(-30px)';
+      next.style.opacity = '0';
+      void next.offsetWidth; // reflow
+
+      // Animate in
+      next.style.transition = '';
+      next.classList.add('active');
+      next.style.transform = '';
+      next.style.opacity = '';
+
+      // Trigger fade-in transitions in next frame
+      requestAnimationFrame(function() {
+        requestAnimationFrame(function() {
+          next.querySelectorAll('.fade-in').forEach(function(el) {
+            el.classList.add('show');
+          });
+          // Start typewriter on final question slide
+          if (index === 50) startTypewriter();
+        });
+      });
+
+      // Stop typewriter when leaving final question slide
+      if (current === 50 && index !== 50) stopTypewriter();
+
+      current = index;
+      updateUI();
+
+      setTimeout(function() {
+        prev.classList.remove('exit-up');
+        prev.style.transform = '';
+        prev.style.opacity = '';
+        isTransitioning = false;
+      }, 600);
+    }
+
+    function next() { goTo(current + 1); }
+    function prev() { goTo(current - 1); }
+
+    // Nav arrow clicks
+    navLeft.addEventListener('click', (e) => { e.stopPropagation(); prev(); });
+    navRight.addEventListener('click', (e) => { e.stopPropagation(); next(); });
+
+    // Keyboard
+    document.addEventListener('keydown', (e) => {
+      if (helpOverlay.classList.contains('visible') && e.key !== 'h' && e.key !== 'H' && e.key !== 'Escape') {
+        helpOverlay.classList.remove('visible');
+        return;
+      }
+
+      switch(e.key) {
+        case 'ArrowRight':
+        case 'ArrowDown':
+        case ' ':
+        case 'PageDown':
+          e.preventDefault(); next(); break;
+        case 'ArrowLeft':
+        case 'ArrowUp':
+        case 'PageUp':
+          e.preventDefault(); prev(); break;
+        case 'Home':
+          e.preventDefault(); goTo(0); break;
+        case 'End':
+          e.preventDefault(); goTo(totalSlides - 1); break;
+        case 'h':
+        case 'H':
+          helpOverlay.classList.toggle('visible'); break;
+        case 'Escape':
+          helpOverlay.classList.remove('visible'); break;
+        case 'f':
+        case 'F':
+          if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen();
+          } else {
+            document.exitFullscreen();
+          }
+          break;
+      }
+    });
+
+    // Touch
+    let touchStartX = 0;
+    let touchStartY = 0;
+    document.addEventListener('touchstart', (e) => {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+    });
+    document.addEventListener('touchend', (e) => {
+      const dx = e.changedTouches[0].clientX - touchStartX;
+      const dy = e.changedTouches[0].clientY - touchStartY;
+      if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50) {
+        dx < 0 ? next() : prev();
+      }
+    });
+
+    // Click anywhere to dismiss help overlay (but NOT navigate slides)
+    document.addEventListener('click', (e) => {
+      if (helpOverlay.classList.contains('visible')) {
+        helpOverlay.classList.remove('visible');
+      }
+    });
+
+    // Show fade-in elements on initial slide
+    slides[0].querySelectorAll('.fade-in').forEach(function(el) { el.classList.add('show'); });
+
+    updateUI();
+  })();
+
+  // Initialize Lucide icons
+  lucide.createIcons();
+
+  // ======= TYPEWRITER EFFECT =======
+  (function() {
+    const words = ['substituir.', 'aposentar.', 'dispensar.', 'vencer.'];
+    const el = document.getElementById('typewriterWord');
+    let wordIndex = 0;
+    let charIndex = 0;
+    let isDeleting = false;
+    let pauseEnd = 0;
+
+    function tick() {
+      const now = Date.now();
+      if (now < pauseEnd) { requestAnimationFrame(tick); return; }
+
+      const currentWord = words[wordIndex];
+
+      if (!isDeleting) {
+        charIndex++;
+        el.textContent = currentWord.substring(0, charIndex);
+        if (charIndex === currentWord.length) {
+          isDeleting = true;
+          pauseEnd = now + 2000;
+        } else {
+          pauseEnd = now + 80 + Math.random() * 40;
+        }
+      } else {
+        charIndex--;
+        el.textContent = currentWord.substring(0, charIndex);
+        if (charIndex === 0) {
+          isDeleting = false;
+          wordIndex = (wordIndex + 1) % words.length;
+          pauseEnd = now + 300;
+        } else {
+          pauseEnd = now + 40 + Math.random() * 20;
+        }
+      }
+      requestAnimationFrame(tick);
+    }
+
+    // Start after a short delay
+    setTimeout(() => { pauseEnd = Date.now(); tick(); }, 1200);
+  })();
+
+  // Fire particles for "Queime Seus Tokens" slide
+  (function() {
+    const container = document.getElementById('fireContainer');
+    if (!container) return;
+    const colors = ['#e85030', '#f0a08a', '#ff6b35', '#da7e7e', '#ffaa44', '#ff4422', '#ff2200', '#ff8800', '#e84020'];
+    function spawnParticle(big) {
+      const p = document.createElement('div');
+      p.className = big ? 'fire-particle ember' : 'fire-particle';
+      const size = big ? (Math.random() * 18 + 10) : (Math.random() * 6 + 2);
+      const x = Math.random() * 100;
+      const duration = big ? (Math.random() * 4 + 3) : (Math.random() * 2.5 + 1.5);
+      const delay = Math.random() * 0.3;
+      const color = colors[Math.floor(Math.random() * colors.length)];
+      const blur = big ? (size * 4) : (size * 3);
+      p.style.cssText = 'width:' + size + 'px;height:' + size + 'px;left:' + x + '%;background:' + color + ';box-shadow:0 0 ' + blur + 'px ' + (blur * 0.5) + 'px ' + color + ';animation-duration:' + duration + 's;animation-delay:' + delay + 's;';
+      container.appendChild(p);
+      setTimeout(() => p.remove(), (duration + delay) * 1000);
+    }
+    // Dense small particles
+    setInterval(function() { spawnParticle(false); }, 25);
+    // Large embers
+    setInterval(function() { spawnParticle(true); }, 120);
+  })();
+</script>
+
+<!-- Laser Pointer -->
+<div class="laser-pointer" id="laserPointer"></div>
+<canvas id="laserCanvas"></canvas>
+<canvas id="spotlightOverlay"></canvas>
+<div id="zoomLens"><div class="zoom-crosshair"></div></div>
+<script>
+(function() {
+  const laser = document.getElementById('laserPointer');
+  const laserCanvas = document.getElementById('laserCanvas');
+  const lCtx = laserCanvas.getContext('2d');
+  const spotCanvas = document.getElementById('spotlightOverlay');
+  const sCtx = spotCanvas.getContext('2d');
+
+  const zoomLens = document.getElementById('zoomLens');
+  const ZOOM_SIZE = 220;
+  const ZOOM_FACTOR = 2;
+  let zoomClone = null;
+
+  let laserActive = false;
+  let spotlightActive = false;
+  let zoomActive = false;
+  let lastX = 0, lastY = 0;
+
+  const points = [];
+  const MAX_POINTS = 80;
+
+  const SPOT_RADIUS = 190;
+  const SPOT_FEATHER = 70;
+  const OVERLAY_ALPHA = 0.78;
+
+  function resize() {
+    laserCanvas.width = spotCanvas.width = window.innerWidth;
+    laserCanvas.height = spotCanvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  function toggleLaser() {
+    laserActive = !laserActive;
+    document.body.classList.toggle('laser-mode', laserActive || spotlightActive);
+    laser.classList.toggle('active', laserActive);
+    laserCanvas.classList.toggle('active', laserActive);
+    if (laserActive) points.length = 0;
+  }
+
+  function toggleSpotlight() {
+    spotlightActive = !spotlightActive;
+    document.body.classList.toggle('spotlight-mode', spotlightActive);
+    document.body.classList.toggle('laser-mode', laserActive || spotlightActive);
+    spotCanvas.classList.toggle('active', spotlightActive);
+  }
+
+  function rebuildZoomClone() {
+    if (zoomClone) zoomClone.remove();
+    zoomClone = document.body.cloneNode(true);
+    zoomClone.classList.add('zoom-clone');
+    zoomClone.style.position = 'absolute';
+    zoomClone.style.top = '0';
+    zoomClone.style.left = '0';
+    zoomClone.style.width = window.innerWidth + 'px';
+    zoomClone.style.height = window.innerHeight + 'px';
+    zoomClone.style.pointerEvents = 'none';
+    zoomClone.style.transformOrigin = '0 0';
+    // Remove the zoom lens from the clone to avoid recursion
+    const clonedLens = zoomClone.querySelector('#zoomLens');
+    if (clonedLens) clonedLens.remove();
+    // Remove laser elements from clone
+    const clonedLaser = zoomClone.querySelector('#laserPointer');
+    if (clonedLaser) clonedLaser.remove();
+    zoomLens.insertBefore(zoomClone, zoomLens.firstChild);
+  }
+
+  function updateZoomPosition() {
+    if (!zoomActive || !zoomClone) return;
+    const half = ZOOM_SIZE / 2;
+    // Position: scale clone so mouse area is centered in lens
+    const tx = -lastX * ZOOM_FACTOR + half;
+    const ty = -lastY * ZOOM_FACTOR + half;
+    zoomClone.style.transform = 'scale(' + ZOOM_FACTOR + ') translate(' + (tx / ZOOM_FACTOR) + 'px, ' + (ty / ZOOM_FACTOR) + 'px)';
+  }
+
+  function toggleZoom() {
+    zoomActive = !zoomActive;
+    document.body.classList.toggle('zoom-mode', zoomActive);
+    zoomLens.classList.toggle('active', zoomActive);
+    if (zoomActive) {
+      rebuildZoomClone();
+      updateZoomPosition();
+    } else if (zoomClone) {
+      zoomClone.remove();
+      zoomClone = null;
+    }
+  }
+
+  document.addEventListener('mousemove', (e) => {
+    lastX = e.clientX;
+    lastY = e.clientY;
+    if (laserActive) {
+      laser.style.left = lastX + 'px';
+      laser.style.top = lastY + 'px';
+      points.push({ x: lastX, y: lastY, t: performance.now() });
+      if (points.length > MAX_POINTS) points.shift();
+    }
+    if (zoomActive) {
+      zoomLens.style.left = lastX + 'px';
+      zoomLens.style.top = lastY + 'px';
+      updateZoomPosition();
+    }
+  });
+
+  function draw() {
+    const w = laserCanvas.width, h = laserCanvas.height;
+
+    lCtx.clearRect(0, 0, w, h);
+    if (laserActive && points.length > 1) {
+      const now = performance.now();
+      const TRAIL_LIFE = 400;
+      while (points.length > 1 && now - points[0].t > TRAIL_LIFE) points.shift();
+
+      if (points.length > 1) {
+        lCtx.lineCap = 'round';
+        lCtx.lineJoin = 'round';
+        for (let i = 1; i < points.length; i++) {
+          const p0 = points[i - 1], p1 = points[i];
+          const alpha = 1 - ((now - p0.t) / TRAIL_LIFE + (now - p1.t) / TRAIL_LIFE) / 2;
+          const width = Math.max(1, 5 * alpha);
+          lCtx.beginPath();
+          lCtx.moveTo(p0.x, p0.y);
+          lCtx.lineTo(p1.x, p1.y);
+          lCtx.strokeStyle = 'rgba(255, 50, 40, ' + (alpha * 0.7) + ')';
+          lCtx.lineWidth = width;
+          lCtx.stroke();
+          lCtx.beginPath();
+          lCtx.moveTo(p0.x, p0.y);
+          lCtx.lineTo(p1.x, p1.y);
+          lCtx.strokeStyle = 'rgba(255, 0, 0, ' + (alpha * 0.2) + ')';
+          lCtx.lineWidth = width + 6;
+          lCtx.stroke();
+        }
+      }
+    }
+
+    sCtx.clearRect(0, 0, w, h);
+    if (spotlightActive) {
+      sCtx.fillStyle = 'rgba(0, 0, 0, ' + OVERLAY_ALPHA + ')';
+      sCtx.fillRect(0, 0, w, h);
+
+      sCtx.save();
+      sCtx.globalCompositeOperation = 'destination-out';
+      const grad = sCtx.createRadialGradient(lastX, lastY, SPOT_RADIUS - SPOT_FEATHER, lastX, lastY, SPOT_RADIUS + SPOT_FEATHER);
+      grad.addColorStop(0, 'rgba(0, 0, 0, 1)');
+      grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+      sCtx.fillStyle = grad;
+      sCtx.beginPath();
+      sCtx.arc(lastX, lastY, SPOT_RADIUS + SPOT_FEATHER, 0, Math.PI * 2);
+      sCtx.fill();
+      sCtx.restore();
+
+      sCtx.save();
+      sCtx.globalCompositeOperation = 'source-atop';
+      const glow = sCtx.createRadialGradient(lastX, lastY, 0, lastX, lastY, SPOT_RADIUS + SPOT_FEATHER);
+      glow.addColorStop(0, 'rgba(255, 255, 240, 0.12)');
+      glow.addColorStop(0.4, 'rgba(255, 255, 240, 0.04)');
+      glow.addColorStop(1, 'rgba(0, 0, 0, 0)');
+      sCtx.fillStyle = glow;
+      sCtx.fillRect(0, 0, w, h);
+      sCtx.restore();
+    }
+
+    requestAnimationFrame(draw);
+  }
+  draw();
+
+  // Rebuild zoom clone when navigating slides
+  const origGoTo = window.goTo;
+  if (typeof origGoTo === 'function') {
+    window.goTo = function() {
+      origGoTo.apply(this, arguments);
+      if (zoomActive) setTimeout(rebuildZoomClone, 100);
+    };
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+    if (e.key === 'l' || e.key === 'L') toggleLaser();
+    if (e.key === 's' || e.key === 'S') toggleSpotlight();
+    if (e.key === 'z' || e.key === 'Z') toggleZoom();
+  });
+})();
+</script>
+
+</body>
+</html>
