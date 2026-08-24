@@ -3,7 +3,7 @@
 ## Deployment
 
 - **Platform**: Vercel (Agilize corporate account, scope `agilize-contabilidade-online`)
-- **Project**: `dev-ia-secomp` → https://dev-ia-secomp.vercel.app (public, NO password gate)
+- **Project**: `agilize-secomp` → https://agilize-secomp.vercel.app (public, NO password gate)
 - **CRITICAL — 404 prevention**: This project lives in a subdirectory of a larger repo. `.vercel/project.json` must ONLY exist in this subdirectory — **never at the repo root**.
 - **ALWAYS deploy with explicit cd** in a single chained command:
   ```bash
