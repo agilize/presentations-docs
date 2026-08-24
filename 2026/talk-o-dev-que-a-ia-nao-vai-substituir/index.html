@@ -1125,9 +1125,8 @@
         <span class="chip-caption">Investidores</span>
       </div>
     </div>
-    <div class="fade-in delay-3 mt-3" style="display: flex; align-items: center; gap: 0.8rem; justify-content: center;">
-      <img src="assets/logo-vitoria.png" alt="Vit&oacute;ria" style="height: 46px;">
-      <span class="small" style="color: var(--text-secondary);">Torcedor apaixonado</span>
+    <div class="fade-in delay-3 mt-3" style="display: flex; justify-content: center;">
+      <img src="assets/logo-vitoria.png" alt="Vit&oacute;ria" style="height: 68px;">
     </div>
     <div class="logo-container fade-in delay-4">
       <img src="assets/logo-branca.png" alt="Agilize">
@@ -1271,7 +1270,7 @@
   <div class="slide" data-slide="12">
     <div class="fade-in" style="margin-bottom: 1.5rem;"><i data-lucide="heart" class="icon-heartbeat" style="width: 64px; height: 64px; color: var(--green); fill: var(--green);"></i></div>
     <h1 class="fade-in delay-1" style="font-size: 3.6rem; white-space: nowrap;">
-      <span id="lovePrefix">It's a</span><span id="loveCursor" class="cursor-blink" style="color: var(--green); font-weight: 400;">_</span> <span style="background: #fff; color: #0a0714; padding: 0.02em 0.25em;">TRUE LOVE</span> story
+      <span id="lovePrefix">It's a</span><span id="loveCursor" class="cursor-blink" style="color: var(--green); font-weight: 400;">_</span> <span style="background: var(--accent); color: #0a0714; padding: 0.02em 0.25em;">TRUE LOVE</span> story
     </h1>
   </div>
 
@@ -1281,7 +1280,7 @@
   <div class="slide" data-slide="13">
     <h2 class="fade-in">O <span class="accent">Experimento</span></h2>
     <div class="fade-in delay-1 mt-2" style="display: flex; gap: 1rem; justify-content: center; flex-wrap: nowrap;">
-      <div class="presenter-card"><span class="presenter-name">h&aacute; 3 anos</span></div>
+      <div class="presenter-card"><span class="presenter-name">Em 2023</span></div>
       <div class="presenter-card"><span class="presenter-name">4 seniores</span></div>
       <div class="presenter-card"><span class="presenter-name">4 meses</span></div>
     </div>
@@ -1314,9 +1313,31 @@
   <!-- SLIDE: RESULTADO? (TDC) -->
   <!-- ======================== -->
   <div class="slide" data-slide="14" style="overflow: hidden;">
-    <svg viewBox="0 0 1200 700" preserveAspectRatio="xMidYMid slice" style="position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0.3;" aria-hidden="true">
-      <line x1="40" y1="620" x2="1160" y2="120" stroke="var(--accent)" stroke-width="5" stroke-dasharray="3 16" stroke-linecap="round"/>
-    </svg>
+    <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; opacity: 0.35; pointer-events: none;" aria-hidden="true">
+      <div style="position: relative; width: 860px; height: 300px; transform: scale(1.35);">
+        <svg viewBox="0 0 860 300" style="position: absolute; inset: 0; width: 100%; height: 100%;">
+          <line x1="60" y1="245" x2="290" y2="205" stroke="var(--accent)" stroke-width="3" stroke-dasharray="2 10" stroke-linecap="round"/>
+          <line x1="310" y1="200" x2="530" y2="140" stroke="var(--accent)" stroke-width="3" stroke-dasharray="2 10" stroke-linecap="round"/>
+          <line x1="550" y1="133" x2="770" y2="45" stroke="var(--accent)" stroke-width="3" stroke-dasharray="2 10" stroke-linecap="round"/>
+        </svg>
+        <div style="position: absolute; left: 10px; top: 215px; display: flex; flex-direction: column; align-items: center; gap: 0.4rem;">
+          <i data-lucide="user-round" style="width: 38px; height: 38px; color: var(--accent);"></i>
+          <span class="small" style="font-size: 1rem;">M&ecirc;s 1</span>
+        </div>
+        <div style="position: absolute; left: 270px; top: 172px; display: flex; flex-direction: column; align-items: center; gap: 0.4rem;">
+          <i data-lucide="user-round" style="width: 38px; height: 38px; color: var(--green);"></i>
+          <span class="small" style="font-size: 1rem;">M&ecirc;s 2</span>
+        </div>
+        <div style="position: absolute; left: 510px; top: 108px; display: flex; flex-direction: column; align-items: center; gap: 0.4rem;">
+          <i data-lucide="user-round" style="width: 38px; height: 38px; color: var(--yellow);"></i>
+          <span class="small" style="font-size: 1rem;">M&ecirc;s 3</span>
+        </div>
+        <div style="position: absolute; left: 750px; top: 12px; display: flex; flex-direction: column; align-items: center; gap: 0.4rem;">
+          <i data-lucide="user-round" style="width: 38px; height: 38px; color: var(--pink);"></i>
+          <span class="small" style="font-size: 1rem;">M&ecirc;s 4</span>
+        </div>
+      </div>
+    </div>
     <h1 class="fade-in animate-glitch" style="position: relative; z-index: 1; font-size: 5.5rem; color: var(--green); text-shadow: 0 0 40px rgba(33, 227, 164, 0.4);">RESULTADO?</h1>
   </div>
 
@@ -1434,7 +1455,7 @@
   <!-- ======================== -->
   <div class="slide" data-slide="20">
     <div class="fade-in" style="margin-bottom: 1rem;"><i data-lucide="flame" class="icon-flame" style="width: 52px; height: 52px; color: #ff8a5c;"></i></div>
-    <h2 class="fade-in delay-1">A <span class="accent">Descoberta do Fogo</span></h2>
+    <h2 class="fade-in delay-1">A <span style="color: #ff8a5c;">Descoberta do Fogo</span></h2>
     <p class="fade-in delay-1 mt-3">
       Quando a IA parou de ser assistente<br>
       e come&ccedil;ou a <span class="accent">trabalhar de verdade.</span>
@@ -1467,15 +1488,9 @@
     <div class="fade-in" style="margin-bottom: 1rem;"><i data-lucide="wind" class="icon-float" style="width: 48px; height: 48px; color: var(--accent);"></i></div>
     <h2 class="fade-in delay-1">O Mundo <span class="accent">Hoje</span></h2>
     <div class="fade-in delay-1 mt-4" style="display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;">
-      <div class="stat-card" style="min-width: 180px;">
-        <div class="stat-value" style="font-size: 1.4rem;">Agentes aut&ocirc;nomos</div>
-      </div>
-      <div class="stat-card" style="min-width: 180px;">
-        <div class="stat-value" style="font-size: 1.4rem;">M&uacute;ltiplos em paralelo</div>
-      </div>
-      <div class="stat-card" style="min-width: 180px;">
-        <div class="stat-value" style="font-size: 1.4rem;">Dev como orquestrador</div>
-      </div>
+      <div class="presenter-card"><span class="presenter-name">Agentes aut&ocirc;nomos</span></div>
+      <div class="presenter-card"><span class="presenter-name">M&uacute;ltiplos em paralelo</span></div>
+      <div class="presenter-card"><span class="presenter-name">Dev como orquestrador</span></div>
     </div>
     <p class="fade-in delay-2 mt-4">
       Uma parte enorme do mercado <span class="accent">ainda est&aacute; descobrindo o fogo.</span><br>
@@ -1564,18 +1579,10 @@
     <div class="fade-in" style="margin-bottom: 1rem;"><i data-lucide="user-cog" class="icon-float" style="width: 48px; height: 48px; color: var(--accent);"></i></div>
     <h2 class="fade-in delay-1">O <span class="accent">Novo Dev</span></h2>
     <div class="fade-in delay-1 mt-4" style="display: flex; gap: 1rem; flex-wrap: nowrap; justify-content: center;">
-      <div class="stat-card" style="padding: 1.4rem 1.1rem;">
-        <div class="stat-value" style="font-size: 1.2rem;">De executor<br>a estrategista</div>
-      </div>
-      <div class="stat-card" style="padding: 1.4rem 1.1rem;">
-        <div class="stat-value" style="font-size: 1.2rem;">Curador do que<br>a IA gera</div>
-      </div>
-      <div class="stat-card" style="padding: 1.4rem 1.1rem;">
-        <div class="stat-value" style="font-size: 1.2rem;">Clareza, inten&ccedil;&atilde;o<br>e dire&ccedil;&atilde;o</div>
-      </div>
-      <div class="stat-card" style="padding: 1.4rem 1.1rem;">
-        <div class="stat-value" style="font-size: 1.2rem;">Prompt &eacute;<br>skill t&eacute;cnica</div>
-      </div>
+      <div class="presenter-card"><span class="presenter-name">De executor<br>a estrategista</span></div>
+      <div class="presenter-card"><span class="presenter-name">Curador do que<br>a IA gera</span></div>
+      <div class="presenter-card"><span class="presenter-name">Clareza, inten&ccedil;&atilde;o<br>e dire&ccedil;&atilde;o</span></div>
+      <div class="presenter-card"><span class="presenter-name">Prompt &eacute;<br>skill t&eacute;cnica</span></div>
     </div>
     <p class="fade-in delay-2 mt-4 small" style="white-space: nowrap; max-width: none;">
       O c&oacute;digo continua importando.<br>Mas quem decide <span class="accent">o qu&ecirc; e por qu&ecirc;</span> vale mais do que quem s&oacute; digita.
@@ -2539,7 +2546,7 @@
 
   // ======= TYPEWRITER EFFECT =======
   (function() {
-    const words = ['substituir.', 'alcançar.', 'aposentar.', 'superar.', 'imitar.'];
+    const words = ['substituir.', 'alcançar.', 'aposentar.', 'superar.'];
     const el = document.getElementById('typewriterWord');
     let wordIndex = 0;
     let charIndex = 0;
