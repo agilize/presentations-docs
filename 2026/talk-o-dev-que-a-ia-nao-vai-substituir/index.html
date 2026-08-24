@@ -2799,6 +2799,7 @@
   var codeEl = document.getElementById('remoteCode');
   var statusEl = document.getElementById('remoteStatus');
   var client = null, code = null, started = false;
+  var pc = null, dc = null, rtcUp = false;
 
   function randCode() {
     var A = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
@@ -2809,6 +2810,51 @@
 
   function press(key) {
     document.dispatchEvent(new KeyboardEvent('keydown', { key: key, bubbles: true, cancelable: true }));
+  }
+
+  // Smoothed pointer: incoming moves set a target, a 60fps loop chases it
+  var moveTarget = null, moveCur = null, moveRaf = false;
+  function onMove(nx, ny) {
+    moveTarget = { x: nx * window.innerWidth, y: ny * window.innerHeight };
+    if (!moveCur) moveCur = { x: moveTarget.x, y: moveTarget.y };
+    if (!moveRaf) { moveRaf = true; requestAnimationFrame(moveStep); }
+  }
+  function moveStep() {
+    if (!moveTarget) { moveRaf = false; return; }
+    moveCur.x += (moveTarget.x - moveCur.x) * 0.45;
+    moveCur.y += (moveTarget.y - moveCur.y) * 0.45;
+    document.dispatchEvent(new MouseEvent('mousemove', { clientX: moveCur.x, clientY: moveCur.y, bubbles: true }));
+    if (Math.abs(moveTarget.x - moveCur.x) < 0.5 && Math.abs(moveTarget.y - moveCur.y) < 0.5) {
+      moveCur.x = moveTarget.x; moveCur.y = moveTarget.y;
+      moveRaf = false;
+    } else {
+      requestAnimationFrame(moveStep);
+    }
+  }
+
+  // WebRTC data channel for low-latency input; MQTT stays as signaling + fallback
+  function sig(m) {
+    if (client && client.connected) client.publish('agz-secomp-remote/' + code + '/sig', JSON.stringify(m));
+  }
+  function startRtc() {
+    if (!window.RTCPeerConnection) return;
+    if (pc) { try { pc.close(); } catch (e) {} pc = null; dc = null; rtcUp = false; }
+    try { pc = new RTCPeerConnection({ iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] }); } catch (e) { return; }
+    dc = pc.createDataChannel('input', { ordered: false, maxRetransmits: 0 });
+    dc.onopen = function() {
+      rtcUp = true;
+      statusEl.textContent = 'celular conectado (p2p, baixa latência)';
+      statusEl.style.color = 'var(--green)';
+    };
+    dc.onclose = function() { rtcUp = false; };
+    dc.onmessage = function(ev) {
+      var m; try { m = JSON.parse(ev.data); } catch (e) { return; }
+      handle(m);
+    };
+    pc.onicecandidate = function(ev) { if (ev.candidate) sig({ t: 'rtc-ice', c: ev.candidate.toJSON() }); };
+    pc.createOffer().then(function(o) { return pc.setLocalDescription(o); }).then(function() {
+      sig({ t: 'rtc-offer', sdp: { type: pc.localDescription.type, sdp: pc.localDescription.sdp } });
+    }).catch(function() {});
   }
 
   function pubState() {
@@ -2829,16 +2875,17 @@
       press(m.key);
       setTimeout(pubState, 80);
     } else if (m.t === 'move') {
-      document.dispatchEvent(new MouseEvent('mousemove', {
-        clientX: m.x * window.innerWidth,
-        clientY: m.y * window.innerHeight,
-        bubbles: true
-      }));
+      onMove(m.x, m.y);
     } else if (m.t === 'hello') {
-      statusEl.textContent = 'celular conectado';
+      statusEl.textContent = 'celular conectado (nuvem)';
       statusEl.style.color = 'var(--green)';
       pubState();
+      startRtc();
       setTimeout(function() { panel.style.display = 'none'; }, 1500);
+    } else if (m.t === 'rtc-answer') {
+      if (pc) pc.setRemoteDescription(m.sdp).catch(function() {});
+    } else if (m.t === 'rtc-ice') {
+      if (pc) pc.addIceCandidate(m.c).catch(function() {});
     }
   }
 

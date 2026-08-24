@@ -136,6 +136,7 @@
 (function() {
   var BROKERS = ['wss://broker.emqx.io:8084/mqtt', 'wss://broker.hivemq.com:8884/mqtt'];
   var client = null, base = null;
+  var pc = null, dc = null;
 
   var connectView = document.getElementById('connectView');
   var controlView = document.getElementById('controlView');
@@ -153,7 +154,30 @@
   var qsCode = new URLSearchParams(location.search).get('c');
   codeInput.value = (qsCode || localStorage.getItem('remote-code') || '').toUpperCase().slice(0, 4);
 
-  function send(m) { if (client && base) client.publish(base + '/cmd', JSON.stringify(m)); }
+  function sendMqtt(m) { if (client && base) client.publish(base + '/cmd', JSON.stringify(m)); }
+  function rtcOpen() { return dc && dc.readyState === 'open'; }
+  function send(m) {
+    if (rtcOpen()) { try { dc.send(JSON.stringify(m)); return; } catch (e) {} }
+    sendMqtt(m);
+  }
+
+  function setStatus(txt) { statusTxt.textContent = txt; }
+
+  function setupRtc(offer) {
+    if (!window.RTCPeerConnection) return;
+    if (pc) { try { pc.close(); } catch (e) {} pc = null; dc = null; }
+    try { pc = new RTCPeerConnection({ iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] }); } catch (e) { return; }
+    pc.ondatachannel = function(ev) {
+      dc = ev.channel;
+      dc.onopen = function() { setStatus('conectado · p2p'); };
+      dc.onclose = function() { dc = null; setStatus('conectado · nuvem'); };
+    };
+    pc.onicecandidate = function(ev) { if (ev.candidate) sendMqtt({ t: 'rtc-ice', c: ev.candidate.toJSON() }); };
+    pc.setRemoteDescription(offer).then(function() { return pc.createAnswer(); })
+      .then(function(a) { return pc.setLocalDescription(a); })
+      .then(function() { sendMqtt({ t: 'rtc-answer', sdp: { type: pc.localDescription.type, sdp: pc.localDescription.sdp } }); })
+      .catch(function() {});
+  }
 
   function tryBroker(i, code) {
     if (i >= BROKERS.length) { connectMsg.textContent = 'sem conexão com o broker — cheque a internet'; connectBtn.disabled = false; return; }
@@ -164,6 +188,7 @@
       if (!ok) {
         ok = true; client = c; base = 'agz-secomp-remote/' + code;
         c.subscribe(base + '/state');
+        c.subscribe(base + '/sig');
         localStorage.setItem('remote-code', code);
         connectView.style.display = 'none';
         controlView.style.display = 'flex';
@@ -171,10 +196,10 @@
         try { if (navigator.wakeLock) navigator.wakeLock.request('screen').catch(function(){}); } catch (e) {}
       }
       statusDot.classList.add('on');
-      statusTxt.textContent = 'conectado';
-      send({ t: 'hello' });
+      if (!rtcOpen()) setStatus('conectado · nuvem');
+      sendMqtt({ t: 'hello' });
     });
-    c.on('close', function() { if (ok) { statusDot.classList.remove('on'); statusTxt.textContent = 'reconectando'; } });
+    c.on('close', function() { if (ok) { statusDot.classList.remove('on'); if (!rtcOpen()) setStatus('reconectando'); } });
     c.on('message', function(topic, payload) {
       var m; try { m = JSON.parse(payload.toString()); } catch (e) { return; }
       if (m.t === 'state') {
@@ -182,6 +207,10 @@
         document.getElementById('mLaser').classList.toggle('on', !!m.laser);
         document.getElementById('mSpot').classList.toggle('on', !!m.spot);
         document.getElementById('mZoom').classList.toggle('on', !!m.zoom);
+      } else if (m.t === 'rtc-offer') {
+        setupRtc(m.sdp);
+      } else if (m.t === 'rtc-ice') {
+        if (pc) pc.addIceCandidate(m.c).catch(function() {});
       }
     });
     c.on('error', function() { if (!ok) { c.end(true); tryBroker(i + 1, code); } });
@@ -210,7 +239,8 @@
     padDot.style.left = (x * 100) + '%';
     padDot.style.top = (y * 100) + '%';
     var now = Date.now();
-    if (now - lastSent > 40) { lastSent = now; send({ t: 'move', x: x, y: y }); }
+    var gap = rtcOpen() ? 16 : 33;
+    if (now - lastSent > gap) { lastSent = now; send({ t: 'move', x: x, y: y }); }
   }
   pad.addEventListener('pointerdown', function(e) { try { pad.setPointerCapture(e.pointerId); } catch (err) {} padMove(e); });
   pad.addEventListener('pointermove', function(e) { if (e.buttons || e.pointerType === 'touch') padMove(e); });
