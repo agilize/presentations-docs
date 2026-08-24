@@ -1,9 +1,9 @@
-# Talk: O Dev que a IA Não Vai Substituir (UFBA)
+# Talk: O Dev que a IA Não Vai Substituir (SECOMP/UFBA)
 
 ## Deployment
 
-- **Platform**: Vercel (Agilize corporate account)
-- **First deploy**: run `vercel --prod --yes` from THIS directory to link/create the project; set the `PRESENTATION_PASSWORD` env var on the Vercel project (the password gate calls `api/verify.js`).
+- **Platform**: Vercel (Agilize corporate account, scope `agilize-contabilidade-online`)
+- **Project**: `dev-ia-secomp` → https://dev-ia-secomp.vercel.app (public, NO password gate)
 - **CRITICAL — 404 prevention**: This project lives in a subdirectory of a larger repo. `.vercel/project.json` must ONLY exist in this subdirectory — **never at the repo root**.
 - **ALWAYS deploy with explicit cd** in a single chained command:
   ```bash
@@ -14,7 +14,7 @@
 ## Local dev
 
 - Static server is enough: `python3 -m http.server <port>` from this directory.
-- The password gate auto-bypasses on `localhost`/`127.0.0.1` (see the gate script in `index.html`). In production it validates via `/api/verify` + `PRESENTATION_PASSWORD`.
+- No password gate — the presentation is public.
 
 ## Workflow
 
@@ -24,7 +24,6 @@
 ## Project Structure
 
 - Single-file HTML presentation: `index.html` (all slides, CSS, JS)
-- Password gate: `api/verify.js` (Vercel serverless, reads `PRESENTATION_PASSWORD` env var)
 - Config: `vercel.json` (no build, outputDirectory ".", noindex headers)
 
 ## Slide Management
