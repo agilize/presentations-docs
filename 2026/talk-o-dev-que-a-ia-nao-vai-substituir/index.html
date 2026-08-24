@@ -764,15 +764,15 @@
     /* ======= LOGO CHIPS & QR ======= */
     .logo-chip {
       background: #fff;
-      padding: 0.7rem 1.1rem;
-      border-radius: 10px;
-      display: flex; align-items: center; gap: 1.4rem;
-      height: 64px;
+      padding: 1rem 1.6rem;
+      border-radius: 12px;
+      display: flex; align-items: center; gap: 1.8rem;
+      height: 104px;
     }
-    .logo-chip img { height: 38px; width: auto; display: block; }
+    .logo-chip img { height: 62px; width: auto; display: block; }
     .chip-caption {
-      font-size: 0.75rem; color: #dcb2ff; text-transform: uppercase;
-      letter-spacing: 0.1em; margin-top: 0.5rem; display: block; text-align: center;
+      font-size: 0.85rem; color: #dcb2ff; text-transform: uppercase;
+      letter-spacing: 0.1em; margin-top: 0.6rem; display: block; text-align: center;
     }
     .qr-card {
       background: #fff;
@@ -1037,23 +1037,9 @@
   </div>
 
   <!-- ======================== -->
-  <!-- SLIDE: OBRIGADO (BRINCADEIRA) -->
-  <!-- ======================== -->
-  <div class="slide" data-slide="1">
-    <div class="fade-in" style="margin-bottom: 1.5rem;">
-      <img src="assets/logo-branca.png" alt="Agilize" style="height: 56px;">
-    </div>
-    <h1 class="fade-in delay-1" style="font-size: 5.5rem;">Obrigado!</h1>
-    <p class="fade-in delay-2 mt-3" style="font-size: 1.6rem;">
-      &Eacute; isso. <span class="red">Todos</span> ser&atilde;o substitu&iacute;dos.
-    </p>
-    <p class="fade-in delay-3 mt-4 small" style="color: var(--text-muted);">// EOF &mdash; boa tarde, pessoal. Perguntas?</p>
-  </div>
-
-  <!-- ======================== -->
   <!-- SLIDE 1: WHOAMI -->
   <!-- ======================== -->
-  <div class="slide" data-slide="2">
+  <div class="slide" data-slide="1">
     <div class="fade-in">
       <p class="small" style="letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent-dim);">$ whoami</p>
     </div>
@@ -1084,8 +1070,22 @@
       <img src="assets/logo-vitoria.png" alt="Vit&oacute;ria" style="height: 102px;">
     </div>
     <div class="logo-container fade-in delay-4">
-      <img src="assets/logo-branca.png" alt="Agilize" style="height: 66px; opacity: 1;">
+      <img src="assets/logo-branca.png" alt="Agilize" style="height: 46px; opacity: 1;">
     </div>
+  </div>
+
+  <!-- ======================== -->
+  <!-- SLIDE: OBRIGADO (BRINCADEIRA) -->
+  <!-- ======================== -->
+  <div class="slide" data-slide="2">
+    <div class="fade-in" style="margin-bottom: 1.5rem;">
+      <img src="assets/logo-branca.png" alt="Agilize" style="height: 56px;">
+    </div>
+    <h1 class="fade-in delay-1" style="font-size: 5.5rem;">Obrigado!</h1>
+    <p class="fade-in delay-2 mt-3" style="font-size: 1.6rem;">
+      &Eacute; isso. <span class="red">Todos</span> ser&atilde;o substitu&iacute;dos.
+    </p>
+    <p class="fade-in delay-3 mt-4 small" style="color: var(--text-muted);">// EOF &mdash; boa tarde, pessoal. Perguntas?</p>
   </div>
 
   <!-- ======================== -->
@@ -2103,8 +2103,8 @@
     // Slide titles for preview tooltips
     const slideTitles = [
       'O dev que a IA não vai substituir',
-      'Obrigado! (brincadeira)',
       'Quem sou eu',
+      'Obrigado! (brincadeira)',
       'A Ansiedade nº1',
       'O Choque de Realidade',
       'Mental Model',
