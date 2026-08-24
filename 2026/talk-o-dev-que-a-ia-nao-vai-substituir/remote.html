@@ -68,12 +68,12 @@
     #slideInfo .cur { color: var(--accent); font-size: 1rem; }
     #codeChip { color: var(--muted); letter-spacing: 0.2em; }
 
-    .mainrow { flex: 1; display: flex; gap: 10px; min-height: 42vh; }
-    .mainrow > button {
-      width: 23%; font-size: 2.8rem; border-radius: 14px; color: var(--accent);
+    .navrow { display: flex; gap: 10px; height: 25vh; }
+    .navrow button {
+      flex: 1; font-size: 3rem; border-radius: 14px; color: var(--accent);
       background: var(--surface);
     }
-    .mainrow > button:active { background: var(--surface-2); border-color: var(--accent); }
+    .navrow button:active { background: var(--surface-2); border-color: var(--accent); }
 
     .modes { display: flex; gap: 8px; }
     .modes button {
@@ -122,9 +122,9 @@
     <button data-key="Home">In&iacute;cio</button>
     <button data-key="End">Fim</button>
   </div>
-  <div class="mainrow">
+  <div id="pad">trackpad<div class="dot" id="padDot"></div></div>
+  <div class="navrow">
     <button id="btnPrev" aria-label="Slide anterior">&larr;</button>
-    <div id="pad">trackpad<div class="dot" id="padDot"></div></div>
     <button id="btnNext" aria-label="Pr&oacute;ximo slide">&rarr;</button>
   </div>
 </div>
