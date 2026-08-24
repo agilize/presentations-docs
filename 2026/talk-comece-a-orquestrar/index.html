@@ -1007,8 +1007,11 @@
   const input = document.getElementById('pwInput');
   const error = document.getElementById('pwError');
 
-  if (sessionStorage.getItem('talk-auth') === '1') {
+  const isLocalhost = ['localhost', '127.0.0.1', ''].includes(location.hostname);
+
+  if (isLocalhost || sessionStorage.getItem('talk-auth') === '1') {
     gate.classList.add('hidden');
+    return;
   }
 
   input.addEventListener('keydown', async (e) => {
