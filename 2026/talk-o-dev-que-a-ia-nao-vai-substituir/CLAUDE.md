@@ -35,4 +35,4 @@
   2. `slideTitles` array (preview tooltips)
   3. `chapterSlides` array (nav dot styling)
   4. `totalSlides` display span
-  5. Hardcoded slide index references in JS (typewriter trigger: `index === N` / `current === N` — currently 50)
+  5. Hardcoded slide index references in JS (typewriter triggers: final quote `index === 49`, identity quote `index === 16`)

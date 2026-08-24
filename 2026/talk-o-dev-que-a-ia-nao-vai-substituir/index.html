@@ -21,12 +21,12 @@
       --border-hover: #54408c;
       --text: #f7f4ff;
       --text-secondary: #d9cfec;
-      --text-muted: #a495c2;
+      --text-muted: #b3a6cf;
       --accent: #c15fff;
-      --accent-dim: #9d3df2;
+      --accent-dim: #b876ff;
       --accent-glow: rgba(193, 95, 255, 0.10);
       --blue: #7eb8da;
-      --green: #7ec9a0;
+      --green: #21e3a4;
       --red: #ff6b7a;
       --pink: #f5a0c0;
       --purple: #b07eda;
@@ -331,7 +331,7 @@
       display: flex; flex-direction: column; align-items: center; gap: 0.2rem;
     }
     .presenter-name { font-weight: 700; font-size: 1.15rem; color: var(--text); }
-    .presenter-role { font-size: 0.85rem; color: var(--accent); text-transform: uppercase; letter-spacing: 0.1em; }
+    .presenter-role { font-size: 0.85rem; color: #dcb2ff; text-transform: uppercase; letter-spacing: 0.1em; }
 
     /* Chapter title slides */
     .chapter-slide {
@@ -749,6 +749,26 @@
     .terminal-dots span:nth-child(3) { background: var(--green); }
     .terminal-title { flex: 1; text-align: center; letter-spacing: 0.04em; }
 
+    /* ======= LOGO CHIPS & QR ======= */
+    .logo-chip {
+      background: #fff;
+      padding: 0.7rem 1.1rem;
+      border-radius: 10px;
+      display: flex; align-items: center; gap: 1.4rem;
+      height: 64px;
+    }
+    .logo-chip img { height: 38px; width: auto; display: block; }
+    .chip-caption {
+      font-size: 0.75rem; color: #dcb2ff; text-transform: uppercase;
+      letter-spacing: 0.1em; margin-top: 0.5rem; display: block; text-align: center;
+    }
+    .qr-card {
+      background: #fff;
+      padding: 10px;
+      border-radius: 12px;
+    }
+    .qr-card img { width: 150px; height: 150px; display: block; }
+
     /* ======= LOGO ======= */
     .logo-container {
       margin-top: 2rem; display: flex; align-items: center;
@@ -1085,15 +1105,31 @@
     <div class="fade-in">
       <p class="small" style="letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent-dim);">$ whoami</p>
     </div>
-    <h2 class="fade-in delay-1 mt-2">Adriano <span class="accent">Fialho</span></h2>
+    <h2 class="fade-in delay-1 mt-2">Adriano Fialho</h2>
     <p class="fade-in delay-1" style="font-size: 1.4rem;">Co-founder e CTO @ <span class="accent">Agilize</span></p>
-    <div class="fade-in delay-2 mt-4" style="display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;">
-      <div class="presenter-card"><span class="presenter-name">Google for Startups</span><span class="presenter-role">Accelerator 2019</span></div>
-      <div class="presenter-card"><span class="presenter-name">Endeavor</span><span class="presenter-role">Empreendedor</span></div>
-      <div class="presenter-card"><span class="presenter-name">Stone &middot; L4 &middot; AXA</span><span class="presenter-role">Investidores</span></div>
-      <div class="presenter-card"><span class="presenter-name">Vit&oacute;ria</span><span class="presenter-role">Torcedor sofredor</span></div>
+    <div class="fade-in delay-2 mt-4" style="display: flex; gap: 1.5rem; flex-wrap: wrap; justify-content: center; align-items: flex-start;">
+      <div>
+        <div class="logo-chip"><img src="assets/logo-google-startups.png" alt="Google for Startups Accelerator 2019"></div>
+        <span class="chip-caption">Acelera&ccedil;&atilde;o</span>
+      </div>
+      <div>
+        <div class="logo-chip"><img src="assets/logo-endeavor.png" alt="Empreendedor Endeavor"></div>
+        <span class="chip-caption">Empreendedor</span>
+      </div>
+      <div>
+        <div class="logo-chip">
+          <img src="assets/logo-stone.png" alt="Stone">
+          <img src="assets/logo-l4.png" alt="L4 Venture Builder">
+          <img src="assets/logo-axa.png" alt="AXA">
+        </div>
+        <span class="chip-caption">Investidores</span>
+      </div>
     </div>
-    <div class="logo-container fade-in delay-3">
+    <div class="fade-in delay-3 mt-3" style="display: flex; align-items: center; gap: 0.8rem; justify-content: center;">
+      <img src="assets/logo-vitoria.png" alt="Vit&oacute;ria" style="height: 46px;">
+      <span class="small" style="color: var(--text-secondary);">Torcedor apaixonado</span>
+    </div>
+    <div class="logo-container fade-in delay-4">
       <img src="assets/logo-branca.png" alt="Agilize">
     </div>
   </div>
@@ -1104,10 +1140,10 @@
   <div class="slide" data-slide="2">
     <h1 class="fade-in animate-glitch" style="font-size: 3.8rem;">"A IA vai me <span class="red">substituir</span>?"</h1>
     <p class="fade-in delay-1 mt-3">
-      A ansiedade n&ordm; 1 de quem estuda<br>e trabalha com tecnologia hoje.
+      A ansiedade n&ordm;1 de quem estuda<br>e trabalha com tecnologia hoje.
     </p>
     <p class="fade-in delay-2 mt-4 small">
-      Resposta curta: n&atilde;o &eacute; <span class="accent">sim</span> nem <span class="accent">n&atilde;o</span>.<br>&Eacute; <span class="accent">"depende do dev que voc&ecirc; decidir ser."</span>
+      Resposta curta: <span class="accent">sim e n&atilde;o.</span><br>Depende do dev que <span class="accent">voc&ecirc; decidir ser.</span>
     </p>
   </div>
 
@@ -1230,28 +1266,84 @@
   </div>
 
   <!-- ======================== -->
-  <!-- SLIDE: FORA, IA! (TDC) -->
+  <!-- SLIDE: TRUE LOVE STORY (TDC) -->
   <!-- ======================== -->
   <div class="slide" data-slide="12">
-    <h2 class="fade-in animate-glitch">"<span class="red">FORA, IA!</span>"</h2>
-    <div class="mt-4" style="max-width: 780px; text-align: left;">
-      <p class="fade-in delay-1" style="margin-bottom: 1rem; color: var(--text); font-style: italic; font-size: 1.7rem;">"Prefiro escrever do zero."</p>
-      <p class="fade-in delay-2" style="margin-bottom: 1rem; color: var(--text); font-style: italic; font-size: 1.7rem;">"O c&oacute;digo da IA &eacute; bagun&ccedil;ado."</p>
-      <p class="fade-in delay-3" style="margin-bottom: 1rem; color: var(--text); font-style: italic; font-size: 1.7rem;">"N&atilde;o vou confiar meu trabalho nisso."</p>
-      <p class="fade-in delay-4" style="margin-bottom: 1rem; color: var(--text); font-style: italic; font-size: 1.7rem;">"A IA se perde e faz coisas que n&atilde;o pedi."</p>
-      <p class="fade-in delay-5" style="color: var(--text); font-style: italic; font-size: 1.7rem;">"Se for pra arrumar depois, prefiro fazer logo."</p>
+    <div class="fade-in" style="margin-bottom: 1.5rem;"><i data-lucide="heart" class="icon-heartbeat" style="width: 64px; height: 64px; color: var(--green); fill: var(--green);"></i></div>
+    <h1 class="fade-in delay-1" style="font-size: 3.6rem; white-space: nowrap;">
+      <span id="lovePrefix">It's a</span><span id="loveCursor" class="cursor-blink" style="color: var(--green); font-weight: 400;">_</span> <span style="background: #fff; color: #0a0714; padding: 0.02em 0.25em;">TRUE LOVE</span> story
+    </h1>
+  </div>
+
+  <!-- ======================== -->
+  <!-- SLIDE: O EXPERIMENTO (TDC) -->
+  <!-- ======================== -->
+  <div class="slide" data-slide="13">
+    <h2 class="fade-in">O <span class="accent">Experimento</span></h2>
+    <div class="fade-in delay-1 mt-2" style="display: flex; gap: 1rem; justify-content: center; flex-wrap: nowrap;">
+      <div class="presenter-card"><span class="presenter-name">h&aacute; 3 anos</span></div>
+      <div class="presenter-card"><span class="presenter-name">4 seniores</span></div>
+      <div class="presenter-card"><span class="presenter-name">4 meses</span></div>
     </div>
-    <p class="fade-in delay-6 mt-4 small">Rea&ccedil;&otilde;es reais &mdash; inclusive dentro da Agilize.</p>
+    <div class="mt-4" style="position: relative; width: 860px; max-width: 90%; height: 300px;">
+      <svg viewBox="0 0 860 300" style="position: absolute; inset: 0; width: 100%; height: 100%;" aria-hidden="true">
+        <line class="fade-in delay-2" x1="60" y1="245" x2="290" y2="205" stroke="var(--accent)" stroke-width="3" stroke-dasharray="2 10" stroke-linecap="round"/>
+        <line class="fade-in delay-3" x1="310" y1="200" x2="530" y2="140" stroke="var(--accent)" stroke-width="3" stroke-dasharray="2 10" stroke-linecap="round"/>
+        <line class="fade-in delay-4" x1="550" y1="133" x2="770" y2="45" stroke="var(--accent)" stroke-width="3" stroke-dasharray="2 10" stroke-linecap="round"/>
+      </svg>
+      <div class="fade-in delay-2" style="position: absolute; left: 10px; top: 215px; display: flex; flex-direction: column; align-items: center; gap: 0.4rem;">
+        <i data-lucide="user-round" style="width: 38px; height: 38px; color: var(--accent);"></i>
+        <span class="small" style="font-size: 1rem;">M&ecirc;s 1</span>
+      </div>
+      <div class="fade-in delay-3" style="position: absolute; left: 270px; top: 172px; display: flex; flex-direction: column; align-items: center; gap: 0.4rem;">
+        <i data-lucide="user-round" style="width: 38px; height: 38px; color: var(--green);"></i>
+        <span class="small" style="font-size: 1rem;">M&ecirc;s 2</span>
+      </div>
+      <div class="fade-in delay-4" style="position: absolute; left: 510px; top: 108px; display: flex; flex-direction: column; align-items: center; gap: 0.4rem;">
+        <i data-lucide="user-round" style="width: 38px; height: 38px; color: var(--yellow);"></i>
+        <span class="small" style="font-size: 1rem;">M&ecirc;s 3</span>
+      </div>
+      <div class="fade-in delay-5" style="position: absolute; left: 750px; top: 12px; display: flex; flex-direction: column; align-items: center; gap: 0.4rem;">
+        <i data-lucide="user-round" style="width: 38px; height: 38px; color: var(--pink);"></i>
+        <span class="small" style="font-size: 1rem;">M&ecirc;s 4</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================== -->
+  <!-- SLIDE: RESULTADO? (TDC) -->
+  <!-- ======================== -->
+  <div class="slide" data-slide="14" style="overflow: hidden;">
+    <svg viewBox="0 0 1200 700" preserveAspectRatio="xMidYMid slice" style="position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0.3;" aria-hidden="true">
+      <line x1="40" y1="620" x2="1160" y2="120" stroke="var(--accent)" stroke-width="5" stroke-dasharray="3 16" stroke-linecap="round"/>
+    </svg>
+    <h1 class="fade-in animate-glitch" style="position: relative; z-index: 1; font-size: 5.5rem; color: var(--green); text-shadow: 0 0 40px rgba(33, 227, 164, 0.4);">RESULTADO?</h1>
+  </div>
+
+  <!-- ======================== -->
+  <!-- SLIDE: FORA, IA! (TDC) -->
+  <!-- ======================== -->
+  <div class="slide" data-slide="15" style="background: url('assets/bg-fora-ia.png') center center / cover no-repeat;">
+    <div style="position: absolute; inset: 0; background: rgba(10, 7, 20, 0.72);"></div>
+    <div style="position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center;">
+      <h2 class="fade-in animate-glitch">"<span class="red">FORA, IA!</span>"</h2>
+      <div class="mt-4" style="max-width: 900px; text-align: left;">
+        <p class="fade-in delay-1" style="margin-bottom: 1rem; color: var(--text); font-style: italic; font-size: 1.7rem;">"Prefiro escrever do zero."</p>
+        <p class="fade-in delay-2" style="margin-bottom: 1rem; color: var(--text); font-style: italic; font-size: 1.7rem;">"O c&oacute;digo da IA &eacute; bagun&ccedil;ado."</p>
+        <p class="fade-in delay-3" style="margin-bottom: 1rem; color: var(--text); font-style: italic; font-size: 1.7rem;">"N&atilde;o vou confiar meu trabalho nisso."</p>
+        <p class="fade-in delay-4" style="margin-bottom: 1rem; color: var(--text); font-style: italic; font-size: 1.7rem;">"A IA se perde e faz coisas que n&atilde;o pedi."</p>
+        <p class="fade-in delay-5" style="color: var(--text); font-style: italic; font-size: 1.7rem; white-space: nowrap;">"Se for pra arrumar depois, prefiro fazer logo."</p>
+      </div>
+      <p class="fade-in delay-6 mt-4 small">Rea&ccedil;&otilde;es reais &mdash; inclusive dentro da Agilize.</p>
+    </div>
   </div>
 
   <!-- ======================== -->
   <!-- SLIDE: IDENTIDADE (TDC) -->
   <!-- ======================== -->
-  <div class="slide quote-slide" data-slide="13">
+  <div class="slide quote-slide" data-slide="16">
     <div class="fade-in">
-      <div class="big-quote">
-        A resist&ecirc;ncia n&atilde;o era sobre <span class="highlight">IA</span>&hellip;<br>Era sobre <span class="highlight">identidade.</span>
-      </div>
+      <div class="big-quote" id="typewriter-identity" style="min-height: 3em;"></div>
       <p style="color: var(--text-muted); font-size: 1.1rem; margin-top: 1.5rem; font-style: italic; padding-left: 2.5rem; text-align: left;">Quando seu valor sempre foi medido por escrever c&oacute;digo, o que sobra quando algo escreve por voc&ecirc;?</p>
       <div class="attribution">// a verdadeira barreira</div>
     </div>
@@ -1260,7 +1352,7 @@
   <!-- ======================== -->
   <!-- SLIDE 10: AGILIZE ADVANCES -->
   <!-- ======================== -->
-  <div class="slide" data-slide="14">
+  <div class="slide" data-slide="17">
     <h2 class="fade-in">Enquanto isso,<br>na <span class="accent">Agilize...</span></h2>
     <p class="fade-in delay-1 mt-3">
       Decidimos <span class="accent">experimentar antes de julgar.</span>
@@ -1305,7 +1397,7 @@
   <!-- ======================== -->
   <!-- SLIDE: HELLO WORLD - LIA (TDC) -->
   <!-- ======================== -->
-  <div class="slide" data-slide="15">
+  <div class="slide" data-slide="18">
     <div class="case-card fade-in">
       <span class="case-tag tag-purple">Meu "Hello World" com IA</span>
       <div style="margin-bottom: 0.8rem;"><i data-lucide="sparkles" class="icon-bot" style="width: 44px; height: 44px; color: var(--accent);"></i></div>
@@ -1314,7 +1406,7 @@
         O primeiro app <span class="accent">100% feito com IA</span> na Agilize.
       </p>
       <p class="mt-2">
-        Criada em <span class="accent">12 horas</span> &mdash; Go, Node.js e AWS Lambda.
+        Criada em <span class="accent">2023, 4 horas</span> &mdash; Go, Node.js e AWS Lambda.
       </p>
       <div class="case-highlight">
         <p>N&atilde;o era autocomplete. Era um sistema inteiro, de ponta a ponta.</p>
@@ -1325,7 +1417,7 @@
   <!-- ======================== -->
   <!-- SLIDE: CURIOSIDADE VS ORGULHO (TDC) -->
   <!-- ======================== -->
-  <div class="slide" data-slide="16">
+  <div class="slide" data-slide="19">
     <h2 class="fade-in">+ <span class="green">Curiosidade</span> &nbsp;&nbsp;&minus; <span class="red">Orgulho</span></h2>
     <div class="mt-4" style="max-width: 720px; text-align: left;">
       <p class="fade-in delay-1" style="margin-bottom: 1.2rem; color: var(--text); font-style: italic; font-size: 1.9rem;">"Como voc&ecirc; fez esse bot no Slack?"</p>
@@ -1340,8 +1432,8 @@
   <!-- ======================== -->
   <!-- SLIDE 11: DISCOVERY OF FIRE -->
   <!-- ======================== -->
-  <div class="slide" data-slide="17">
-    <div class="fade-in" style="margin-bottom: 1rem;"><i data-lucide="flame" class="icon-flame" style="width: 52px; height: 52px; color: var(--accent);"></i></div>
+  <div class="slide" data-slide="20">
+    <div class="fade-in" style="margin-bottom: 1rem;"><i data-lucide="flame" class="icon-flame" style="width: 52px; height: 52px; color: #ff8a5c;"></i></div>
     <h2 class="fade-in delay-1">A <span class="accent">Descoberta do Fogo</span></h2>
     <p class="fade-in delay-1 mt-3">
       Quando a IA parou de ser assistente<br>
@@ -1355,7 +1447,7 @@
   <!-- ======================== -->
   <!-- SLIDE 12: CULTURAL BARRIER -->
   <!-- ======================== -->
-  <div class="slide" data-slide="18">
+  <div class="slide" data-slide="21">
     <h2 class="fade-in">A barreira n&atilde;o foi <span class="red">t&eacute;cnica.</span></h2>
     <h2 class="fade-in delay-1">Foi <span class="accent">cultural.</span></h2>
     <div class="fade-in delay-2 mt-4" style="max-width: 700px; text-align: left;">
@@ -1371,7 +1463,7 @@
   <!-- ======================== -->
   <!-- SLIDE 13: CURRENT WORLD -->
   <!-- ======================== -->
-  <div class="slide" data-slide="19">
+  <div class="slide" data-slide="22">
     <div class="fade-in" style="margin-bottom: 1rem;"><i data-lucide="wind" class="icon-float" style="width: 48px; height: 48px; color: var(--accent);"></i></div>
     <h2 class="fade-in delay-1">O Mundo <span class="accent">Hoje</span></h2>
     <div class="fade-in delay-1 mt-4" style="display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;">
@@ -1394,7 +1486,7 @@
   <!-- ======================== -->
   <!-- SLIDE 14: THE GAP -->
   <!-- ======================== -->
-  <div class="slide" data-slide="20">
+  <div class="slide" data-slide="23">
     <p class="fade-in small" style="letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent-dim);">O gap de produtividade</p>
     <h1 class="fade-in delay-1 mt-3 animate-glitch" style="font-size: 8rem; font-weight: 800; color: var(--accent); letter-spacing: -0.05em; line-height: 1;">100x</h1>
     <p class="fade-in delay-2 mt-3">
@@ -1407,7 +1499,7 @@
   <!-- ======================== -->
   <!-- SLIDE 15: JOURNEY MESSAGE -->
   <!-- ======================== -->
-  <div class="slide" data-slide="21">
+  <div class="slide" data-slide="24">
     <h2 class="fade-in">O que fez <span class="accent">diferen&ccedil;a?</span></h2>
     <p class="fade-in delay-1 mt-3" style="max-width: 750px;">
       A disposi&ccedil;&atilde;o de <span class="accent">experimentar mesmo com medo.</span><br>De ajustar a cultura mesmo quando era desconfort&aacute;vel.<br><br>De aceitar que o jeito antigo de trabalhar<br><span class="accent">n&atilde;o era sagrado.</span>
@@ -1420,7 +1512,7 @@
   <!-- ======================== -->
   <!-- SLIDE 16: CHAPTER - A VIRADA -->
   <!-- ======================== -->
-  <div class="slide chapter-slide" data-slide="22">
+  <div class="slide chapter-slide" data-slide="25">
     <div class="fade-in" style="margin-bottom: 1.2rem;"><i data-lucide="rotate-ccw" class="icon-spin" style="width: 48px; height: 48px; color: var(--accent);"></i></div>
     <div class="chapter-num fade-in delay-1">Cap&iacute;tulo 02</div>
     <h1 class="fade-in delay-2">A Virada</h1>
@@ -1430,7 +1522,7 @@
   <!-- ======================== -->
   <!-- SLIDE 17: PARADIGM SHIFT -->
   <!-- ======================== -->
-  <div class="slide" data-slide="23">
+  <div class="slide" data-slide="26">
     <div class="comparison fade-in">
       <div class="comparison-side" style="border-color: var(--red); opacity: 0.7;">
         <div style="margin-bottom: 0.6rem;"><i data-lucide="code" style="width: 32px; height: 32px; color: var(--red);"></i></div>
@@ -1451,13 +1543,13 @@
   <!-- ======================== -->
   <!-- SLIDE 18: NEW ROLE -->
   <!-- ======================== -->
-  <div class="slide" data-slide="24">
+  <div class="slide" data-slide="27">
     <div class="fade-in" style="margin-bottom: 0.8rem; display: flex; gap: 1.5rem; justify-content: center;">
       <i data-lucide="crown" class="icon-crown" style="width: 52px; height: 52px; color: var(--accent);"></i>
-      <i data-lucide="bot" class="icon-bot" style="width: 52px; height: 52px; color: var(--blue);"></i>
+      <i data-lucide="bot" class="icon-bot" style="width: 52px; height: 52px; color: var(--green);"></i>
     </div>
     <h2 class="fade-in delay-1">Voc&ecirc; &eacute; o <span class="accent">PM.</span></h2>
-    <h2 class="fade-in delay-2">Os agentes s&atilde;o seus <span style="color: var(--blue);">engenheiros.</span></h2>
+    <h2 class="fade-in delay-2">Os agentes s&atilde;o seus <span style="color: var(--green);">engenheiros.</span></h2>
     <h2 class="fade-in delay-3" style="color: var(--text-secondary); font-size: 2rem; margin-top: 1rem;">Seu trabalho: manter todos <span class="accent">desbloqueados.</span></h2>
     <p class="fade-in delay-4 mt-4 small" style="max-width: 700px;">
       Isso vale pra todo mundo. Dev, PM, designer, analista.<br>
@@ -1468,24 +1560,24 @@
   <!-- ======================== -->
   <!-- SLIDE: O NOVO DEV (TDC) -->
   <!-- ======================== -->
-  <div class="slide" data-slide="25">
+  <div class="slide" data-slide="28">
     <div class="fade-in" style="margin-bottom: 1rem;"><i data-lucide="user-cog" class="icon-float" style="width: 48px; height: 48px; color: var(--accent);"></i></div>
     <h2 class="fade-in delay-1">O <span class="accent">Novo Dev</span></h2>
-    <div class="fade-in delay-1 mt-4" style="display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; max-width: 900px;">
-      <div class="stat-card" style="min-width: 200px;">
-        <div class="stat-value" style="font-size: 1.3rem;">De executor<br>a estrategista</div>
+    <div class="fade-in delay-1 mt-4" style="display: flex; gap: 1rem; flex-wrap: nowrap; justify-content: center;">
+      <div class="stat-card" style="padding: 1.4rem 1.1rem;">
+        <div class="stat-value" style="font-size: 1.2rem;">De executor<br>a estrategista</div>
       </div>
-      <div class="stat-card" style="min-width: 200px;">
-        <div class="stat-value" style="font-size: 1.3rem;">Curador do que<br>a IA gera</div>
+      <div class="stat-card" style="padding: 1.4rem 1.1rem;">
+        <div class="stat-value" style="font-size: 1.2rem;">Curador do que<br>a IA gera</div>
       </div>
-      <div class="stat-card" style="min-width: 200px;">
-        <div class="stat-value" style="font-size: 1.3rem;">Clareza, inten&ccedil;&atilde;o<br>e dire&ccedil;&atilde;o</div>
+      <div class="stat-card" style="padding: 1.4rem 1.1rem;">
+        <div class="stat-value" style="font-size: 1.2rem;">Clareza, inten&ccedil;&atilde;o<br>e dire&ccedil;&atilde;o</div>
       </div>
-      <div class="stat-card" style="min-width: 200px;">
-        <div class="stat-value" style="font-size: 1.3rem;">Prompt &eacute;<br>skill t&eacute;cnica</div>
+      <div class="stat-card" style="padding: 1.4rem 1.1rem;">
+        <div class="stat-value" style="font-size: 1.2rem;">Prompt &eacute;<br>skill t&eacute;cnica</div>
       </div>
     </div>
-    <p class="fade-in delay-2 mt-4 small" style="max-width: 750px;">
+    <p class="fade-in delay-2 mt-4 small" style="white-space: nowrap; max-width: none;">
       O c&oacute;digo continua importando.<br>Mas quem decide <span class="accent">o qu&ecirc; e por qu&ecirc;</span> vale mais do que quem s&oacute; digita.
     </p>
   </div>
@@ -1493,7 +1585,7 @@
   <!-- ======================== -->
   <!-- SLIDE 19: CHAPTER - BENCHMARK -->
   <!-- ======================== -->
-  <div class="slide chapter-slide" data-slide="26">
+  <div class="slide chapter-slide" data-slide="29">
     <div class="fade-in" style="margin-bottom: 1.2rem;"><i data-lucide="bar-chart-3" class="icon-chart" style="width: 48px; height: 48px; color: var(--accent);"></i></div>
     <div class="chapter-num fade-in delay-1">Cap&iacute;tulo 03</div>
     <h1 class="fade-in delay-2">Benchmark</h1>
@@ -1503,7 +1595,7 @@
   <!-- ======================== -->
   <!-- SLIDE 20: MARKET DATA -->
   <!-- ======================== -->
-  <div class="slide" data-slide="27">
+  <div class="slide" data-slide="30">
     <div class="fade-in" style="margin-bottom: 0.8rem;"><i data-lucide="trending-up" class="icon-rocket" style="width: 44px; height: 44px; color: var(--accent);"></i></div>
     <h3 class="fade-in delay-1 mb-3" style="color: var(--text-secondary);">Dados da Anthropic &mdash; 2026</h3>
     <div class="stats-grid fade-in delay-1">
@@ -1538,7 +1630,7 @@
   <!-- ======================== -->
   <!-- SLIDE 21: STRIPE CASE -->
   <!-- ======================== -->
-  <div class="slide" data-slide="28">
+  <div class="slide" data-slide="31">
     <div class="fade-in" style="margin-bottom: 0.8rem;"><i data-lucide="zap" class="icon-flame" style="width: 44px; height: 44px; color: var(--yellow);"></i></div>
     <h3 class="fade-in delay-1" style="color: var(--text-secondary);">Stripe &mdash; 2025</h3>
     <div class="fade-in delay-1 mt-3">
@@ -1556,12 +1648,12 @@
   <!-- ======================== -->
   <!-- SLIDE 22: TOKEN BURNING -->
   <!-- ======================== -->
-  <div class="slide" data-slide="29" style="overflow: hidden;">
+  <div class="slide" data-slide="32" style="overflow: hidden;">
     <div class="fire-container" id="fireContainer">
       <div class="fire-glow"></div>
     </div>
     <div class="fade-in" style="margin-bottom: 1rem; z-index: 1; position: relative;">
-      <i data-lucide="flame" class="icon-flame" style="width: 52px; height: 52px; color: var(--accent);"></i>
+      <i data-lucide="flame" class="icon-flame" style="width: 52px; height: 52px; color: #ff8a5c;"></i>
     </div>
     <h2 class="fade-in delay-1 animate-glitch" style="z-index: 1; position: relative;">Token Burners <span class="accent">Culture</span></h2>
     <p class="fade-in delay-2 mt-2" style="max-width: 700px; z-index: 1; position: relative; font-size: 1.3rem;">
@@ -1584,13 +1676,13 @@
         <div class="stat-label">Torrar e pedir extra</div>
       </div>
     </div>
-    <p class="fade-in delay-4 mt-3 small animate-glitch" style="color: var(--text-muted); z-index: 1; position: relative;">Token parado &eacute; produtividade desperdi&ccedil;ada.</p>
+    <p class="fade-in delay-4 mt-3 small animate-glitch" style="color: var(--text); z-index: 1; position: relative;">Token parado &eacute; produtividade desperdi&ccedil;ada.</p>
   </div>
 
   <!-- ======================== -->
   <!-- SLIDE 23: CHAPTER - CASES -->
   <!-- ======================== -->
-  <div class="slide chapter-slide" data-slide="30">
+  <div class="slide chapter-slide" data-slide="33">
     <div class="fade-in" style="margin-bottom: 1.2rem;"><i data-lucide="rocket" class="icon-rocket" style="width: 48px; height: 48px; color: var(--accent);"></i></div>
     <div class="chapter-num fade-in delay-1">Cap&iacute;tulo 04</div>
     <h1 class="fade-in delay-2">Cases Reais</h1>
@@ -1600,25 +1692,29 @@
   <!-- ======================== -->
   <!-- SLIDE: NA AGILIZE HOJE (TDC) -->
   <!-- ======================== -->
-  <div class="slide" data-slide="31">
+  <div class="slide" data-slide="34">
     <div class="fade-in" style="margin-bottom: 1rem;"><i data-lucide="activity" class="icon-heartbeat" style="width: 48px; height: 48px; color: var(--accent);"></i></div>
     <h2 class="fade-in delay-1">Na Agilize, <span class="accent">hoje</span></h2>
-    <div class="fade-in delay-1 mt-4" style="display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; max-width: 950px;">
-      <div class="stat-card" style="min-width: 190px;">
-        <div class="stat-value" style="font-size: 1.3rem;">IA virou cultura</div>
-        <div class="stat-label">integrada ao time</div>
+    <div class="fade-in delay-1 mt-4" style="display: flex; flex-direction: column; gap: 1rem; align-items: center;">
+      <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: nowrap;">
+        <div class="stat-card" style="min-width: 210px;">
+          <div class="stat-value" style="font-size: 1.3rem;">IA virou cultura</div>
+          <div class="stat-label">integrada ao time</div>
+        </div>
+        <div class="stat-card" style="min-width: 210px;">
+          <div class="stat-value" style="font-size: 1.3rem;">Comercial</div>
+          <div class="stat-label">IA vende sozinha</div>
+        </div>
+        <div class="stat-card" style="min-width: 210px;">
+          <div class="stat-value" style="font-size: 1.3rem;">Contadores</div>
+          <div class="stat-label">criando software</div>
+        </div>
       </div>
-      <div class="stat-card" style="min-width: 190px;">
-        <div class="stat-value">40%</div>
-        <div class="stat-label">dos tickets resolvidos por IA</div>
-      </div>
-      <div class="stat-card" style="min-width: 190px;">
-        <div class="stat-value" style="font-size: 1.3rem;">Contadores</div>
-        <div class="stat-label">criando software</div>
-      </div>
-      <div class="stat-card" style="min-width: 190px;">
-        <div class="stat-value" style="font-size: 1.3rem;">Comercial</div>
-        <div class="stat-label">IA vende sozinha</div>
+      <div style="display: flex; justify-content: center;">
+        <div class="stat-card" style="min-width: 320px;">
+          <div class="stat-value">40%</div>
+          <div class="stat-label">dos tickets resolvidos por IA</div>
+        </div>
       </div>
     </div>
     <p class="fade-in delay-2 mt-4 small">N&atilde;o &eacute; roadmap. &Eacute; o dia a dia de uma empresa em Salvador.</p>
@@ -1627,7 +1723,7 @@
   <!-- ======================== -->
   <!-- SLIDE 24: CASE 2 - LUIZ -->
   <!-- ======================== -->
-  <div class="slide" data-slide="32">
+  <div class="slide" data-slide="35">
     <div class="case-card fade-in">
       <span class="case-tag tag-red">Case 01</span>
       <div style="margin-bottom: 0.8rem;"><i data-lucide="bug" class="icon-bot" style="width: 44px; height: 44px; color: var(--red);"></i></div>
@@ -1647,56 +1743,11 @@
   </div>
 
   <!-- ======================== -->
-  <!-- SLIDE 25: CASE 3 - ERNESTO BUG RESOLUTION -->
+  <!-- CASE - AUTIA -->
   <!-- ======================== -->
-  <div class="slide" data-slide="33">
+  <div class="slide" data-slide="36">
     <div class="case-card fade-in">
-      <span class="case-tag tag-purple">Case 02</span>
-      <div style="margin-bottom: 0.8rem;"><i data-lucide="bug" class="icon-bot" style="width: 44px; height: 44px; color: var(--purple);"></i></div>
-      <h2>Do Bug ao PR. Voc&ecirc; S&oacute; Aprova.</h2>
-      <p>
-        Bug criado &rarr; webhook &rarr; sistema classifica &rarr; agente corrige &rarr; <span class="accent">abre o PR.</span>
-      </p>
-      <p class="mt-2">
-        Interface com kanban, tela para acompanhar o Claude Code trabalhando em cada issue, tela para responder perguntas do agente.
-      </p>
-      <div class="case-highlight">
-        <p>Mesmo problema, outra &oacute;tica. O resultado &eacute; igual: <span style="color: var(--green);">task done</span> <i data-lucide="check" style="width: 16px; height: 16px; color: var(--green); display: inline; vertical-align: middle;"></i></p>
-      </div>
-    </div>
-  </div>
-
-  <!-- ======================== -->
-  <!-- SLIDE 26: CASE 4 - BITBUCKET TO GITHUB -->
-  <!-- ======================== -->
-  <div class="slide" data-slide="34">
-    <div class="case-card fade-in">
-      <span class="case-tag tag-blue">Case 03</span>
-      <div style="margin-bottom: 0.8rem;"><i data-lucide="git-branch" style="width: 44px; height: 44px; color: var(--blue);"></i></div>
-      <h2>Bitbucket &rarr; GitHub</h2>
-      <p>
-        Automa&ccedil;&atilde;o ponta a ponta: skill no Claude Code orquestra migra&ccedil;&atilde;o, cria infra via templates + Action, provisiona no GitHub, ajusta pipeline e change de origin.
-      </p>
-      <p class="mt-2">
-        Fluxo de PRs <span class="accent">develop &rarr; main</span>. Processo <span class="accent">100% automatizado.</span>
-      </p>
-      <div class="case-highlight">
-        <p>A vers&atilde;o real: voc&ecirc; responde 3 perguntas.</p>
-        <p class="mt-2" style="text-align: left; font-size: 0.9rem;">
-          <span style="color: var(--blue);">1.</span> Qual o nome do repo?<br>
-          <span style="color: var(--blue);">2.</span> Qual o nome do ECR?<br>
-          <span style="color: var(--blue);">3.</span> Qual o nome do Vault?
-        </p>
-      </div>
-    </div>
-  </div>
-
-  <!-- ======================== -->
-  <!-- SLIDE 23: CASE 1 - AUTIA -->
-  <!-- ======================== -->
-  <div class="slide" data-slide="35">
-    <div class="case-card fade-in">
-      <span class="case-tag tag-green">Case 04</span>
+      <span class="case-tag tag-green">Case 02</span>
       <div style="margin-bottom: 0.8rem;"><i data-lucide="users" class="icon-float" style="width: 44px; height: 44px; color: var(--green);"></i></div>
       <h2>AutIA: Citizen Developers</h2>
       <p>
@@ -1715,9 +1766,9 @@
   <!-- ======================== -->
   <!-- SLIDE 27: CASE 5 - ALINE WHATSAPP -->
   <!-- ======================== -->
-  <div class="slide" data-slide="36">
+  <div class="slide" data-slide="37">
     <div class="case-card fade-in">
-      <span class="case-tag tag-green">Case 05</span>
+      <span class="case-tag tag-green">Case 03</span>
       <div style="margin-bottom: 0.8rem;"><i data-lucide="message-circle" style="width: 44px; height: 44px; color: var(--green);"></i></div>
       <h2>Aline: Abertura de Empresa via WhatsApp</h2>
       <p>
@@ -1733,9 +1784,9 @@
   <!-- ======================== -->
   <!-- SLIDE 28: CASE 6 - NEOCORTEX -->
   <!-- ======================== -->
-  <div class="slide" data-slide="37">
+  <div class="slide" data-slide="38">
     <div class="case-card fade-in">
-      <span class="case-tag tag-purple">Case 06</span>
+      <span class="case-tag tag-purple">Case 04</span>
       <div style="margin-bottom: 0.8rem;"><i data-lucide="brain" style="width: 44px; height: 44px; color: var(--purple);"></i></div>
       <h2>NeoCortex: C&eacute;rebro Externo</h2>
       <p>
@@ -1753,31 +1804,11 @@
   </div>
 
   <!-- ======================== -->
-  <!-- SLIDE 29: CASE 7 - MARIA START TASK -->
-  <!-- ======================== -->
-  <div class="slide" data-slide="38">
-    <div class="case-card fade-in">
-      <span class="case-tag tag-pink">Case 07</span>
-      <div style="margin-bottom: 0.8rem;"><i data-lucide="terminal" style="width: 44px; height: 44px; color: var(--pink);"></i></div>
-      <h2>/maria-start-task</h2>
-      <p>
-        Um comando que orquestra o ciclo completo: do <span class="accent">card no Jira</span> ao <span class="accent">PR aberto</span>, for&ccedil;ando que cada agente seja constru&iacute;do a partir de <span class="accent">tickets reais do Zendesk.</span>
-      </p>
-      <p class="mt-2" style="font-size: 0.85rem;">
-        Jira &rarr; branch &rarr; assign &rarr; dataset real &rarr; implementa&ccedil;&atilde;o &rarr; eval com LLM Judge &rarr; PR &rarr; Jira atualizado.
-      </p>
-      <div class="case-highlight" style="border-left-color: var(--green);">
-        <p style="color: var(--green);">Antes: 1&ndash;2 dias por agente. Depois: <span style="color: var(--accent);">10&ndash;20 minutos.</span></p>
-      </div>
-    </div>
-  </div>
-
-  <!-- ======================== -->
-  <!-- SLIDE 30: CASE 8 - JIRA CLONE -->
+  <!-- CASE - JIRA CLONE -->
   <!-- ======================== -->
   <div class="slide" data-slide="39">
     <div class="case-card fade-in">
-      <span class="case-tag tag-green">Case 08</span>
+      <span class="case-tag tag-green">Case 05</span>
       <div style="margin-bottom: 0.8rem;"><i data-lucide="layout-dashboard" class="icon-crown" style="width: 44px; height: 44px; color: var(--green);"></i></div>
       <h2>Agilijira: O Clone do Jira</h2>
       <p>
@@ -1801,7 +1832,7 @@
   <!-- ======================== -->
   <div class="slide" data-slide="40">
     <div class="case-card fade-in">
-      <span class="case-tag tag-yellow">Case 09</span>
+      <span class="case-tag tag-yellow">Case 06</span>
       <div style="margin-bottom: 0.8rem;"><i data-lucide="workflow" class="icon-workflow" style="width: 44px; height: 44px; color: var(--yellow);"></i></div>
       <h2>Agilify: O Clone do Pipefy</h2>
       <p>
@@ -1825,11 +1856,11 @@
   <!-- ======================== -->
   <div class="slide" data-slide="41">
     <div class="case-card fade-in">
-      <span class="case-tag tag-blue">Case 10</span>
-      <div style="margin-bottom: 0.8rem;"><i data-lucide="mic" class="icon-mic" style="width: 44px; height: 44px; color: var(--blue);"></i></div>
+      <span class="case-tag tag-green">Case 07</span>
+      <div style="margin-bottom: 0.8rem;"><i data-lucide="mic" class="icon-mic" style="width: 44px; height: 44px; color: var(--green);"></i></div>
       <h2>Voz no Celular, C&oacute;digo na Tela</h2>
       <p>
-        Um &aacute;udio no <span style="color: var(--blue);">Telegram</span>, direto do celular, vira tarefa executada por agentes.
+        Um &aacute;udio no <span style="color: var(--green);">Telegram</span>, direto do celular, vira tarefa executada por agentes.
       </p>
       <p class="mt-2">
         Sem abrir o notebook. Sem digitar uma linha.<br>
@@ -1845,9 +1876,29 @@
   </div>
 
   <!-- ======================== -->
+  <!-- CASE - APP DA AGILIZE -->
+  <!-- ======================== -->
+  <div class="slide" data-slide="42">
+    <div class="case-card fade-in" style="display: flex; gap: 2.5rem; align-items: center; max-width: 980px;">
+      <div style="flex: 1;">
+        <span class="case-tag tag-green">Case 08</span>
+        <div style="margin-bottom: 0.8rem;"><i data-lucide="smartphone" class="icon-float" style="width: 44px; height: 44px; color: var(--green);"></i></div>
+        <h2>O App da Agilize</h2>
+        <p>
+          O novo app da Agilize, constru&iacute;do com <span class="accent">IA no fluxo inteiro</span> de desenvolvimento.
+        </p>
+        <div class="case-highlight" style="border-left-color: var(--green);">
+          <p style="color: var(--green);">N&atilde;o &eacute; prot&oacute;tipo. &Eacute; produto indo pra m&atilde;o do cliente.</p>
+        </div>
+      </div>
+      <img src="assets/app-agilize.png" alt="App da Agilize" style="height: 480px; border-radius: 24px; border: 1px solid var(--border); box-shadow: 0 12px 48px rgba(0,0,0,0.5);">
+    </div>
+  </div>
+
+  <!-- ======================== -->
   <!-- SLIDE 31: CHAPTER - DEEP STUDY -->
   <!-- ======================== -->
-  <div class="slide chapter-slide" data-slide="42">
+  <div class="slide chapter-slide" data-slide="43">
     <div class="fade-in" style="margin-bottom: 1.2rem;"><i data-lucide="book-open" class="icon-float" style="width: 48px; height: 48px; color: var(--accent);"></i></div>
     <div class="chapter-num fade-in delay-1">Cap&iacute;tulo 05</div>
     <h1 class="fade-in delay-2">Deep Study</h1>
@@ -1857,7 +1908,7 @@
   <!-- ======================== -->
   <!-- SLIDE 31: ANTHROPIC WAY -->
   <!-- ======================== -->
-  <div class="slide" data-slide="43">
+  <div class="slide" data-slide="44">
     <div class="fade-in" style="margin-bottom: 0.8rem;"><i data-lucide="building" class="icon-float" style="width: 44px; height: 44px; color: var(--accent);"></i></div>
     <h3 class="fade-in delay-1" style="color: var(--text-secondary);">Dados reais do time da Anthropic</h3>
     <div class="two-col fade-in delay-1 mt-4">
@@ -1871,9 +1922,9 @@
       </div>
     </div>
     <div class="fade-in delay-2 mt-4">
-      <a href="https://building-like-anthropic.vercel.app/" target="_blank" class="link-card">
+      <a href="https://building-like-anthropic-secomp.vercel.app/" target="_blank" class="link-card">
         <span class="link-badge">Deep Study</span>
-        <span class="link-text">building-like-anthropic.vercel.app</span>
+        <span class="link-text">building-like-anthropic-secomp.vercel.app</span>
         <span class="link-arrow">&rarr;</span>
       </a>
     </div>
@@ -1882,7 +1933,7 @@
   <!-- ======================== -->
   <!-- SLIDE: CHAPTER - O DEV DE 2026 -->
   <!-- ======================== -->
-  <div class="slide chapter-slide" data-slide="44">
+  <div class="slide chapter-slide" data-slide="45">
     <div class="fade-in" style="margin-bottom: 1.2rem;"><i data-lucide="badge-check" class="icon-crown" style="width: 48px; height: 48px; color: var(--accent);"></i></div>
     <div class="chapter-num fade-in delay-1">Cap&iacute;tulo 06</div>
     <h1 class="fade-in delay-2">O Dev de 2026</h1>
@@ -1892,19 +1943,29 @@
   <!-- ======================== -->
   <!-- SLIDE: PERDEU VS GANHOU VALOR -->
   <!-- ======================== -->
-  <div class="slide" data-slide="45">
+  <div class="slide" data-slide="46">
     <h2 class="fade-in mb-3">O que eu olho <span class="accent">num dev</span> hoje</h2>
     <div class="comparison fade-in delay-1 mt-3">
       <div class="comparison-side" style="border-color: var(--red); opacity: 0.75;">
         <div style="margin-bottom: 0.6rem;"><i data-lucide="trending-down" style="width: 32px; height: 32px; color: var(--red);"></i></div>
         <p class="small red" style="text-transform: uppercase; letter-spacing: 0.1em;">Perdeu valor</p>
-        <p class="mt-2" style="font-size: 1.25rem; line-height: 2;">Digitar r&aacute;pido<br>Decorar sintaxe<br>Medir esfor&ccedil;o em linhas de c&oacute;digo<br>Fazer tudo sozinho</p>
+        <div class="mt-2" style="text-align: left; display: inline-flex; flex-direction: column; gap: 0.8rem; font-size: 1.1rem; color: var(--text-secondary);">
+          <span style="white-space: nowrap;"><span style="color: var(--red); font-weight: 700;">&times;</span> Digitar r&aacute;pido</span>
+          <span style="white-space: nowrap;"><span style="color: var(--red); font-weight: 700;">&times;</span> Decorar sintaxe</span>
+          <span style="white-space: nowrap;"><span style="color: var(--red); font-weight: 700;">&times;</span> Medir esfor&ccedil;o em linhas de c&oacute;digo</span>
+          <span style="white-space: nowrap;"><span style="color: var(--red); font-weight: 700;">&times;</span> Fazer tudo sozinho</span>
+        </div>
       </div>
       <div class="comparison-vs">&rarr;</div>
       <div class="comparison-side" style="border-color: var(--accent);">
         <div style="margin-bottom: 0.6rem;"><i data-lucide="trending-up" style="width: 32px; height: 32px; color: var(--accent);"></i></div>
         <p class="small accent" style="text-transform: uppercase; letter-spacing: 0.1em;">Ganhou valor</p>
-        <p class="mt-2" style="font-size: 1.25rem; line-height: 2;">Clareza de pensamento<br>Entender o problema e o neg&oacute;cio<br>Orquestrar agentes em paralelo<br>Julgamento: saber o que &eacute; bom</p>
+        <div class="mt-2" style="text-align: left; display: inline-flex; flex-direction: column; gap: 0.8rem; font-size: 1.1rem; color: var(--text-secondary);">
+          <span style="white-space: nowrap;"><span style="color: var(--green); font-weight: 700;">&#10003;</span> Clareza de pensamento</span>
+          <span style="white-space: nowrap;"><span style="color: var(--green); font-weight: 700;">&#10003;</span> Entender o problema e o neg&oacute;cio</span>
+          <span style="white-space: nowrap;"><span style="color: var(--green); font-weight: 700;">&#10003;</span> Orquestrar agentes em paralelo</span>
+          <span style="white-space: nowrap;"><span style="color: var(--green); font-weight: 700;">&#10003;</span> Julgamento: saber o que &eacute; bom</span>
+        </div>
       </div>
     </div>
   </div>
@@ -1912,54 +1973,21 @@
   <!-- ======================== -->
   <!-- SLIDE: A RESPOSTA -->
   <!-- ======================== -->
-  <div class="slide quote-slide" data-slide="46">
+  <div class="slide quote-slide" data-slide="47">
     <div class="fade-in">
       <div class="big-quote">
         A IA substitui quem s&oacute; <span class="highlight">executa</span>.<br>
         E multiplica quem <span class="highlight">pensa, direciona e orquestra</span>.
       </div>
-      <div class="attribution">// o dev que eu contrato &mdash; e que a IA n&atilde;o substitui</div>
+      <div class="attribution">// esse &eacute; o dev que contratamos</div>
     </div>
-  </div>
-
-  <!-- ======================== -->
-  <!-- SLIDE 32: CHAPTER - COMO COMECAR -->
-  <!-- ======================== -->
-  <div class="slide chapter-slide" data-slide="47">
-    <div class="fade-in" style="margin-bottom: 1.2rem;"><i data-lucide="play-circle" class="icon-crown" style="width: 48px; height: 48px; color: var(--accent);"></i></div>
-    <div class="chapter-num fade-in delay-1">Cap&iacute;tulo 07</div>
-    <h1 class="fade-in delay-2">Como Come&ccedil;ar</h1>
-    <p class="fade-in delay-2" style="color: var(--text-secondary); font-size: 1.3rem;">Primeiros passos pra quem quer come&ccedil;ar hoje</p>
-  </div>
-
-  <!-- ======================== -->
-  <!-- SLIDE 33: RESOURCES -->
-  <!-- ======================== -->
-  <div class="slide" data-slide="48">
-    <h2 class="fade-in">A barreira n&atilde;o &eacute; <span class="accent">acesso.</span></h2>
-    <h2 class="fade-in delay-1" style="color: var(--text-secondary); font-size: 2rem;">A barreira &eacute; decidir <span class="accent">come&ccedil;ar.</span></h2>
-    <div class="fade-in delay-2 mt-5" style="display: flex; flex-direction: column; gap: 1rem; align-items: center;">
-      <a href="https://cccourses.vercel.app/" target="_blank" class="link-card">
-        <span class="link-badge">Curso</span>
-        <span class="link-text">Claude Code para Engenheiros &mdash; 29 m&oacute;dulos</span>
-        <span class="link-arrow">&rarr;</span>
-      </a>
-      <a href="https://building-like-anthropic.vercel.app/" target="_blank" class="link-card">
-        <span class="link-badge">Deep Study</span>
-        <span class="link-text">Como a Anthropic constr&oacute;i software</span>
-        <span class="link-arrow">&rarr;</span>
-      </a>
-    </div>
-    <p class="fade-in delay-3 mt-4 small">
-      Quanto mais cedo come&ccedil;ar, maior a vantagem acumulada.
-    </p>
   </div>
 
   <!-- ======================== -->
   <!-- SLIDE 37: O MUNDO MUDOU -->
   <!-- ======================== -->
-  <div class="slide" data-slide="49" style="background: url('assets/bg-mundo-mudou.png') center center / cover no-repeat;">
-    <div style="position: absolute; inset: 0; background: rgba(10, 10, 20, 0.65);"></div>
+  <div class="slide" data-slide="48" style="background: url('assets/bg-mundo-mudou.png') center center / cover no-repeat;">
+    <div style="position: absolute; inset: 0; background: rgba(10, 10, 20, 0.45);"></div>
     <div style="position: relative; z-index: 1;">
       <h1 class="fade-in animate-glitch" style="font-size: 3.8rem;">
         O mundo <span class="accent">j&aacute; mudou.</span>
@@ -1973,20 +2001,32 @@
   <!-- ======================== -->
   <!-- SLIDE 38: THE FINAL QUESTION -->
   <!-- ======================== -->
-  <div class="slide" data-slide="50">
+  <div class="slide" data-slide="49">
     <h1 id="typewriter-final" class="fade-in" style="font-size: 3.2rem; line-height: 1.3; min-height: 4em;"></h1>
   </div>
 
   <!-- ======================== -->
   <!-- SLIDE 39: LINKS -->
   <!-- ======================== -->
-  <div class="slide" data-slide="51">
-    <div class="fade-in animate-glitch" style="margin-bottom: 2rem;">
-      <img src="assets/logo-branca.png" alt="Agilize" style="height: 80px; opacity: 1;">
+  <div class="slide" data-slide="50">
+    <div class="fade-in animate-glitch" style="margin-bottom: 1.2rem;">
+      <img src="assets/logo-branca.png" alt="Agilize" style="height: 60px; opacity: 1;">
     </div>
-    <h2 class="fade-in delay-1" style="font-size: 2.2rem; color: #fff; text-shadow: 0 0 8px rgba(255,255,255,0.9), 0 0 20px rgba(200,220,255,0.6), 0 0 40px rgba(150,180,255,0.3);">Se posicionando pra <span class="accent" style="text-shadow: 0 0 8px rgba(230,170,255,0.9), 0 0 20px rgba(193,95,255,0.6), 0 0 40px rgba(130,40,200,0.3);">liderar</span>, n&atilde;o pra correr atr&aacute;s.</h2>
-    <p class="fade-in delay-2 mt-4 small">Adriano Fialho &mdash; Co-founder e CTO @ Agilize</p>
-    <p class="fade-in delay-3 mt-2 small" style="color: var(--text-muted);">// EOF &mdash; O dev que a IA n&atilde;o vai substituir &mdash; UFBA 2026</p>
+    <h2 class="fade-in delay-1" style="font-size: 2rem; color: #fff; text-shadow: 0 0 8px rgba(255,255,255,0.9), 0 0 20px rgba(200,220,255,0.6), 0 0 40px rgba(150,180,255,0.3);">Se posicionando pra <span class="accent" style="text-shadow: 0 0 8px rgba(230,170,255,0.9), 0 0 20px rgba(193,95,255,0.6), 0 0 40px rgba(130,40,200,0.3);">liderar</span>, n&atilde;o pra correr atr&aacute;s.</h2>
+    <div class="fade-in delay-2 mt-4" style="display: flex; gap: 3rem; justify-content: center;">
+      <div style="display: flex; flex-direction: column; align-items: center; gap: 0.7rem;">
+        <div class="qr-card"><img src="assets/qr-vagas.png" alt="QR code para vagas da Agilize"></div>
+        <span style="font-size: 0.9rem; color: var(--green); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 700;">Vem pra Agilize</span>
+        <span style="font-size: 0.8rem; color: var(--text-secondary);">agilize.com.br/vagas</span>
+      </div>
+      <div style="display: flex; flex-direction: column; align-items: center; gap: 0.7rem;">
+        <div class="qr-card"><img src="assets/qr-deepstudy.png" alt="QR code para o Deep Study"></div>
+        <span style="font-size: 0.9rem; color: var(--accent); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 700;">Deep Study</span>
+        <span style="font-size: 0.8rem; color: var(--text-secondary);">building-like-anthropic-secomp.vercel.app</span>
+      </div>
+    </div>
+    <p class="fade-in delay-3 mt-4 small">Adriano Fialho &mdash; Co-founder e CTO @ Agilize</p>
+    <p class="fade-in delay-4 mt-2 small" style="color: var(--text-muted);">// EOF &mdash; O dev que a IA n&atilde;o vai substituir &mdash; UFBA 2026</p>
   </div>
 
 </div>
@@ -2008,7 +2048,7 @@
 </div>
 
 <!-- Slide counter -->
-<div class="slide-counter" id="slideCounter"><span class="current-num">01</span> / <span id="totalSlides">52</span></div>
+<div class="slide-counter" id="slideCounter"><span class="current-num">01</span> / <span id="totalSlides">51</span></div>
 
 <!-- Keyboard hint -->
 <div class="keyboard-hint" id="keyboardHint">
@@ -2085,7 +2125,7 @@
     const slideTitles = [
       'O dev que a IA não vai substituir',
       'Quem sou eu',
-      'A Ansiedade nº 1',
+      'A Ansiedade nº1',
       'O Choque de Realidade',
       'Mental Model',
       'Idle Time',
@@ -2095,6 +2135,9 @@
       'Idade da Pedra',
       'Primeiros Sinais',
       'Copilot',
+      'AI True Love Story',
+      'O Experimento',
+      'Resultado?',
       'FORA, IA!',
       'Era sobre Identidade',
       'Experimentar antes de julgar',
@@ -2116,29 +2159,25 @@
       'Cap 04: Cases Reais',
       'Na Agilize Hoje',
       'Case 01: Bug Zero Touch',
-      'Case 02: Bugs Automáticos',
-      'Case 03: Bitbucket → GitHub',
-      'Case 04: AutIA',
-      'Case 05: Aline WhatsApp',
-      'Case 06: NeoCortex',
-      'Case 07: /maria-start-task',
-      'Case 08: Agilijira',
-      'Case 09: Agilify',
-      'Case 10: Voz / Telegram',
+      'Case 02: AutIA',
+      'Case 03: Aline WhatsApp',
+      'Case 04: NeoCortex',
+      'Case 05: Agilijira',
+      'Case 06: Agilify',
+      'Case 07: Voz / Telegram',
+      'Case 08: App da Agilize',
       'Cap 05: Deep Study',
       'Anthropic Way',
       'Cap 06: O Dev de 2026',
       'Perdeu vs Ganhou Valor',
       'A Resposta',
-      'Cap 07: Como Começar',
-      'Recursos',
       'O Mundo Já Mudou',
       'A IA não vai te substituir…',
       'Fechamento'
     ];
 
     // Chapter slides (for dot styling)
-    const chapterSlides = [0, 8, 22, 26, 30, 42, 44, 47];
+    const chapterSlides = [0, 8, 25, 29, 33, 43, 45];
 
     // Build nav dots with preview thumbnails
     function buildNavBar() {
@@ -2237,8 +2276,7 @@
       el.innerHTML = '<span class="cursor-blink" style="color: var(--accent);">_</span>';
       var parts = [
         { text: 'A IA n\u00e3o vai te substituir.\n', style: '' },
-        { text: 'Quem usa ela melhor que voc\u00ea', style: 'color: var(--accent); font-size: 4rem;' },
-        { text: '\nvai.', style: '' }
+        { text: 'Quem usa ela melhor que voc\u00ea, vai.', style: 'color: var(--accent); font-size: 3rem; white-space: nowrap;' }
       ];
       var pIdx = 0, cIdx = 0, html = '';
       function type() {
@@ -2263,6 +2301,45 @@
     }
     function stopTypewriter() {
       if (typewriterTimer) { clearTimeout(typewriterTimer); typewriterTimer = null; }
+    }
+
+    // Typewriter effect for the identity quote slide
+    var identityTimer = null;
+    function startIdentityTypewriter() {
+      var el = document.getElementById('typewriter-identity');
+      if (!el) return;
+      var hl = 'color: var(--accent); text-shadow: 0 0 30px rgba(193, 95, 255, 0.4);';
+      el.innerHTML = '<span class="cursor-blink" style="color: var(--accent); font-weight: 400;">_</span>';
+      var parts = [
+        { text: 'A resistência não era sobre ', style: '' },
+        { text: 'IA', style: hl },
+        { text: '…\n', style: '' },
+        { text: 'Era sobre ', style: '' },
+        { text: 'identidade.', style: hl }
+      ];
+      var pIdx = 0, cIdx = 0, html = '';
+      function type() {
+        if (pIdx >= parts.length) {
+          el.innerHTML = html + '<span class="cursor-blink" style="color: var(--accent); font-weight: 400;">_</span>';
+          return;
+        }
+        var p = parts[pIdx];
+        var ch = p.text[cIdx];
+        if (cIdx === 0 && p.style) html += '<span style="' + p.style + '">';
+        if (ch === '\n') html += '<br>';
+        else html += ch;
+        cIdx++;
+        if (cIdx >= p.text.length) {
+          if (p.style) html += '</span>';
+          pIdx++; cIdx = 0;
+        }
+        el.innerHTML = html + '<span class="cursor-blink" style="color: var(--accent); font-weight: 400;">_</span>';
+        identityTimer = setTimeout(type, 60);
+      }
+      identityTimer = setTimeout(type, 400);
+    }
+    function stopIdentityTypewriter() {
+      if (identityTimer) { clearTimeout(identityTimer); identityTimer = null; }
     }
 
     // Word cloud random glow
@@ -2363,12 +2440,16 @@
             el.classList.add('show');
           });
           // Start typewriter on final question slide
-          if (index === 50) startTypewriter();
+          if (index === 49) startTypewriter();
+          // Start typewriter on identity quote slide
+          if (index === 16) startIdentityTypewriter();
         });
       });
 
       // Stop typewriter when leaving final question slide
-      if (current === 50 && index !== 50) stopTypewriter();
+      if (current === 49 && index !== 49) stopTypewriter();
+      // Stop identity typewriter when leaving its slide
+      if (current === 16 && index !== 16) stopIdentityTypewriter();
 
       current = index;
       updateUI();
@@ -2458,7 +2539,7 @@
 
   // ======= TYPEWRITER EFFECT =======
   (function() {
-    const words = ['substituir.', 'aposentar.', 'dispensar.', 'vencer.'];
+    const words = ['substituir.', 'alcançar.', 'aposentar.', 'superar.', 'imitar.'];
     const el = document.getElementById('typewriterWord');
     let wordIndex = 0;
     let charIndex = 0;
@@ -2496,6 +2577,43 @@
 
     // Start after a short delay
     setTimeout(() => { pauseEnd = Date.now(); tick(); }, 1200);
+  })();
+
+  // ======= TRUE LOVE PREFIX LOOP ("It's a" <-> "AI") =======
+  (function() {
+    const el = document.getElementById('lovePrefix');
+    if (!el) return;
+    const states = ["It's a", 'AI'];
+    let stateIndex = 0;
+    let charIndex = states[0].length;
+    let isDeleting = false;
+    let pauseEnd = Date.now() + 2200;
+
+    function tick() {
+      const now = Date.now();
+      if (now < pauseEnd) { requestAnimationFrame(tick); return; }
+      const word = states[stateIndex];
+      if (!isDeleting && charIndex === word.length) {
+        isDeleting = true;
+        pauseEnd = now + 2200;
+      } else if (isDeleting) {
+        charIndex--;
+        el.textContent = word.substring(0, charIndex);
+        if (charIndex === 0) {
+          isDeleting = false;
+          stateIndex = (stateIndex + 1) % states.length;
+          pauseEnd = now + 350;
+        } else {
+          pauseEnd = now + 55;
+        }
+      } else {
+        charIndex++;
+        el.textContent = states[stateIndex].substring(0, charIndex);
+        pauseEnd = now + 95 + Math.random() * 40;
+      }
+      requestAnimationFrame(tick);
+    }
+    tick();
   })();
 
   // Fire particles for "Queime Seus Tokens" slide
