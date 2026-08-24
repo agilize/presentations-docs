@@ -68,7 +68,7 @@
     #slideInfo .cur { color: var(--accent); font-size: 1rem; }
     #codeChip { color: var(--muted); letter-spacing: 0.2em; }
 
-    .navrow { display: flex; gap: 10px; height: 17vh; }
+    .navrow { flex: 1; display: flex; gap: 10px; }
     .navrow button {
       flex: 1; font-size: 3rem; border-radius: 14px; color: var(--accent);
       background: var(--surface);
@@ -83,7 +83,7 @@
     .modes button.on { border-color: var(--green); color: var(--green); box-shadow: 0 0 10px rgba(33,227,164,0.25); }
 
     #pad {
-      flex: 1; border: 1px dashed var(--border); border-radius: 14px;
+      height: 17vh; border: 1px dashed var(--border); border-radius: 14px;
       display: flex; align-items: center; justify-content: center;
       color: var(--muted); font-size: 0.75rem; letter-spacing: 0.08em;
       touch-action: none; position: relative; overflow: hidden;
@@ -122,11 +122,11 @@
     <button data-key="s" id="mSpot">Spot</button>
     <button data-key="z" id="mZoom">Zoom</button>
   </div>
-  <div id="pad">trackpad<div class="dot" id="padDot"></div></div>
   <div class="navrow">
     <button id="btnPrev" aria-label="Slide anterior">&larr;</button>
     <button id="btnNext" aria-label="Pr&oacute;ximo slide">&rarr;</button>
   </div>
+  <div id="pad">trackpad<div class="dot" id="padDot"></div></div>
 </div>
 
 <script src="https://unpkg.com/mqtt@5.10.1/dist/mqtt.min.js"></script>
