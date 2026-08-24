@@ -82,8 +82,11 @@
     }
     .modes button.on { border-color: var(--green); color: var(--green); box-shadow: 0 0 10px rgba(33,227,164,0.25); }
 
+    .bottomrow { display: flex; gap: 8px; height: 17vh; }
+    .bottomrow .modes { flex-direction: column; width: 30%; }
+    .bottomrow .modes button { padding: 0; font-size: 0.75rem; }
     #pad {
-      height: 17vh; border: 1px dashed var(--border); border-radius: 14px;
+      flex: 1; border: 1px dashed var(--border); border-radius: 14px;
       display: flex; align-items: center; justify-content: center;
       color: var(--muted); font-size: 0.75rem; letter-spacing: 0.08em;
       touch-action: none; position: relative; overflow: hidden;
@@ -117,16 +120,18 @@
     <button data-key="Home">In&iacute;cio</button>
     <button data-key="End">Fim</button>
   </div>
-  <div class="modes">
-    <button data-key="l" id="mLaser">Laser</button>
-    <button data-key="s" id="mSpot">Spot</button>
-    <button data-key="z" id="mZoom">Zoom</button>
-  </div>
   <div class="navrow">
     <button id="btnPrev" aria-label="Slide anterior">&larr;</button>
     <button id="btnNext" aria-label="Pr&oacute;ximo slide">&rarr;</button>
   </div>
-  <div id="pad">trackpad<div class="dot" id="padDot"></div></div>
+  <div class="bottomrow">
+    <div id="pad">trackpad<div class="dot" id="padDot"></div></div>
+    <div class="modes">
+      <button data-key="l" id="mLaser">Laser</button>
+      <button data-key="s" id="mSpot">Spot</button>
+      <button data-key="z" id="mZoom">Zoom</button>
+    </div>
+  </div>
 </div>
 
 <script src="https://unpkg.com/mqtt@5.10.1/dist/mqtt.min.js"></script>
