@@ -24,7 +24,7 @@ Deck interno para o time de tech da Agilize sobre como o controle remoto por cel
   - `qrcode.js` — qrcode-generator 1.4.4 (Kazuhiko Arase, MIT) · sha384-8FWZA6BGMXhsfO+BLtrJK0We6gg5o1JyO8xQm6peWDEUs17ACA5ziE/NIAkl9z2k
   - `world-dots.js` — Natural Earth 110m land (domínio público), rasterizado em grade de 1° para o mapa pontilhado (gerado com PIL; região lon −140..45, lat 72..−48)
   - ícones lucide-static 1.34.0 (ISC) inlinados no HTML na montagem
-  - `ufba-erro.png` — screenshot real do erro no Wi-Fi da UFBA; `logo-branca.png`
+  - `ufba-erro.png` — screenshot real do erro no Wi-Fi da UFBA; `remote-celular.png` — print do remoto conectado (viewport iPhone 390×844 @3x, capturado headless com o fluxo real: p2p, slide 02/35, laser ligado); `logo-branca.png`
 - Fonte (Google Fonts) continua externa, como nos outros decks.
 
 ## Diferenças do remoto em relação à SECOMP
