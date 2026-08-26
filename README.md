@@ -19,6 +19,8 @@ tech-presentations-docs/
 |---|---|
 | [team-topologies](./2026/team-topologies/) | Engineering squads structure and team topologies |
 | [talk-comece-a-orquestrar](./2026/talk-comece-a-orquestrar/) | AI Agents: Pare de fazer! Comece a orquestrar! |
+| [talk-o-dev-que-a-ia-nao-vai-substituir](./2026/talk-o-dev-que-a-ia-nao-vai-substituir/) | O dev que a IA não vai substituir (SECOMP/UFBA) |
+| [talk-frankfurt-no-meu-trackpad](./2026/talk-frankfurt-no-meu-trackpad/) | Frankfurt no meu trackpad — como o controle remoto por celular foi construído (redes, protocolos, segurança, vibecoding) |
 
 ## How to open
 
